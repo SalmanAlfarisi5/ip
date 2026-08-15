@@ -3,13 +3,16 @@ import java.util.Scanner;
 /**
  * Entry point of the saLLMan chatbot.
  * <p>
- * At this stage the chatbot echoes back whatever the user types, until the
- * user enters {@code bye}.
+ * At this stage the chatbot stores whatever the user types and lists it back
+ * on request, until the user enters {@code bye}.
  */
 public class Sallman {
 
     /** Name the chatbot introduces itself with. */
     private static final String NAME = "saLLMan";
+
+    /** Maximum number of tasks the chatbot can hold, as allowed by the requirements. */
+    private static final int MAX_TASKS = 100;
 
     /** Horizontal rule that separates the chatbot's replies from the user's input. */
     private static final String DIVIDER =
@@ -42,10 +45,29 @@ public class Sallman {
         System.out.println();
     }
 
+    /**
+     * Formats the stored tasks as numbered lines, ready to be passed to
+     * {@link #say(String...)}.
+     *
+     * @param tasks     array holding the tasks
+     * @param taskCount number of filled slots at the front of {@code tasks}
+     * @return one line per task, numbered from 1
+     */
+    private static String[] numberedTasks(String[] tasks, int taskCount) {
+        String[] lines = new String[taskCount];
+        for (int i = 0; i < taskCount; i++) {
+            lines[i] = (i + 1) + ". " + tasks[i];
+        }
+        return lines;
+    }
+
     public static void main(String[] args) {
         System.out.println(BANNER);
         say("Hello! I'm " + NAME + ", freshly loaded and ready to assist.",
                 "What are we working on today?");
+
+        String[] tasks = new String[MAX_TASKS];
+        int taskCount = 0; // number of slots filled, so also the index of the next free slot
 
         try (Scanner in = new Scanner(System.in)) {
             // hasNextLine() also stops the loop if input ends without a "bye".
@@ -54,8 +76,13 @@ public class Sallman {
                 if (input.equals("bye")) {
                     say("Bye. Hope to see you again soon!");
                     break;
+                } else if (input.equals("list")) {
+                    say(numberedTasks(tasks, taskCount));
+                } else {
+                    tasks[taskCount] = input;
+                    taskCount++;
+                    say("added: " + input);
                 }
-                say(input);
             }
         }
     }
