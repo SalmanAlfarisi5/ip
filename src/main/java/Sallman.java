@@ -1,8 +1,10 @@
+import java.util.Scanner;
+
 /**
  * Entry point of the saLLMan chatbot.
  * <p>
- * At this stage the chatbot only greets the user and exits; it does not yet
- * read any input.
+ * At this stage the chatbot echoes back whatever the user types, until the
+ * user enters {@code bye}.
  */
 public class Sallman {
 
@@ -25,13 +27,36 @@ public class Sallman {
             + "\\__ \\ | (_| || |___ | |___ | |  | || (_| || | | |\n"
             + "|___/  \\__,_||_____||_____||_|  |_| \\__,_||_| |_|";
 
+    /**
+     * Prints the given lines as one chatbot reply, wrapped between horizontal
+     * rules so replies stand out from what the user typed.
+     *
+     * @param lines lines of the reply, printed in order
+     */
+    private static void say(String... lines) {
+        System.out.println("    " + DIVIDER);
+        for (String line : lines) {
+            System.out.println("     " + line);
+        }
+        System.out.println("    " + DIVIDER);
+        System.out.println();
+    }
+
     public static void main(String[] args) {
-        System.out.println(DIVIDER);
         System.out.println(BANNER);
-        System.out.println("Hello! I'm " + NAME + ".");
-        System.out.println("What can I do for you?");
-        System.out.println(DIVIDER);
-        System.out.println("Bye. Hope to see you again soon!");
-        System.out.println(DIVIDER);
+        say("Hello! I'm " + NAME + ", freshly loaded and ready to assist.",
+                "What are we working on today?");
+
+        try (Scanner in = new Scanner(System.in)) {
+            // hasNextLine() also stops the loop if input ends without a "bye".
+            while (in.hasNextLine()) {
+                String input = in.nextLine().trim();
+                if (input.equals("bye")) {
+                    say("Bye. Hope to see you again soon!");
+                    break;
+                }
+                say(input);
+            }
+        }
     }
 }
