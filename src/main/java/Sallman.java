@@ -3,8 +3,8 @@ import java.util.Scanner;
 /**
  * Entry point of the saLLMan chatbot.
  * <p>
- * At this stage the chatbot stores whatever the user types, lists it back on
- * request, and can mark a task as done, until the user enters {@code bye}.
+ * At this stage the chatbot tracks todos, deadlines and events, lists them
+ * back on request, and can mark them done, until the user enters {@code bye}.
  */
 public class Sallman {
 
@@ -62,6 +62,19 @@ public class Sallman {
         return lines;
     }
 
+    /**
+     * Confirms to the user that a task was added, and reports the new total.
+     *
+     * @param task      the task just added
+     * @param taskCount number of tasks now in the list
+     */
+    private static void announceAdded(Task task, int taskCount) {
+        say("Got it. I've added this task:",
+                "  " + task,
+                "Now you have " + taskCount + (taskCount == 1 ? " task" : " tasks")
+                        + " in the list.");
+    }
+
     public static void main(String[] args) {
         System.out.println(BANNER);
         say("Hello! I'm " + NAME + ", freshly loaded and ready to assist.",
@@ -90,10 +103,26 @@ public class Sallman {
                     tasks[index].markAsNotDone();
                     say("OK, I've marked this task as not done yet:",
                             "  " + tasks[index]);
-                } else {
-                    tasks[taskCount] = new Task(input);
+                } else if (input.startsWith("todo ")) {
+                    tasks[taskCount] = new Todo(input.substring("todo ".length()).trim());
                     taskCount++;
-                    say("added: " + input);
+                    announceAdded(tasks[taskCount - 1], taskCount);
+                } else if (input.startsWith("deadline ")) {
+                    // "return book /by Sunday" splits into description and due date.
+                    String[] parts = input.substring("deadline ".length()).split(" /by ", 2);
+                    tasks[taskCount] = new Deadline(parts[0].trim(), parts[1].trim());
+                    taskCount++;
+                    announceAdded(tasks[taskCount - 1], taskCount);
+                } else if (input.startsWith("event ")) {
+                    // "meeting /from Mon 2pm /to 4pm" splits into description, start, end.
+                    String[] fromParts = input.substring("event ".length()).split(" /from ", 2);
+                    String[] toParts = fromParts[1].split(" /to ", 2);
+                    tasks[taskCount] = new Event(fromParts[0].trim(), toParts[0].trim(),
+                            toParts[1].trim());
+                    taskCount++;
+                    announceAdded(tasks[taskCount - 1], taskCount);
+                } else {
+                    say("Hmm, that one isn't in my vocabulary yet.");
                 }
             }
         }
