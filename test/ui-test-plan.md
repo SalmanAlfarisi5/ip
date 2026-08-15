@@ -290,13 +290,214 @@ bye
     ____________________________________________________________
 ```
 
-## Known gaps
+### TC8: Bad task numbers are refused
 
-These crash the program today and are expected to be covered when Level-5
-adds error handling:
+**Aim:** Verify every way of getting a task number wrong is reported rather
+than crashing: out of range above and below, non-numeric, and missing. The
+closing `list` confirms the real task survived all of it untouched.
 
-- `mark 99` / `mark 0` — index outside the list.
-- `mark abc` — non-numeric task number.
-- `deadline submit report` — missing the `/by` part.
-- `event meeting /from Mon` — missing the `/to` part.
-- Adding a 101st task — exceeds the fixed-size array.
+**Input:**
+
+```text
+todo read book
+mark 99
+mark 0
+mark abc
+mark
+unmark
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Oops! There is no task with that number.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Oops! There is no task with that number.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Oops! That is not a task number.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Oops! Give me a task number.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Oops! Give me a task number.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC9: Marking on an empty list is refused
+
+**Aim:** Verify `mark 1` on an empty list is refused. Task 1 is a valid number
+in general, so this checks the range is compared against the current task
+count rather than the array size.
+
+**Input:**
+
+```text
+mark 1
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Oops! There is no task with that number.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC10: Incomplete deadlines are refused
+
+**Aim:** Verify a deadline missing its `/by`, its description, or its date is
+refused in each case, and that a valid deadline still works afterwards.
+
+**Input:**
+
+```text
+deadline submit report
+deadline /by Sunday
+deadline report /by
+deadline return book /by Sunday
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Oops! A deadline needs a description and a /by part.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Oops! A deadline needs a description and a /by part.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Oops! A deadline needs a description and a /by part.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Sunday)
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[D][ ] return book (by: Sunday)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC11: Incomplete events are refused
+
+**Aim:** Verify an event missing its `/to`, missing both parts, or missing its
+description is refused, and that a valid event still works afterwards.
+
+**Input:**
+
+```text
+event meeting /from Mon
+event meeting
+event /from Mon 2pm /to 4pm
+event project meeting /from Mon 2pm /to 4pm
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Oops! An event needs a description, a /from part and a /to part.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Oops! An event needs a description, a /from part and a /to part.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Oops! An event needs a description, a /from part and a /to part.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] project meeting (from: Mon 2pm to: 4pm)
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC12: A blank line is ignored
+
+**Aim:** Verify pressing Enter on its own produces no reply at all, rather than
+an unknown-command complaint.
+
+**Input:**
+
+```text
+
+todo read book
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+## Not covered by this plan
+
+- **A full task list.** Adding a 101st task is refused with
+  `Oops! Your list is full.`, verified by hand with a generated 101-command
+  session. It is left out of the plan because a 100-line test case would
+  dominate the file. The A-Collections extension in Level-6 removes the limit
+  and with it this case.

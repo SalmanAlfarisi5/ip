@@ -5,8 +5,8 @@ import java.util.Scanner;
  * <p>
  * At this stage the chatbot tracks todos, deadlines and events, lists them
  * back on request, and can mark them done, until the user enters {@code bye}.
- * An unknown command and a todo with no description are reported to the user;
- * other invalid input is not handled yet.
+ * Invalid input is reported to the user rather than allowed to crash the
+ * program.
  */
 public class Sallman {
 
@@ -89,45 +89,89 @@ public class Sallman {
             // hasNextLine() also stops the loop if input ends without a "bye".
             while (in.hasNextLine()) {
                 String input = in.nextLine().trim();
-                if (input.equals("bye")) {
+                if (input.isEmpty()) {
+                    continue; // a blank line is not worth complaining about
+                }
+
+                // Everything up to the first space is the command, the rest are
+                // its arguments. Separating them up front means a command given
+                // without arguments still reaches its own branch, where the
+                // missing part can be named.
+                String[] words = input.split("\\s+", 2);
+                String command = words[0];
+                String arguments = words.length > 1 ? words[1].trim() : "";
+
+                boolean isAddCommand = command.equals("todo")
+                        || command.equals("deadline")
+                        || command.equals("event");
+                if (isAddCommand && taskCount == MAX_TASKS) {
+                    say("Oops! Your list is full.");
+                    continue;
+                }
+
+                if (command.equals("bye")) {
                     say("Bye. Hope to see you again soon!");
                     break;
-                } else if (input.equals("list")) {
+                } else if (command.equals("list")) {
                     say(numberedTasks(tasks, taskCount));
-                } else if (input.startsWith("mark ")) {
-                    // Task numbers shown to the user start at 1, arrays start at 0.
-                    int index = Integer.parseInt(input.substring("mark ".length()).trim()) - 1;
-                    tasks[index].markAsDone();
-                    say("Nice! I've marked this task as done:",
-                            "  " + tasks[index]);
-                } else if (input.startsWith("unmark ")) {
-                    int index = Integer.parseInt(input.substring("unmark ".length()).trim()) - 1;
-                    tasks[index].markAsNotDone();
-                    say("OK, I've marked this task as not done yet:",
-                            "  " + tasks[index]);
-                } else if (input.equals("todo") || input.startsWith("todo ")) {
-                    // Matching a bare "todo" too, so that a missing description
-                    // is reported as such instead of looking like a typo.
-                    String description = input.substring("todo".length()).trim();
-                    if (description.isEmpty()) {
+                } else if (command.equals("mark") || command.equals("unmark")) {
+                    if (arguments.isEmpty()) {
+                        say("Oops! Give me a task number.");
+                        continue;
+                    }
+                    int index;
+                    try {
+                        // Task numbers shown to the user start at 1, arrays start at 0.
+                        index = Integer.parseInt(arguments) - 1;
+                    } catch (NumberFormatException e) {
+                        say("Oops! That is not a task number.");
+                        continue;
+                    }
+                    if (index < 0 || index >= taskCount) {
+                        say("Oops! There is no task with that number.");
+                        continue;
+                    }
+                    if (command.equals("mark")) {
+                        tasks[index].markAsDone();
+                        say("Nice! I've marked this task as done:", "  " + tasks[index]);
+                    } else {
+                        tasks[index].markAsNotDone();
+                        say("OK, I've marked this task as not done yet:", "  " + tasks[index]);
+                    }
+                } else if (command.equals("todo")) {
+                    if (arguments.isEmpty()) {
                         say("Oops! A todo needs a description.");
                         continue;
                     }
-                    tasks[taskCount] = new Todo(description);
+                    tasks[taskCount] = new Todo(arguments);
                     taskCount++;
                     announceAdded(tasks[taskCount - 1], taskCount);
-                } else if (input.startsWith("deadline ")) {
+                } else if (command.equals("deadline")) {
                     // "return book /by Sunday" splits into description and due date.
-                    String[] parts = input.substring("deadline ".length()).split(" /by ", 2);
-                    tasks[taskCount] = new Deadline(parts[0].trim(), parts[1].trim());
+                    String[] parts = arguments.split("/by", 2);
+                    String description = parts[0].trim();
+                    String by = parts.length > 1 ? parts[1].trim() : "";
+                    if (description.isEmpty() || by.isEmpty()) {
+                        say("Oops! A deadline needs a description and a /by part.");
+                        continue;
+                    }
+                    tasks[taskCount] = new Deadline(description, by);
                     taskCount++;
                     announceAdded(tasks[taskCount - 1], taskCount);
-                } else if (input.startsWith("event ")) {
+                } else if (command.equals("event")) {
                     // "meeting /from Mon 2pm /to 4pm" splits into description, start, end.
-                    String[] fromParts = input.substring("event ".length()).split(" /from ", 2);
-                    String[] toParts = fromParts[1].split(" /to ", 2);
-                    tasks[taskCount] = new Event(fromParts[0].trim(), toParts[0].trim(),
-                            toParts[1].trim());
+                    String[] fromParts = arguments.split("/from", 2);
+                    String[] toParts = fromParts.length > 1
+                            ? fromParts[1].split("/to", 2)
+                            : new String[] {""};
+                    String description = fromParts[0].trim();
+                    String from = toParts[0].trim();
+                    String to = toParts.length > 1 ? toParts[1].trim() : "";
+                    if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+                        say("Oops! An event needs a description, a /from part and a /to part.");
+                        continue;
+                    }
+                    tasks[taskCount] = new Event(description, from, to);
                     taskCount++;
                     announceAdded(tasks[taskCount - 1], taskCount);
                 } else {
