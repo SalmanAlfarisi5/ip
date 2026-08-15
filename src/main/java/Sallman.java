@@ -78,6 +78,17 @@ public class Sallman {
     }
 
     /**
+     * Adds a task to the list and confirms it to the user.
+     *
+     * @param tasks the list to add to
+     * @param task  the task to add
+     */
+    private static void addTask(List<Task> tasks, Task task) {
+        tasks.add(task);
+        announceAdded(task, tasks.size());
+    }
+
+    /**
      * Reads the task number given to a {@code mark} or {@code unmark} command.
      *
      * @param command   the command the number was given to, used in messages
@@ -219,6 +230,10 @@ public class Sallman {
         // and no separate count to keep in step with the contents.
         List<Task> tasks = new ArrayList<>();
 
+        // A "break" inside a switch leaves the switch, not the loop, so the
+        // bye command records its intent here instead.
+        boolean isExiting = false;
+
         try (Scanner in = new Scanner(System.in)) {
             // hasNextLine() also stops the loop if input ends without a "bye".
             while (in.hasNextLine()) {
@@ -232,56 +247,50 @@ public class Sallman {
                 // without arguments still reaches its own branch, where the
                 // missing part can be named.
                 String[] words = input.split("\\s+", 2);
-                String command = words[0];
+                String keyword = words[0];
                 String arguments = words.length > 1 ? words[1].trim() : "";
 
                 // Each branch below either carries out the command or throws,
                 // so the happy path reads without the error cases in the way.
                 try {
-                    boolean isAddCommand = command.equals("todo")
-                            || command.equals("deadline")
-                            || command.equals("event");
+                    // Rejects an unknown keyword before the switch, so every
+                    // case below is one of the known commands.
+                    Command command = Command.fromKeyword(keyword);
 
-                    if (command.equals("bye")) {
+                    switch (command) {
+                    case BYE -> {
                         say("Bye. Hope to see you again soon!");
-                        break;
-                    } else if (command.equals("list")) {
-                        say(numberedTasks(tasks));
-                    } else if (command.equals("mark") || command.equals("unmark")) {
-                        int index = parseTaskNumber(command, arguments, tasks.size());
+                        isExiting = true;
+                    }
+                    case LIST -> say(numberedTasks(tasks));
+                    case MARK, UNMARK -> {
+                        int index = parseTaskNumber(keyword, arguments, tasks.size());
                         Task task = tasks.get(index);
-                        if (command.equals("mark")) {
+                        if (command == Command.MARK) {
                             task.markAsDone();
                             say("Nice! I've marked this task as done:", "  " + task);
                         } else {
                             task.markAsNotDone();
                             say("OK, I've marked this task as not done yet:", "  " + task);
                         }
-                    } else if (command.equals("delete")) {
-                        int index = parseTaskNumber(command, arguments, tasks.size());
+                    }
+                    case DELETE -> {
+                        int index = parseTaskNumber(keyword, arguments, tasks.size());
                         // remove() closes the gap itself and returns what it took out.
                         Task removed = tasks.remove(index);
                         say("Noted. I've removed this task:", "  " + removed,
                                 taskCountSummary(tasks.size()));
-                    } else if (isAddCommand) {
-                        Task task;
-                        if (command.equals("todo")) {
-                            task = parseTodo(arguments);
-                        } else if (command.equals("deadline")) {
-                            task = parseDeadline(arguments);
-                        } else {
-                            task = parseEvent(arguments);
-                        }
-                        tasks.add(task);
-                        announceAdded(task, tasks.size());
-                    } else {
-                        throw new SallmanException(
-                                "Sorry, I don't know what \"" + command + "\" means.",
-                                "I understand: todo, deadline, event, list, mark, "
-                                        + "unmark, delete, bye.");
+                    }
+                    case TODO -> addTask(tasks, parseTodo(arguments));
+                    case DEADLINE -> addTask(tasks, parseDeadline(arguments));
+                    case EVENT -> addTask(tasks, parseEvent(arguments));
                     }
                 } catch (SallmanException e) {
                     say(e.toLines());
+                }
+
+                if (isExiting) {
+                    break;
                 }
             }
         }
