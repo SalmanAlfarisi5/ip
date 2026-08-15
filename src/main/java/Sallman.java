@@ -1,10 +1,13 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
  * Entry point of the saLLMan chatbot.
  * <p>
  * At this stage the chatbot tracks todos, deadlines and events, lists them
- * back on request, and can mark them done, until the user enters {@code bye}.
+ * back on request, and can mark them done or delete them, until the user
+ * enters {@code bye}.
  * Invalid input is reported to the user rather than allowed to crash the
  * program.
  */
@@ -12,9 +15,6 @@ public class Sallman {
 
     /** Name the chatbot introduces itself with. */
     private static final String NAME = "saLLMan";
-
-    /** Maximum number of tasks the chatbot can hold, as allowed by the requirements. */
-    private static final int MAX_TASKS = 100;
 
     /**
      * Worked examples shown alongside an error, so the user can see the shape
@@ -63,10 +63,18 @@ public class Sallman {
      * @param taskCount number of tasks now in the list
      */
     private static void announceAdded(Task task, int taskCount) {
-        say("Got it. I've added this task:",
-                "  " + task,
-                "Now you have " + taskCount + (taskCount == 1 ? " task" : " tasks")
-                        + " in the list.");
+        say("Got it. I've added this task:", "  " + task, taskCountSummary(taskCount));
+    }
+
+    /**
+     * Reports how many tasks are in the list, shown after adding or removing one.
+     *
+     * @param taskCount number of tasks now in the list
+     * @return a sentence naming the total, with "task" pluralised to match
+     */
+    private static String taskCountSummary(int taskCount) {
+        return "Now you have " + taskCount + (taskCount == 1 ? " task" : " tasks")
+                + " in the list.";
     }
 
     /**
@@ -111,15 +119,14 @@ public class Sallman {
      * Formats the stored tasks as a numbered list with a heading, ready to be
      * passed to {@link #say(String...)}.
      *
-     * @param tasks     array holding the tasks
-     * @param taskCount number of filled slots at the front of {@code tasks}
+     * @param tasks the tasks to list
      * @return a heading followed by one line per task, numbered from 1
      */
-    private static String[] numberedTasks(Task[] tasks, int taskCount) {
-        String[] lines = new String[taskCount + 1];
+    private static String[] numberedTasks(List<Task> tasks) {
+        String[] lines = new String[tasks.size() + 1];
         lines[0] = "Here are the tasks in your list:";
-        for (int i = 0; i < taskCount; i++) {
-            lines[i + 1] = (i + 1) + "." + tasks[i];
+        for (int i = 0; i < tasks.size(); i++) {
+            lines[i + 1] = (i + 1) + "." + tasks.get(i);
         }
         return lines;
     }
@@ -208,8 +215,9 @@ public class Sallman {
         say("Hello! I'm " + NAME + ", freshly loaded and ready to assist.",
                 "What are we working on today?");
 
-        Task[] tasks = new Task[MAX_TASKS];
-        int taskCount = 0; // number of slots filled, so also the index of the next free slot
+        // An ArrayList grows as needed, so there is no task limit to enforce
+        // and no separate count to keep in step with the contents.
+        List<Task> tasks = new ArrayList<>();
 
         try (Scanner in = new Scanner(System.in)) {
             // hasNextLine() also stops the loop if input ends without a "bye".
@@ -233,27 +241,28 @@ public class Sallman {
                     boolean isAddCommand = command.equals("todo")
                             || command.equals("deadline")
                             || command.equals("event");
-                    if (isAddCommand && taskCount == MAX_TASKS) {
-                        throw new SallmanException("Your list is full at " + MAX_TASKS
-                                + " tasks.",
-                                "I can't take any more until some come off the list.");
-                    }
 
                     if (command.equals("bye")) {
                         say("Bye. Hope to see you again soon!");
                         break;
                     } else if (command.equals("list")) {
-                        say(numberedTasks(tasks, taskCount));
+                        say(numberedTasks(tasks));
                     } else if (command.equals("mark") || command.equals("unmark")) {
-                        int index = parseTaskNumber(command, arguments, taskCount);
+                        int index = parseTaskNumber(command, arguments, tasks.size());
+                        Task task = tasks.get(index);
                         if (command.equals("mark")) {
-                            tasks[index].markAsDone();
-                            say("Nice! I've marked this task as done:", "  " + tasks[index]);
+                            task.markAsDone();
+                            say("Nice! I've marked this task as done:", "  " + task);
                         } else {
-                            tasks[index].markAsNotDone();
-                            say("OK, I've marked this task as not done yet:",
-                                    "  " + tasks[index]);
+                            task.markAsNotDone();
+                            say("OK, I've marked this task as not done yet:", "  " + task);
                         }
+                    } else if (command.equals("delete")) {
+                        int index = parseTaskNumber(command, arguments, tasks.size());
+                        // remove() closes the gap itself and returns what it took out.
+                        Task removed = tasks.remove(index);
+                        say("Noted. I've removed this task:", "  " + removed,
+                                taskCountSummary(tasks.size()));
                     } else if (isAddCommand) {
                         Task task;
                         if (command.equals("todo")) {
@@ -263,14 +272,13 @@ public class Sallman {
                         } else {
                             task = parseEvent(arguments);
                         }
-                        tasks[taskCount] = task;
-                        taskCount++;
-                        announceAdded(task, taskCount);
+                        tasks.add(task);
+                        announceAdded(task, tasks.size());
                     } else {
                         throw new SallmanException(
                                 "Sorry, I don't know what \"" + command + "\" means.",
                                 "I understand: todo, deadline, event, list, mark, "
-                                        + "unmark, bye.");
+                                        + "unmark, delete, bye.");
                     }
                 } catch (SallmanException e) {
                     say(e.toLines());

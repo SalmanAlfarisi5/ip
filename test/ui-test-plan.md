@@ -212,7 +212,7 @@ bye
 ```text
     ____________________________________________________________
      Sorry, I don't know what "blah" means.
-     I understand: todo, deadline, event, list, mark, unmark, bye.
+     I understand: todo, deadline, event, list, mark, unmark, delete, bye.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -566,10 +566,181 @@ bye
     ____________________________________________________________
 ```
 
+### TC13: Deleting from the middle renumbers the rest
+
+**Aim:** Verify `delete` removes the right task, reports the new total, and
+that the tasks after it move up. Marking task 3 afterwards is the real check:
+if the deleted slot were left behind, task 3 would still be the old task 4 and
+the wrong item would be marked.
+
+**Input:**
+
+```text
+todo read book
+todo return book
+todo buy bread
+todo join club
+delete 2
+list
+mark 3
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] return book
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] buy bread
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] join club
+     Now you have 4 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noted. I've removed this task:
+       [T][ ] return book
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] read book
+     2.[T][ ] buy bread
+     3.[T][ ] join club
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [T][X] join club
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] read book
+     2.[T][ ] buy bread
+     3.[T][X] join club
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC14: Deleting the last task, then an out-of-range delete
+
+**Aim:** Verify deleting the final task leaves an empty list rather than
+running off the end, and that the now-stale task number is refused afterwards.
+
+**Input:**
+
+```text
+todo read book
+delete 1
+delete 1
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Noted. I've removed this task:
+       [T][ ] read book
+     Now you have 0 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There is no task 1: your list is empty.
+     Try: todo read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC15: A bad delete number is refused
+
+**Aim:** Verify `delete` reuses the same task-number validation as `mark`, and
+that its error hints name `delete` rather than another command.
+
+**Input:**
+
+```text
+todo read book
+delete 99
+delete abc
+delete
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There is no task 99 in your list.
+     You only have task 1.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     "abc" is not a number.
+     Try: delete 2
+    ____________________________________________________________
+
+    ____________________________________________________________
+     delete needs a task number.
+     Try: delete 2
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
 ## Not covered by this plan
 
-- **A full task list.** Adding a 101st task is refused with `Your list is full
-  at 100 tasks.`, verified by hand with a generated 101-command session. It is
-  left out of the plan because a 100-line test case would dominate the file.
-  The A-Collections extension in Level-6 removes the limit and with it this
-  case.
+- **A very large task list.** The list is held in an `ArrayList`, so there is
+  no fixed limit to bump into. Adding 150 tasks was checked by hand; it is left
+  out of the plan because a 150-line test case would dominate the file. The
+  earlier 100-task limit, and its "your list is full" error, no longer exist.
