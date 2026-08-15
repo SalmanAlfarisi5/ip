@@ -98,6 +98,11 @@ public class Sallman {
                     isDone[index] = true;
                     say("Nice! I've marked this task as done:",
                             "  " + formatTask(tasks[index], true));
+                } else if (input.startsWith("unmark ")) {
+                    int index = Integer.parseInt(input.substring("unmark ".length()).trim()) - 1;
+                    isDone[index] = false;
+                    say("OK, I've marked this task as not done yet:",
+                            "  " + formatTask(tasks[index], false));
                 } else {
                     tasks[taskCount] = input;
                     taskCount++;
