@@ -16,6 +16,15 @@ public class Sallman {
     /** Maximum number of tasks the chatbot can hold, as allowed by the requirements. */
     private static final int MAX_TASKS = 100;
 
+    /**
+     * Worked examples shown alongside an error, so the user can see the shape
+     * of a correct command instead of only being told what was wrong.
+     */
+    private static final String TODO_EXAMPLE = "Try: todo read book";
+    private static final String DEADLINE_EXAMPLE = "Try: deadline return book /by Sunday";
+    private static final String EVENT_EXAMPLE =
+            "Try: event project meeting /from Mon 2pm /to 4pm";
+
     /** Horizontal rule that separates the chatbot's replies from the user's input. */
     private static final String DIVIDER =
             "____________________________________________________________";
@@ -105,7 +114,8 @@ public class Sallman {
                         || command.equals("deadline")
                         || command.equals("event");
                 if (isAddCommand && taskCount == MAX_TASKS) {
-                    say("Oops! Your list is full.");
+                    say("Your list is full at " + MAX_TASKS + " tasks.",
+                            "I can't take any more until some come off the list.");
                     continue;
                 }
 
@@ -116,7 +126,7 @@ public class Sallman {
                     say(numberedTasks(tasks, taskCount));
                 } else if (command.equals("mark") || command.equals("unmark")) {
                     if (arguments.isEmpty()) {
-                        say("Oops! Give me a task number.");
+                        say(command + " needs a task number.", "Try: " + command + " 2");
                         continue;
                     }
                     int index;
@@ -124,11 +134,20 @@ public class Sallman {
                         // Task numbers shown to the user start at 1, arrays start at 0.
                         index = Integer.parseInt(arguments) - 1;
                     } catch (NumberFormatException e) {
-                        say("Oops! That is not a task number.");
+                        say("\"" + arguments + "\" is not a number.",
+                                "Try: " + command + " 2");
+                        continue;
+                    }
+                    if (taskCount == 0) {
+                        say("There is no task " + arguments + ": your list is empty.",
+                                TODO_EXAMPLE);
                         continue;
                     }
                     if (index < 0 || index >= taskCount) {
-                        say("Oops! There is no task with that number.");
+                        say("There is no task " + arguments + " in your list.",
+                                taskCount == 1
+                                        ? "You only have task 1."
+                                        : "Pick a number from 1 to " + taskCount + ".");
                         continue;
                     }
                     if (command.equals("mark")) {
@@ -140,7 +159,7 @@ public class Sallman {
                     }
                 } else if (command.equals("todo")) {
                     if (arguments.isEmpty()) {
-                        say("Oops! A todo needs a description.");
+                        say("A todo needs a description.", TODO_EXAMPLE);
                         continue;
                     }
                     tasks[taskCount] = new Todo(arguments);
@@ -149,10 +168,19 @@ public class Sallman {
                 } else if (command.equals("deadline")) {
                     // "return book /by Sunday" splits into description and due date.
                     String[] parts = arguments.split("/by", 2);
+                    if (parts.length < 2) {
+                        say("I couldn't find a /by in that deadline.", DEADLINE_EXAMPLE);
+                        continue;
+                    }
                     String description = parts[0].trim();
-                    String by = parts.length > 1 ? parts[1].trim() : "";
-                    if (description.isEmpty() || by.isEmpty()) {
-                        say("Oops! A deadline needs a description and a /by part.");
+                    String by = parts[1].trim();
+                    if (description.isEmpty()) {
+                        say("That deadline has no description before the /by.",
+                                DEADLINE_EXAMPLE);
+                        continue;
+                    }
+                    if (by.isEmpty()) {
+                        say("That deadline has no due date after the /by.", DEADLINE_EXAMPLE);
                         continue;
                     }
                     tasks[taskCount] = new Deadline(description, by);
@@ -161,21 +189,36 @@ public class Sallman {
                 } else if (command.equals("event")) {
                     // "meeting /from Mon 2pm /to 4pm" splits into description, start, end.
                     String[] fromParts = arguments.split("/from", 2);
-                    String[] toParts = fromParts.length > 1
-                            ? fromParts[1].split("/to", 2)
-                            : new String[] {""};
+                    if (fromParts.length < 2) {
+                        say("I couldn't find a /from in that event.", EVENT_EXAMPLE);
+                        continue;
+                    }
+                    String[] toParts = fromParts[1].split("/to", 2);
+                    if (toParts.length < 2) {
+                        say("I couldn't find a /to in that event.", EVENT_EXAMPLE);
+                        continue;
+                    }
                     String description = fromParts[0].trim();
                     String from = toParts[0].trim();
-                    String to = toParts.length > 1 ? toParts[1].trim() : "";
-                    if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-                        say("Oops! An event needs a description, a /from part and a /to part.");
+                    String to = toParts[1].trim();
+                    if (description.isEmpty()) {
+                        say("That event has no description before the /from.", EVENT_EXAMPLE);
+                        continue;
+                    }
+                    if (from.isEmpty()) {
+                        say("That event has no start time after the /from.", EVENT_EXAMPLE);
+                        continue;
+                    }
+                    if (to.isEmpty()) {
+                        say("That event has no end time after the /to.", EVENT_EXAMPLE);
                         continue;
                     }
                     tasks[taskCount] = new Event(description, from, to);
                     taskCount++;
                     announceAdded(tasks[taskCount - 1], taskCount);
                 } else {
-                    say("Oops! I don't know what that means.");
+                    say("Sorry, I don't know what \"" + command + "\" means.",
+                            "I understand: todo, deadline, event, list, mark, unmark, bye.");
                 }
             }
         }

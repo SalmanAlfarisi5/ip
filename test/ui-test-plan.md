@@ -195,9 +195,9 @@ bye
 
 ### TC5: Unrecognised input is rejected, not stored
 
-**Aim:** Verify an unknown command is refused, and crucially that it is not
-silently added to the list. The trailing `list` is what proves the internal
-state stayed clean.
+**Aim:** Verify an unknown command is refused, quoted back so the user can see
+what was not understood, and crucially that it is not silently added to the
+list. The trailing `list` is what proves the internal state stayed clean.
 
 **Input:**
 
@@ -211,7 +211,8 @@ bye
 
 ```text
     ____________________________________________________________
-     Oops! I don't know what that means.
+     Sorry, I don't know what "blah" means.
+     I understand: todo, deadline, event, list, mark, unmark, bye.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -242,7 +243,8 @@ bye
 
 ```text
     ____________________________________________________________
-     Oops! A todo needs a description.
+     A todo needs a description.
+     Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
@@ -278,7 +280,8 @@ bye
 
 ```text
     ____________________________________________________________
-     Oops! A todo needs a description.
+     A todo needs a description.
+     Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
@@ -293,8 +296,10 @@ bye
 ### TC8: Bad task numbers are refused
 
 **Aim:** Verify every way of getting a task number wrong is reported rather
-than crashing: out of range above and below, non-numeric, and missing. The
-closing `list` confirms the real task survived all of it untouched.
+than crashing, and that each is distinguished: out of range above and below,
+non-numeric, and missing. The missing-number message must name the command the
+user actually typed. The closing `list` confirms the real task survived all of
+it untouched.
 
 **Input:**
 
@@ -319,23 +324,28 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     Oops! There is no task with that number.
+     There is no task 99 in your list.
+     You only have task 1.
     ____________________________________________________________
 
     ____________________________________________________________
-     Oops! There is no task with that number.
+     There is no task 0 in your list.
+     You only have task 1.
     ____________________________________________________________
 
     ____________________________________________________________
-     Oops! That is not a task number.
+     "abc" is not a number.
+     Try: mark 2
     ____________________________________________________________
 
     ____________________________________________________________
-     Oops! Give me a task number.
+     mark needs a task number.
+     Try: mark 2
     ____________________________________________________________
 
     ____________________________________________________________
-     Oops! Give me a task number.
+     unmark needs a task number.
+     Try: unmark 2
     ____________________________________________________________
 
     ____________________________________________________________
@@ -348,11 +358,51 @@ bye
     ____________________________________________________________
 ```
 
+### TC8b: The valid range is reported when several tasks exist
+
+**Aim:** Verify the out-of-range message switches from the singular
+"You only have task 1." to a range once there is more than one task.
+
+**Input:**
+
+```text
+todo read book
+todo buy bread
+mark 99
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] buy bread
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There is no task 99 in your list.
+     Pick a number from 1 to 2.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
 ### TC9: Marking on an empty list is refused
 
 **Aim:** Verify `mark 1` on an empty list is refused. Task 1 is a valid number
 in general, so this checks the range is compared against the current task
-count rather than the array size.
+count rather than the array size. The empty list gets its own message, since
+telling the user to "pick a number from 1 to 0" would be nonsense.
 
 **Input:**
 
@@ -365,7 +415,8 @@ bye
 
 ```text
     ____________________________________________________________
-     Oops! There is no task with that number.
+     There is no task 1: your list is empty.
+     Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
@@ -376,7 +427,9 @@ bye
 ### TC10: Incomplete deadlines are refused
 
 **Aim:** Verify a deadline missing its `/by`, its description, or its date is
-refused in each case, and that a valid deadline still works afterwards.
+refused with a *different* message in each case, so the user is told which
+part is missing rather than being handed a generic complaint. A valid deadline
+afterwards confirms the rejections left the list usable.
 
 **Input:**
 
@@ -393,15 +446,18 @@ bye
 
 ```text
     ____________________________________________________________
-     Oops! A deadline needs a description and a /by part.
+     I couldn't find a /by in that deadline.
+     Try: deadline return book /by Sunday
     ____________________________________________________________
 
     ____________________________________________________________
-     Oops! A deadline needs a description and a /by part.
+     That deadline has no description before the /by.
+     Try: deadline return book /by Sunday
     ____________________________________________________________
 
     ____________________________________________________________
-     Oops! A deadline needs a description and a /by part.
+     That deadline has no due date after the /by.
+     Try: deadline return book /by Sunday
     ____________________________________________________________
 
     ____________________________________________________________
@@ -422,15 +478,18 @@ bye
 
 ### TC11: Incomplete events are refused
 
-**Aim:** Verify an event missing its `/to`, missing both parts, or missing its
-description is refused, and that a valid event still works afterwards.
+**Aim:** Verify each of the five ways an event can be incomplete gets its own
+message: no `/from`, no `/to`, no description, no start time, no end time. A
+valid event afterwards confirms the rejections left the list usable.
 
 **Input:**
 
 ```text
-event meeting /from Mon
 event meeting
+event meeting /from Mon
 event /from Mon 2pm /to 4pm
+event meeting /from /to 4pm
+event meeting /from Mon 2pm /to
 event project meeting /from Mon 2pm /to 4pm
 list
 bye
@@ -440,15 +499,28 @@ bye
 
 ```text
     ____________________________________________________________
-     Oops! An event needs a description, a /from part and a /to part.
+     I couldn't find a /from in that event.
+     Try: event project meeting /from Mon 2pm /to 4pm
     ____________________________________________________________
 
     ____________________________________________________________
-     Oops! An event needs a description, a /from part and a /to part.
+     I couldn't find a /to in that event.
+     Try: event project meeting /from Mon 2pm /to 4pm
     ____________________________________________________________
 
     ____________________________________________________________
-     Oops! An event needs a description, a /from part and a /to part.
+     That event has no description before the /from.
+     Try: event project meeting /from Mon 2pm /to 4pm
+    ____________________________________________________________
+
+    ____________________________________________________________
+     That event has no start time after the /from.
+     Try: event project meeting /from Mon 2pm /to 4pm
+    ____________________________________________________________
+
+    ____________________________________________________________
+     That event has no end time after the /to.
+     Try: event project meeting /from Mon 2pm /to 4pm
     ____________________________________________________________
 
     ____________________________________________________________
@@ -496,8 +568,8 @@ bye
 
 ## Not covered by this plan
 
-- **A full task list.** Adding a 101st task is refused with
-  `Oops! Your list is full.`, verified by hand with a generated 101-command
-  session. It is left out of the plan because a 100-line test case would
-  dominate the file. The A-Collections extension in Level-6 removes the limit
-  and with it this case.
+- **A full task list.** Adding a 101st task is refused with `Your list is full
+  at 100 tasks.`, verified by hand with a generated 101-command session. It is
+  left out of the plan because a 100-line test case would dominate the file.
+  The A-Collections extension in Level-6 removes the limit and with it this
+  case.
