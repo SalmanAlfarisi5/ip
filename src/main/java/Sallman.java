@@ -46,30 +46,18 @@ public class Sallman {
     }
 
     /**
-     * Formats one task with its completion status, e.g. {@code [X] read book}.
-     *
-     * @param task   description of the task
-     * @param isDone whether the task has been completed
-     * @return the task description prefixed with its status icon
-     */
-    private static String formatTask(String task, boolean isDone) {
-        return "[" + (isDone ? "X" : " ") + "] " + task;
-    }
-
-    /**
      * Formats the stored tasks as a numbered list with a heading, ready to be
      * passed to {@link #say(String...)}.
      *
-     * @param tasks     array holding the task descriptions
-     * @param isDone    completion status of each task, parallel to {@code tasks}
-     * @param taskCount number of filled slots at the front of the arrays
+     * @param tasks     array holding the tasks
+     * @param taskCount number of filled slots at the front of {@code tasks}
      * @return a heading followed by one line per task, numbered from 1
      */
-    private static String[] numberedTasks(String[] tasks, boolean[] isDone, int taskCount) {
+    private static String[] numberedTasks(Task[] tasks, int taskCount) {
         String[] lines = new String[taskCount + 1];
         lines[0] = "Here are the tasks in your list:";
         for (int i = 0; i < taskCount; i++) {
-            lines[i + 1] = (i + 1) + "." + formatTask(tasks[i], isDone[i]);
+            lines[i + 1] = (i + 1) + "." + tasks[i];
         }
         return lines;
     }
@@ -79,8 +67,7 @@ public class Sallman {
         say("Hello! I'm " + NAME + ", freshly loaded and ready to assist.",
                 "What are we working on today?");
 
-        String[] tasks = new String[MAX_TASKS];
-        boolean[] isDone = new boolean[MAX_TASKS]; // isDone[i] tracks tasks[i]
+        Task[] tasks = new Task[MAX_TASKS];
         int taskCount = 0; // number of slots filled, so also the index of the next free slot
 
         try (Scanner in = new Scanner(System.in)) {
@@ -91,20 +78,20 @@ public class Sallman {
                     say("Bye. Hope to see you again soon!");
                     break;
                 } else if (input.equals("list")) {
-                    say(numberedTasks(tasks, isDone, taskCount));
+                    say(numberedTasks(tasks, taskCount));
                 } else if (input.startsWith("mark ")) {
                     // Task numbers shown to the user start at 1, arrays start at 0.
                     int index = Integer.parseInt(input.substring("mark ".length()).trim()) - 1;
-                    isDone[index] = true;
+                    tasks[index].markAsDone();
                     say("Nice! I've marked this task as done:",
-                            "  " + formatTask(tasks[index], true));
+                            "  " + tasks[index]);
                 } else if (input.startsWith("unmark ")) {
                     int index = Integer.parseInt(input.substring("unmark ".length()).trim()) - 1;
-                    isDone[index] = false;
+                    tasks[index].markAsNotDone();
                     say("OK, I've marked this task as not done yet:",
-                            "  " + formatTask(tasks[index], false));
+                            "  " + tasks[index]);
                 } else {
-                    tasks[taskCount] = input;
+                    tasks[taskCount] = new Task(input);
                     taskCount++;
                     say("added: " + input);
                 }
