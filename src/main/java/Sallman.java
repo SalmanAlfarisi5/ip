@@ -57,6 +57,57 @@ public class Sallman {
     }
 
     /**
+     * Confirms to the user that a task was added, and reports the new total.
+     *
+     * @param task      the task just added
+     * @param taskCount number of tasks now in the list
+     */
+    private static void announceAdded(Task task, int taskCount) {
+        say("Got it. I've added this task:",
+                "  " + task,
+                "Now you have " + taskCount + (taskCount == 1 ? " task" : " tasks")
+                        + " in the list.");
+    }
+
+    /**
+     * Reads the task number given to a {@code mark} or {@code unmark} command.
+     *
+     * @param command   the command the number was given to, used in messages
+     * @param arguments text the user typed after the command
+     * @param taskCount number of tasks currently in the list
+     * @return the matching index into the task array, counting from 0
+     * @throws SallmanException if the number is missing, not a number, or
+     *                          outside the list
+     */
+    private static int parseTaskNumber(String command, String arguments, int taskCount)
+            throws SallmanException {
+        if (arguments.isEmpty()) {
+            throw new SallmanException(command + " needs a task number.",
+                    "Try: " + command + " 2");
+        }
+        int index;
+        try {
+            // Task numbers shown to the user start at 1, arrays start at 0.
+            index = Integer.parseInt(arguments) - 1;
+        } catch (NumberFormatException e) {
+            // Translate Java's exception into one phrased for the user.
+            throw new SallmanException("\"" + arguments + "\" is not a number.",
+                    "Try: " + command + " 2");
+        }
+        if (taskCount == 0) {
+            throw new SallmanException("There is no task " + arguments
+                    + ": your list is empty.", TODO_EXAMPLE);
+        }
+        if (index < 0 || index >= taskCount) {
+            throw new SallmanException("There is no task " + arguments + " in your list.",
+                    taskCount == 1
+                            ? "You only have task 1."
+                            : "Pick a number from 1 to " + taskCount + ".");
+        }
+        return index;
+    }
+
+    /**
      * Formats the stored tasks as a numbered list with a heading, ready to be
      * passed to {@link #say(String...)}.
      *
@@ -74,16 +125,82 @@ public class Sallman {
     }
 
     /**
-     * Confirms to the user that a task was added, and reports the new total.
+     * Builds a todo from the text following the {@code todo} command.
      *
-     * @param task      the task just added
-     * @param taskCount number of tasks now in the list
+     * @param arguments text the user typed after the command
+     * @return the new task
+     * @throws SallmanException if the description is missing
      */
-    private static void announceAdded(Task task, int taskCount) {
-        say("Got it. I've added this task:",
-                "  " + task,
-                "Now you have " + taskCount + (taskCount == 1 ? " task" : " tasks")
-                        + " in the list.");
+    private static Task parseTodo(String arguments) throws SallmanException {
+        if (arguments.isEmpty()) {
+            throw new SallmanException("A todo needs a description.", TODO_EXAMPLE);
+        }
+        return new Todo(arguments);
+    }
+
+    /**
+     * Builds a deadline from the text following the {@code deadline} command,
+     * e.g. {@code return book /by Sunday}.
+     *
+     * @param arguments text the user typed after the command
+     * @return the new task
+     * @throws SallmanException if the {@code /by}, the description, or the due
+     *                          date is missing
+     */
+    private static Task parseDeadline(String arguments) throws SallmanException {
+        String[] parts = arguments.split("/by", 2);
+        if (parts.length < 2) {
+            throw new SallmanException("I couldn't find a /by in that deadline.",
+                    DEADLINE_EXAMPLE);
+        }
+        String description = parts[0].trim();
+        String by = parts[1].trim();
+        if (description.isEmpty()) {
+            throw new SallmanException("That deadline has no description before the /by.",
+                    DEADLINE_EXAMPLE);
+        }
+        if (by.isEmpty()) {
+            throw new SallmanException("That deadline has no due date after the /by.",
+                    DEADLINE_EXAMPLE);
+        }
+        return new Deadline(description, by);
+    }
+
+    /**
+     * Builds an event from the text following the {@code event} command,
+     * e.g. {@code project meeting /from Mon 2pm /to 4pm}.
+     *
+     * @param arguments text the user typed after the command
+     * @return the new task
+     * @throws SallmanException if any of the description, {@code /from} or
+     *                          {@code /to} parts is missing
+     */
+    private static Task parseEvent(String arguments) throws SallmanException {
+        String[] fromParts = arguments.split("/from", 2);
+        if (fromParts.length < 2) {
+            throw new SallmanException("I couldn't find a /from in that event.",
+                    EVENT_EXAMPLE);
+        }
+        String[] toParts = fromParts[1].split("/to", 2);
+        if (toParts.length < 2) {
+            throw new SallmanException("I couldn't find a /to in that event.", EVENT_EXAMPLE);
+        }
+        String description = fromParts[0].trim();
+        String from = toParts[0].trim();
+        String to = toParts[1].trim();
+        if (description.isEmpty()) {
+            throw new SallmanException("That event has no description before the /from.",
+                    EVENT_EXAMPLE);
+        }
+        if (from.isEmpty()) {
+            throw new SallmanException("That event has no start time after the /from.",
+                    EVENT_EXAMPLE);
+        }
+        if (to.isEmpty()) {
+            throw new SallmanException("That event has no end time after the /to.",
+                    EVENT_EXAMPLE);
+        }
+        return new Event(description, from, to);
     }
 
     public static void main(String[] args) {
@@ -110,115 +227,53 @@ public class Sallman {
                 String command = words[0];
                 String arguments = words.length > 1 ? words[1].trim() : "";
 
-                boolean isAddCommand = command.equals("todo")
-                        || command.equals("deadline")
-                        || command.equals("event");
-                if (isAddCommand && taskCount == MAX_TASKS) {
-                    say("Your list is full at " + MAX_TASKS + " tasks.",
-                            "I can't take any more until some come off the list.");
-                    continue;
-                }
+                // Each branch below either carries out the command or throws,
+                // so the happy path reads without the error cases in the way.
+                try {
+                    boolean isAddCommand = command.equals("todo")
+                            || command.equals("deadline")
+                            || command.equals("event");
+                    if (isAddCommand && taskCount == MAX_TASKS) {
+                        throw new SallmanException("Your list is full at " + MAX_TASKS
+                                + " tasks.",
+                                "I can't take any more until some come off the list.");
+                    }
 
-                if (command.equals("bye")) {
-                    say("Bye. Hope to see you again soon!");
-                    break;
-                } else if (command.equals("list")) {
-                    say(numberedTasks(tasks, taskCount));
-                } else if (command.equals("mark") || command.equals("unmark")) {
-                    if (arguments.isEmpty()) {
-                        say(command + " needs a task number.", "Try: " + command + " 2");
-                        continue;
-                    }
-                    int index;
-                    try {
-                        // Task numbers shown to the user start at 1, arrays start at 0.
-                        index = Integer.parseInt(arguments) - 1;
-                    } catch (NumberFormatException e) {
-                        say("\"" + arguments + "\" is not a number.",
-                                "Try: " + command + " 2");
-                        continue;
-                    }
-                    if (taskCount == 0) {
-                        say("There is no task " + arguments + ": your list is empty.",
-                                TODO_EXAMPLE);
-                        continue;
-                    }
-                    if (index < 0 || index >= taskCount) {
-                        say("There is no task " + arguments + " in your list.",
-                                taskCount == 1
-                                        ? "You only have task 1."
-                                        : "Pick a number from 1 to " + taskCount + ".");
-                        continue;
-                    }
-                    if (command.equals("mark")) {
-                        tasks[index].markAsDone();
-                        say("Nice! I've marked this task as done:", "  " + tasks[index]);
+                    if (command.equals("bye")) {
+                        say("Bye. Hope to see you again soon!");
+                        break;
+                    } else if (command.equals("list")) {
+                        say(numberedTasks(tasks, taskCount));
+                    } else if (command.equals("mark") || command.equals("unmark")) {
+                        int index = parseTaskNumber(command, arguments, taskCount);
+                        if (command.equals("mark")) {
+                            tasks[index].markAsDone();
+                            say("Nice! I've marked this task as done:", "  " + tasks[index]);
+                        } else {
+                            tasks[index].markAsNotDone();
+                            say("OK, I've marked this task as not done yet:",
+                                    "  " + tasks[index]);
+                        }
+                    } else if (isAddCommand) {
+                        Task task;
+                        if (command.equals("todo")) {
+                            task = parseTodo(arguments);
+                        } else if (command.equals("deadline")) {
+                            task = parseDeadline(arguments);
+                        } else {
+                            task = parseEvent(arguments);
+                        }
+                        tasks[taskCount] = task;
+                        taskCount++;
+                        announceAdded(task, taskCount);
                     } else {
-                        tasks[index].markAsNotDone();
-                        say("OK, I've marked this task as not done yet:", "  " + tasks[index]);
+                        throw new SallmanException(
+                                "Sorry, I don't know what \"" + command + "\" means.",
+                                "I understand: todo, deadline, event, list, mark, "
+                                        + "unmark, bye.");
                     }
-                } else if (command.equals("todo")) {
-                    if (arguments.isEmpty()) {
-                        say("A todo needs a description.", TODO_EXAMPLE);
-                        continue;
-                    }
-                    tasks[taskCount] = new Todo(arguments);
-                    taskCount++;
-                    announceAdded(tasks[taskCount - 1], taskCount);
-                } else if (command.equals("deadline")) {
-                    // "return book /by Sunday" splits into description and due date.
-                    String[] parts = arguments.split("/by", 2);
-                    if (parts.length < 2) {
-                        say("I couldn't find a /by in that deadline.", DEADLINE_EXAMPLE);
-                        continue;
-                    }
-                    String description = parts[0].trim();
-                    String by = parts[1].trim();
-                    if (description.isEmpty()) {
-                        say("That deadline has no description before the /by.",
-                                DEADLINE_EXAMPLE);
-                        continue;
-                    }
-                    if (by.isEmpty()) {
-                        say("That deadline has no due date after the /by.", DEADLINE_EXAMPLE);
-                        continue;
-                    }
-                    tasks[taskCount] = new Deadline(description, by);
-                    taskCount++;
-                    announceAdded(tasks[taskCount - 1], taskCount);
-                } else if (command.equals("event")) {
-                    // "meeting /from Mon 2pm /to 4pm" splits into description, start, end.
-                    String[] fromParts = arguments.split("/from", 2);
-                    if (fromParts.length < 2) {
-                        say("I couldn't find a /from in that event.", EVENT_EXAMPLE);
-                        continue;
-                    }
-                    String[] toParts = fromParts[1].split("/to", 2);
-                    if (toParts.length < 2) {
-                        say("I couldn't find a /to in that event.", EVENT_EXAMPLE);
-                        continue;
-                    }
-                    String description = fromParts[0].trim();
-                    String from = toParts[0].trim();
-                    String to = toParts[1].trim();
-                    if (description.isEmpty()) {
-                        say("That event has no description before the /from.", EVENT_EXAMPLE);
-                        continue;
-                    }
-                    if (from.isEmpty()) {
-                        say("That event has no start time after the /from.", EVENT_EXAMPLE);
-                        continue;
-                    }
-                    if (to.isEmpty()) {
-                        say("That event has no end time after the /to.", EVENT_EXAMPLE);
-                        continue;
-                    }
-                    tasks[taskCount] = new Event(description, from, to);
-                    taskCount++;
-                    announceAdded(tasks[taskCount - 1], taskCount);
-                } else {
-                    say("Sorry, I don't know what \"" + command + "\" means.",
-                            "I understand: todo, deadline, event, list, mark, unmark, bye.");
+                } catch (SallmanException e) {
+                    say(e.toLines());
                 }
             }
         }
