@@ -5,6 +5,8 @@ import java.util.Scanner;
  * <p>
  * At this stage the chatbot tracks todos, deadlines and events, lists them
  * back on request, and can mark them done, until the user enters {@code bye}.
+ * An unknown command and a todo with no description are reported to the user;
+ * other invalid input is not handled yet.
  */
 public class Sallman {
 
@@ -103,8 +105,15 @@ public class Sallman {
                     tasks[index].markAsNotDone();
                     say("OK, I've marked this task as not done yet:",
                             "  " + tasks[index]);
-                } else if (input.startsWith("todo ")) {
-                    tasks[taskCount] = new Todo(input.substring("todo ".length()).trim());
+                } else if (input.equals("todo") || input.startsWith("todo ")) {
+                    // Matching a bare "todo" too, so that a missing description
+                    // is reported as such instead of looking like a typo.
+                    String description = input.substring("todo".length()).trim();
+                    if (description.isEmpty()) {
+                        say("Oops! A todo needs a description.");
+                        continue;
+                    }
+                    tasks[taskCount] = new Todo(description);
                     taskCount++;
                     announceAdded(tasks[taskCount - 1], taskCount);
                 } else if (input.startsWith("deadline ")) {
@@ -122,7 +131,7 @@ public class Sallman {
                     taskCount++;
                     announceAdded(tasks[taskCount - 1], taskCount);
                 } else {
-                    say("Hmm, that one isn't in my vocabulary yet.");
+                    say("Oops! I don't know what that means.");
                 }
             }
         }
