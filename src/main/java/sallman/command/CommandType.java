@@ -1,3 +1,7 @@
+package sallman.command;
+
+import sallman.SallmanException;
+
 /**
  * The command words the chatbot understands, each paired with the keyword the
  * user types for it.

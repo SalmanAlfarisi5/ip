@@ -1,3 +1,11 @@
+package sallman.command;
+
+import sallman.SallmanException;
+import sallman.Storage;
+import sallman.TaskList;
+import sallman.Ui;
+import sallman.task.Task;
+
 /**
  * Adds one task to the list.
  * <p>
