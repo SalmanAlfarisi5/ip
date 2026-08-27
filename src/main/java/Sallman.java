@@ -228,8 +228,8 @@ public class Sallman {
      * @param arguments text the user typed after the command
      * @return the new task
      * @throws SallmanException if any of the description, {@code /from} or
-     *                          {@code /to} parts is missing, or a date cannot
-     *                          be read
+     *                          {@code /to} parts is missing, a date cannot be
+     *                          read, or the end falls before the start
      */
     private static Task parseEvent(String arguments) throws SallmanException {
         String[] fromParts = arguments.split("/from", 2);
@@ -256,7 +256,15 @@ public class Sallman {
             throw new SallmanException("That event has no end time after the /to.",
                     EVENT_EXAMPLE);
         }
-        return new Event(description, TaskDate.parse(from), TaskDate.parse(to));
+        LocalDate start = TaskDate.parse(from);
+        LocalDate end = TaskDate.parse(to);
+        if (end.isBefore(start)) {
+            // Such an event covers no days at all, so it could never be found
+            // by the on command and is almost certainly a typo.
+            throw new SallmanException("That event ends before it starts.",
+                    "Check the order of the /from and /to dates.");
+        }
+        return new Event(description, start, end);
     }
 
     /**

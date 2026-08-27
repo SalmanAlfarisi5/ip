@@ -1081,3 +1081,43 @@ bye
      Bye. Hope to see you again soon!
     ____________________________________________________________
 ```
+
+### TC24: An event ending before it starts is refused
+
+**Aim:** Verify an event whose `/to` precedes its `/from` is rejected. Such an
+event spans no days at all, so `on` could never find it and `list` would show
+a nonsensical range. A same-day event must still be accepted, since that is
+the boundary case and is legitimate.
+
+**Input:**
+
+```text
+event oops /from 2019-10-20 /to 2019-10-10
+event standup /from 2019-10-15 /to 2019-10-15
+on 2019-10-15
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     That event ends before it starts.
+     Check the order of the /from and /to dates.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] standup (from: Oct 15 2019 to: Oct 15 2019)
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here is what you have on Oct 15 2019:
+     1.[E][ ] standup (from: Oct 15 2019 to: Oct 15 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
