@@ -239,7 +239,7 @@ bye
 ```text
     ____________________________________________________________
      Sorry, I don't know what "blah" means.
-     I understand: todo, deadline, event, list, mark, unmark, delete, bye.
+     I understand: todo, deadline, event, list, mark, unmark, delete, on, bye.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -931,6 +931,106 @@ bye
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC21: Listing what falls on a given date
+
+**Aim:** Verify `on` selects tasks by date. The conference spans 14th to 17th
+and must match both the 15th and the 16th, which is the real check: an event
+occupies every day between its start and end, not just the two end points. The
+todo carries no date and must never match, and a date with nothing on it must
+say so rather than print an empty heading.
+
+**Input:**
+
+```text
+todo read book
+deadline return book /by 2019-10-15
+deadline pay bill /by 2019-10-16
+event conference /from 2019-10-14 /to 2019-10-17
+on 2019-10-15
+on 2019-10-16
+on 2019-12-25
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Oct 15 2019)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] pay bill (by: Oct 16 2019)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+     Now you have 4 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here is what you have on Oct 15 2019:
+     1.[D][ ] return book (by: Oct 15 2019)
+     2.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here is what you have on Oct 16 2019:
+     1.[D][ ] pay bill (by: Oct 16 2019)
+     2.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nothing on Dec 25 2019.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC22: The on command validates its date
+
+**Aim:** Verify `on` refuses a missing or unreadable date with the same
+wording used elsewhere, rather than silently listing nothing.
+
+**Input:**
+
+```text
+on
+on Sunday
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     on needs a date.
+     Try: on 2019-10-15
+    ____________________________________________________________
+
+    ____________________________________________________________
+     I couldn't read "Sunday" as a date.
+     Use yyyy-mm-dd, e.g. 2019-10-15.
     ____________________________________________________________
 
     ____________________________________________________________

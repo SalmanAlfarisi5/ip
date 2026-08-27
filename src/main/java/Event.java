@@ -26,6 +26,20 @@ public class Event extends Task {
     }
 
     /**
+     * Returns whether this event is running on the given date.
+     * <p>
+     * An event covers every day from its start to its end, so a date in the
+     * middle counts, not just the two end points.
+     *
+     * @param date the date being asked about
+     * @return true if the event spans that day
+     */
+    @Override
+    public boolean isOn(LocalDate date) {
+        return !date.isBefore(from) && !date.isAfter(to);
+    }
+
+    /**
      * Returns this event as one line of the data file,
      * e.g. {@code E | 0 | project meeting | 2019-10-15 | 2019-10-16}.
      */

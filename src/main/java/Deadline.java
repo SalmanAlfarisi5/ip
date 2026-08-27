@@ -21,6 +21,17 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns whether this deadline falls due on the given date.
+     *
+     * @param date the date being asked about
+     * @return true if the task is due that day
+     */
+    @Override
+    public boolean isOn(LocalDate date) {
+        return by.equals(date);
+    }
+
+    /**
      * Returns this deadline as one line of the data file,
      * e.g. {@code D | 0 | return book | 2019-10-15}.
      */

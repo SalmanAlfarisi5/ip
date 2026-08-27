@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 /**
  * A single task tracked by the chatbot, together with whether it is done.
  */
@@ -36,6 +38,19 @@ public class Task {
     /** Marks this task as not done yet. */
     public void markAsNotDone() {
         this.isDone = false;
+    }
+
+    /**
+     * Returns whether this task falls on the given date.
+     * <p>
+     * A plain task carries no date, so it never does. Subclasses that hold
+     * dates override this.
+     *
+     * @param date the date being asked about
+     * @return true if this task is scheduled on that date
+     */
+    public boolean isOn(LocalDate date) {
+        return false;
     }
 
     /**

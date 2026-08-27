@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -7,8 +8,9 @@ import java.util.Scanner;
  * <p>
  * At this stage the chatbot tracks todos, deadlines and events, lists them
  * back on request, and can mark them done or delete them, until the user
- * enters {@code bye}. The list is loaded from disk at startup and saved
- * again whenever it changes.
+ * enters {@code bye}. Tasks carry real dates, so the list can also be
+ * filtered to whatever falls on a given day. The list is loaded from disk
+ * at startup and saved again whenever it changes.
  * Invalid input is reported to the user rather than allowed to crash the
  * program.
  */
@@ -133,6 +135,32 @@ public class Sallman {
                             : "Pick a number from 1 to " + taskCount + ".");
         }
         return index;
+    }
+
+    /**
+     * Formats the tasks falling on one date as a numbered list with a heading.
+     *
+     * @param tasks the tasks to search
+     * @param date  the date being asked about
+     * @return a heading followed by the matching tasks, or a single line
+     *         saying nothing falls on that date
+     */
+    private static String[] tasksOnDate(List<Task> tasks, LocalDate date) {
+        List<Task> matches = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.isOn(date)) {
+                matches.add(task);
+            }
+        }
+        if (matches.isEmpty()) {
+            return new String[] {"Nothing on " + TaskDate.format(date) + "."};
+        }
+        String[] lines = new String[matches.size() + 1];
+        lines[0] = "Here is what you have on " + TaskDate.format(date) + ":";
+        for (int i = 0; i < matches.size(); i++) {
+            lines[i + 1] = (i + 1) + "." + matches.get(i);
+        }
+        return lines;
     }
 
     /**
@@ -305,6 +333,13 @@ public class Sallman {
                         isExiting = true;
                     }
                     case LIST -> say(numberedTasks(tasks));
+                    case ON -> {
+                        if (arguments.isEmpty()) {
+                            throw new SallmanException("on needs a date.",
+                                    "Try: on " + TaskDate.EXAMPLE);
+                        }
+                        say(tasksOnDate(tasks, TaskDate.parse(arguments)));
+                    }
                     case MARK, UNMARK -> {
                         int index = parseTaskNumber(keyword, arguments, tasks.size());
                         Task task = tasks.get(index);
