@@ -229,6 +229,26 @@ public class Sallman {
         return new Event(description, from, to);
     }
 
+    /**
+     * Warns the user about any saved lines that could not be read, naming each
+     * one so a hand-edited data file can be corrected.
+     *
+     * @param skippedLines descriptions of the skipped lines, possibly empty
+     */
+    private static void reportSkippedLines(List<String> skippedLines) {
+        if (skippedLines.isEmpty()) {
+            return;
+        }
+        List<String> reply = new ArrayList<>();
+        reply.add("I skipped " + skippedLines.size()
+                + (skippedLines.size() == 1 ? " unreadable line" : " unreadable lines")
+                + " in your saved data:");
+        reply.addAll(skippedLines);
+        reply.add("Everything else loaded fine. The bad lines will be dropped");
+        reply.add("the next time your list changes.");
+        say(reply.toArray(new String[0]));
+    }
+
     public static void main(String[] args) {
         System.out.println(BANNER);
         say("Hello! I'm " + NAME + ", freshly loaded and ready to assist.",
@@ -247,6 +267,7 @@ public class Sallman {
             say(e.toLines());
             tasks = new ArrayList<>();
         }
+        reportSkippedLines(storage.getSkippedLines());
 
         // A "break" inside a switch leaves the switch, not the loop, so the
         // bye command records its intent here instead.

@@ -22,6 +22,13 @@ public class Storage {
     private final Path file;
 
     /**
+     * Descriptions of any lines the last {@link #load()} could not understand.
+     * Kept so the caller can tell the user what was dropped, rather than
+     * failing the whole load because of one bad line.
+     */
+    private final List<String> skippedLines = new ArrayList<>();
+
+    /**
      * Creates storage backed by the given file.
      *
      * @param filePath path to the data file, written with {@code /} separators;
@@ -40,6 +47,7 @@ public class Storage {
      */
     public List<Task> load() throws SallmanException {
         List<Task> tasks = new ArrayList<>();
+        skippedLines.clear();
         if (!Files.exists(file)) {
             // First run on this computer: no data file is not an error.
             return tasks;
@@ -51,10 +59,29 @@ public class Storage {
             throw new SallmanException("I couldn't read your saved tasks from " + file + ".",
                     "Starting with an empty list this time.");
         }
-        for (String line : lines) {
-            tasks.add(parseLine(line));
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if (line.isBlank()) {
+                continue;
+            }
+            try {
+                tasks.add(parseLine(line));
+            } catch (SallmanException e) {
+                // One damaged line should not cost the user every other task,
+                // so record it and carry on with the rest of the file.
+                skippedLines.add("line " + (i + 1) + ": " + e.getMessage());
+            }
         }
         return tasks;
+    }
+
+    /**
+     * Returns what went wrong with any lines skipped by the last load.
+     *
+     * @return one description per skipped line, empty when the file was clean
+     */
+    public List<String> getSkippedLines() {
+        return skippedLines;
     }
 
     /**
@@ -84,18 +111,43 @@ public class Storage {
     /**
      * Rebuilds one task from its saved line.
      *
-     * @param line one line of the data file
+     * @param line one non-blank line of the data file
      * @return the task that line describes
+     * @throws SallmanException if the line is not in the expected format; the
+     *                          message is a fragment naming the specific fault,
+     *                          for the caller to report against a line number
      */
-    private static Task parseLine(String line) {
+    private static Task parseLine(String line) throws SallmanException {
         String[] parts = line.split(" \\| ");
-        Task task = switch (parts[0]) {
-        case "T" -> new Todo(parts[2]);
-        case "D" -> new Deadline(parts[2], parts[3]);
-        case "E" -> new Event(parts[2], parts[3], parts[4]);
-        default -> throw new IllegalArgumentException("Unknown task type: " + parts[0]);
+        if (parts.length < 3) {
+            throw new SallmanException("expected at least 3 fields, found " + parts.length);
+        }
+        String type = parts[0];
+        String doneFlag = parts[1];
+        String description = parts[2].trim();
+        if (!doneFlag.equals("0") && !doneFlag.equals("1")) {
+            throw new SallmanException("the done flag should be 0 or 1, found \"" + doneFlag + "\"");
+        }
+        if (description.isEmpty()) {
+            throw new SallmanException("the description is empty");
+        }
+        Task task = switch (type) {
+        case "T" -> new Todo(description);
+        case "D" -> {
+            if (parts.length < 4 || parts[3].isBlank()) {
+                throw new SallmanException("a deadline needs a due date");
+            }
+            yield new Deadline(description, parts[3].trim());
+        }
+        case "E" -> {
+            if (parts.length < 5 || parts[3].isBlank() || parts[4].isBlank()) {
+                throw new SallmanException("an event needs both a start and an end");
+            }
+            yield new Event(description, parts[3].trim(), parts[4].trim());
+        }
+        default -> throw new SallmanException("unknown task type \"" + type + "\"");
         };
-        if (parts[1].equals("1")) {
+        if (doneFlag.equals("1")) {
             task.markAsDone();
         }
         return task;
