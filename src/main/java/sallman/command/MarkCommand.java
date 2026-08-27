@@ -1,4 +1,11 @@
-package sallman;
+package sallman.command;
+
+import sallman.Parser;
+import sallman.SallmanException;
+import sallman.Storage;
+import sallman.TaskList;
+import sallman.Ui;
+import sallman.task.Task;
 
 /**
  * Changes whether one task is done.

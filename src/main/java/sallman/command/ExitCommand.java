@@ -1,4 +1,8 @@
-package sallman;
+package sallman.command;
+
+import sallman.Storage;
+import sallman.TaskList;
+import sallman.Ui;
 
 /**
  * Ends the session.

@@ -8,6 +8,12 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import sallman.task.Deadline;
+import sallman.task.Event;
+import sallman.task.Task;
+import sallman.task.Todo;
+
+
 /**
  * Loads the task list from disk when the chatbot starts, and writes it back
  * whenever the list changes.

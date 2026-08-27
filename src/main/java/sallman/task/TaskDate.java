@@ -1,8 +1,11 @@
-package sallman;
+package sallman.task;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import sallman.SallmanException;
+
 
 /**
  * Converts between the date format the user types and the one shown back to

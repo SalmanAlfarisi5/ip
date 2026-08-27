@@ -1,4 +1,4 @@
-package sallman;
+package sallman.task;
 
 import java.time.LocalDate;
 

@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import sallman.task.Task;
+
+
 /**
  * The tasks the user is tracking, with the operations that act on the list as
  * a whole.

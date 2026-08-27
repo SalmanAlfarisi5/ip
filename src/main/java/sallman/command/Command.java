@@ -1,4 +1,9 @@
-package sallman;
+package sallman.command;
+
+import sallman.SallmanException;
+import sallman.Storage;
+import sallman.TaskList;
+import sallman.Ui;
 
 /**
  * One thing the user has asked the chatbot to do.

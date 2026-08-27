@@ -1,5 +1,7 @@
 package sallman;
 
+import sallman.command.Command;
+
 /**
  * Entry point of the saLLMan chatbot.
  * <p>
