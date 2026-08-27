@@ -94,7 +94,7 @@ public class Sallman {
      * @param tasks the list to add to
      * @param task  the task to add
      */
-    private static void addTask(List<Task> tasks, Task task) {
+    private static void addTask(TaskList tasks, Task task) {
         tasks.add(task);
         announceAdded(task, tasks.size());
     }
@@ -145,13 +145,8 @@ public class Sallman {
      * @return a heading followed by the matching tasks, or a single line
      *         saying nothing falls on that date
      */
-    private static String[] tasksOnDate(List<Task> tasks, LocalDate date) {
-        List<Task> matches = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.isOn(date)) {
-                matches.add(task);
-            }
-        }
+    private static String[] tasksOnDate(TaskList tasks, LocalDate date) {
+        List<Task> matches = tasks.tasksOn(date);
         if (matches.isEmpty()) {
             return new String[] {"Nothing on " + TaskDate.format(date) + "."};
         }
@@ -170,7 +165,7 @@ public class Sallman {
      * @param tasks the tasks to list
      * @return a heading followed by one line per task, numbered from 1
      */
-    private static String[] numberedTasks(List<Task> tasks) {
+    private static String[] numberedTasks(TaskList tasks) {
         String[] lines = new String[tasks.size() + 1];
         lines[0] = "Here are the tasks in your list:";
         for (int i = 0; i < tasks.size(); i++) {
@@ -298,12 +293,12 @@ public class Sallman {
 
         // An ArrayList grows as needed, so there is no task limit to enforce
         // and no separate count to keep in step with the contents.
-        List<Task> tasks;
+        TaskList tasks;
         try {
-            tasks = storage.load();
+            tasks = new TaskList(storage.load());
         } catch (SallmanException e) {
             say(e.toLines());
-            tasks = new ArrayList<>();
+            tasks = new TaskList();
         }
         reportSkippedLines(storage.getSkippedLines());
 
@@ -385,7 +380,7 @@ public class Sallman {
                     // Saving once here, rather than in each case above, means a
                     // new command that changes the list only has to set the flag.
                     if (isListChanged) {
-                        storage.save(tasks);
+                        storage.save(tasks.asList());
                     }
                 } catch (SallmanException e) {
                     say(e.toLines());
