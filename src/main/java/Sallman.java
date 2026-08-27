@@ -7,7 +7,8 @@ import java.util.Scanner;
  * <p>
  * At this stage the chatbot tracks todos, deadlines and events, lists them
  * back on request, and can mark them done or delete them, until the user
- * enters {@code bye}.
+ * enters {@code bye}. The list is loaded from disk at startup and saved
+ * again whenever it changes.
  * Invalid input is reported to the user rather than allowed to crash the
  * program.
  */
@@ -15,6 +16,13 @@ public class Sallman {
 
     /** Name the chatbot introduces itself with. */
     private static final String NAME = "saLLMan";
+
+    /**
+     * Where the task list is saved when no other path is given on the command
+     * line. Relative to the folder the app is run from, so it works on any
+     * computer.
+     */
+    private static final String DEFAULT_DATA_PATH = "data/sallman.txt";
 
     /**
      * Worked examples shown alongside an error, so the user can see the shape
@@ -226,9 +234,19 @@ public class Sallman {
         say("Hello! I'm " + NAME + ", freshly loaded and ready to assist.",
                 "What are we working on today?");
 
+        // Accepting the path as an argument lets the tests use a scratch file
+        // instead of the real task list.
+        Storage storage = new Storage(args.length > 0 ? args[0] : DEFAULT_DATA_PATH);
+
         // An ArrayList grows as needed, so there is no task limit to enforce
         // and no separate count to keep in step with the contents.
-        List<Task> tasks = new ArrayList<>();
+        List<Task> tasks;
+        try {
+            tasks = storage.load();
+        } catch (SallmanException e) {
+            say(e.toLines());
+            tasks = new ArrayList<>();
+        }
 
         // A "break" inside a switch leaves the switch, not the loop, so the
         // bye command records its intent here instead.
@@ -256,6 +274,7 @@ public class Sallman {
                     // Rejects an unknown keyword before the switch, so every
                     // case below is one of the known commands.
                     Command command = Command.fromKeyword(keyword);
+                    boolean isListChanged = false;
 
                     switch (command) {
                     case BYE -> {
@@ -273,6 +292,7 @@ public class Sallman {
                             task.markAsNotDone();
                             say("OK, I've marked this task as not done yet:", "  " + task);
                         }
+                        isListChanged = true;
                     }
                     case DELETE -> {
                         int index = parseTaskNumber(keyword, arguments, tasks.size());
@@ -280,10 +300,26 @@ public class Sallman {
                         Task removed = tasks.remove(index);
                         say("Noted. I've removed this task:", "  " + removed,
                                 taskCountSummary(tasks.size()));
+                        isListChanged = true;
                     }
-                    case TODO -> addTask(tasks, parseTodo(arguments));
-                    case DEADLINE -> addTask(tasks, parseDeadline(arguments));
-                    case EVENT -> addTask(tasks, parseEvent(arguments));
+                    case TODO -> {
+                        addTask(tasks, parseTodo(arguments));
+                        isListChanged = true;
+                    }
+                    case DEADLINE -> {
+                        addTask(tasks, parseDeadline(arguments));
+                        isListChanged = true;
+                    }
+                    case EVENT -> {
+                        addTask(tasks, parseEvent(arguments));
+                        isListChanged = true;
+                    }
+                    }
+
+                    // Saving once here, rather than in each case above, means a
+                    // new command that changes the list only has to set the flag.
+                    if (isListChanged) {
+                        storage.save(tasks);
                     }
                 } catch (SallmanException e) {
                     say(e.toLines());

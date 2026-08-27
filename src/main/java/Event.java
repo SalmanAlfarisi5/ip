@@ -27,6 +27,15 @@ public class Event extends Task {
     }
 
     /**
+     * Returns this event as one line of the data file,
+     * e.g. {@code E | 0 | project meeting | Mon 2pm | 4pm}.
+     */
+    @Override
+    public String toFileFormat() {
+        return "E | " + super.toFileFormat() + " | " + from + " | " + to;
+    }
+
+    /**
      * Returns this event as it should appear to the user,
      * e.g. {@code [E][ ] project meeting (from: Mon 2pm to: 4pm)}.
      */

@@ -18,6 +18,11 @@ python .claude/skills/test-ui/scripts/run-ui-tests.py --filter "TC3"
 
 Testing stops at the first failure and reports the expected and actual output.
 
+The app saves its task list, so the runner passes a scratch data file
+(`_temp/ui-test-data.txt`) and deletes it before each case. Cases therefore
+start with an empty list unless they declare a `Setup input:` session, which
+runs first against the same file to seed it.
+
 ## Session preamble
 
 Every session opens with the banner and greeting, so this block is prepended to
@@ -744,3 +749,76 @@ bye
   no fixed limit to bump into. Adding 150 tasks was checked by hand; it is left
   out of the plan because a 150-line test case would dominate the file. The
   earlier 100-task limit, and its "your list is full" error, no longer exist.
+
+### TC17: Tasks survive a restart
+
+**Aim:** Verify the list is written to disk when it changes and read back on
+startup. The setup session below runs first against the same data file; this
+case then starts a *fresh process* and lists what was saved. Marking is
+included so the done status is checked too, not just the descriptions.
+
+**Setup input:**
+
+```text
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th 2pm /to 4pm
+mark 1
+bye
+```
+
+**Input:**
+
+```text
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][X] read book
+     2.[D][ ] return book (by: June 6th)
+     3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC18: A deletion is persisted too
+
+**Aim:** Verify saving happens on every change, not only on add. If save were
+wired only into the add commands, the deleted task would reappear here.
+
+**Setup input:**
+
+```text
+todo read book
+todo return book
+delete 1
+bye
+```
+
+**Input:**
+
+```text
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] return book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
