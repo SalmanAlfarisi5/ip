@@ -1,18 +1,11 @@
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
 
 /**
  * Entry point of the saLLMan chatbot.
  * <p>
- * At this stage the chatbot tracks todos, deadlines and events, lists them
- * back on request, and can mark them done or delete them, until the user
- * enters {@code bye}. Tasks carry real dates, so the list can also be
- * filtered to whatever falls on a given day. The list is loaded from disk
- * at startup and saved again whenever it changes.
- * Invalid input is reported to the user rather than allowed to crash the
- * program.
+ * Holds the three parts the app is built from and runs the command loop over
+ * them: a {@link Ui} for talking to the user, a {@link Storage} for the saved
+ * task list, and a {@link TaskList} for the tasks themselves.
  */
 public class Sallman {
 
@@ -36,67 +29,139 @@ public class Sallman {
     private static final String EVENT_EXAMPLE =
             "Try: event project meeting /from " + TaskDate.EXAMPLE + " /to 2019-10-16";
 
-    /** Horizontal rule that separates the chatbot's replies from the user's input. */
-    private static final String DIVIDER =
-            "____________________________________________________________";
+    /** Talks to the user. */
+    private final Ui ui;
+
+    /** Reads and writes the saved task list. */
+    private final Storage storage;
+
+    /** The tasks being tracked. */
+    private final TaskList tasks;
 
     /**
-     * ASCII-art banner spelling "saLLMan", shown once when the chatbot starts.
-     * Each backslash in the art is escaped as {@code \\}, so the string looks
-     * wider in the source than it does on screen.
-     */
-    private static final String BANNER =
-              "              _      _      __  __\n"
-            + " ___    __ _ | |    | |    |  \\/  |  __ _  _ __\n"
-            + "/ __|  / _` || |    | |    | |\\/| | / _` || '_ \\\n"
-            + "\\__ \\ | (_| || |___ | |___ | |  | || (_| || | | |\n"
-            + "|___/  \\__,_||_____||_____||_|  |_| \\__,_||_| |_|";
-
-    /**
-     * Prints the given lines as one chatbot reply, wrapped between horizontal
-     * rules so replies stand out from what the user typed.
+     * Creates a chatbot backed by the given data file, loading whatever is
+     * already saved there.
+     * <p>
+     * A file that cannot be read leaves the chatbot usable with an empty list,
+     * rather than stopping it from starting at all.
      *
-     * @param lines lines of the reply, printed in order
+     * @param filePath where the task list is saved
      */
-    private static void say(String... lines) {
-        System.out.println("    " + DIVIDER);
-        for (String line : lines) {
-            System.out.println("     " + line);
+    public Sallman(String filePath) {
+        this.ui = new Ui();
+        this.storage = new Storage(filePath);
+        TaskList loaded;
+        try {
+            loaded = new TaskList(storage.load());
+        } catch (SallmanException e) {
+            ui.showError(e);
+            loaded = new TaskList();
         }
-        System.out.println("    " + DIVIDER);
-        System.out.println();
+        this.tasks = loaded;
+    }
+
+    /** Greets the user, then handles commands until they ask to stop. */
+    public void run() {
+        ui.showWelcome(NAME);
+        ui.showSkippedLines(storage.getSkippedLines());
+
+        boolean isExiting = false;
+        while (!isExiting && ui.hasNextCommand()) {
+            String input = ui.readCommand();
+            if (input.isEmpty()) {
+                continue; // a blank line is not worth complaining about
+            }
+            try {
+                isExiting = execute(input);
+            } catch (SallmanException e) {
+                ui.showError(e);
+            }
+        }
+        ui.close();
     }
 
     /**
-     * Confirms to the user that a task was added, and reports the new total.
+     * Carries out one command.
      *
-     * @param task      the task just added
-     * @param taskCount number of tasks now in the list
+     * @param input the whole line the user typed, already trimmed
+     * @return true if the chatbot should stop after this command
+     * @throws SallmanException if the command cannot be carried out
      */
-    private static void announceAdded(Task task, int taskCount) {
-        say("Got it. I've added this task:", "  " + task, taskCountSummary(taskCount));
-    }
+    private boolean execute(String input) throws SallmanException {
+        // Everything up to the first space is the command, the rest are its
+        // arguments. Separating them up front means a command given without
+        // arguments still reaches its own branch, where the missing part can
+        // be named.
+        String[] words = input.split("\s+", 2);
+        String keyword = words[0];
+        String arguments = words.length > 1 ? words[1].trim() : "";
 
-    /**
-     * Reports how many tasks are in the list, shown after adding or removing one.
-     *
-     * @param taskCount number of tasks now in the list
-     * @return a sentence naming the total, with "task" pluralised to match
-     */
-    private static String taskCountSummary(int taskCount) {
-        return "Now you have " + taskCount + (taskCount == 1 ? " task" : " tasks")
-                + " in the list.";
+        // Rejects an unknown keyword before the switch, so every case below is
+        // one of the known commands.
+        Command command = Command.fromKeyword(keyword);
+        boolean isListChanged = false;
+
+        switch (command) {
+        case BYE -> {
+            ui.showGoodbye();
+            return true;
+        }
+        case LIST -> ui.showTaskList(tasks);
+        case ON -> {
+            if (arguments.isEmpty()) {
+                throw new SallmanException("on needs a date.", "Try: on " + TaskDate.EXAMPLE);
+            }
+            LocalDate date = TaskDate.parse(arguments);
+            ui.showTasksOn(tasks.tasksOn(date), date);
+        }
+        case MARK, UNMARK -> {
+            int index = parseTaskNumber(keyword, arguments, tasks.size());
+            Task task = tasks.get(index);
+            if (command == Command.MARK) {
+                task.markAsDone();
+                ui.showMarked(task);
+            } else {
+                task.markAsNotDone();
+                ui.showUnmarked(task);
+            }
+            isListChanged = true;
+        }
+        case DELETE -> {
+            int index = parseTaskNumber(keyword, arguments, tasks.size());
+            Task removed = tasks.remove(index);
+            ui.showRemoved(removed, tasks.size());
+            isListChanged = true;
+        }
+        case TODO -> {
+            addTask(parseTodo(arguments));
+            isListChanged = true;
+        }
+        case DEADLINE -> {
+            addTask(parseDeadline(arguments));
+            isListChanged = true;
+        }
+        case EVENT -> {
+            addTask(parseEvent(arguments));
+            isListChanged = true;
+        }
+        }
+
+        // Saving once here, rather than in each case above, means a new command
+        // that changes the list only has to set the flag.
+        if (isListChanged) {
+            storage.save(tasks.asList());
+        }
+        return false;
     }
 
     /**
      * Adds a task to the list and confirms it to the user.
      *
-     * @param tasks the list to add to
-     * @param task  the task to add
+     * @param task the task to add
      */
-    private static void addTask(TaskList tasks, Task task) {
+    private void addTask(Task task) {
         tasks.add(task);
-        announceAdded(task, tasks.size());
+        ui.showAdded(task, tasks.size());
     }
 
     /**
@@ -135,43 +200,6 @@ public class Sallman {
                             : "Pick a number from 1 to " + taskCount + ".");
         }
         return index;
-    }
-
-    /**
-     * Formats the tasks falling on one date as a numbered list with a heading.
-     *
-     * @param tasks the tasks to search
-     * @param date  the date being asked about
-     * @return a heading followed by the matching tasks, or a single line
-     *         saying nothing falls on that date
-     */
-    private static String[] tasksOnDate(TaskList tasks, LocalDate date) {
-        List<Task> matches = tasks.tasksOn(date);
-        if (matches.isEmpty()) {
-            return new String[] {"Nothing on " + TaskDate.format(date) + "."};
-        }
-        String[] lines = new String[matches.size() + 1];
-        lines[0] = "Here is what you have on " + TaskDate.format(date) + ":";
-        for (int i = 0; i < matches.size(); i++) {
-            lines[i + 1] = (i + 1) + "." + matches.get(i);
-        }
-        return lines;
-    }
-
-    /**
-     * Formats the stored tasks as a numbered list with a heading, ready to be
-     * passed to {@link #say(String...)}.
-     *
-     * @param tasks the tasks to list
-     * @return a heading followed by one line per task, numbered from 1
-     */
-    private static String[] numberedTasks(TaskList tasks) {
-        String[] lines = new String[tasks.size() + 1];
-        lines[0] = "Here are the tasks in your list:";
-        for (int i = 0; i < tasks.size(); i++) {
-            lines[i + 1] = (i + 1) + "." + tasks.get(i);
-        }
-        return lines;
     }
 
     /**
@@ -263,133 +291,12 @@ public class Sallman {
     }
 
     /**
-     * Warns the user about any saved lines that could not be read, naming each
-     * one so a hand-edited data file can be corrected.
+     * Starts the chatbot.
      *
-     * @param skippedLines descriptions of the skipped lines, possibly empty
+     * @param args optionally the data file path, for tests that must not touch
+     *             the real task list
      */
-    private static void reportSkippedLines(List<String> skippedLines) {
-        if (skippedLines.isEmpty()) {
-            return;
-        }
-        List<String> reply = new ArrayList<>();
-        reply.add("I skipped " + skippedLines.size()
-                + (skippedLines.size() == 1 ? " unreadable line" : " unreadable lines")
-                + " in your saved data:");
-        reply.addAll(skippedLines);
-        reply.add("Everything else loaded fine. The bad lines will be dropped");
-        reply.add("the next time your list changes.");
-        say(reply.toArray(new String[0]));
-    }
-
     public static void main(String[] args) {
-        System.out.println(BANNER);
-        say("Hello! I'm " + NAME + ", freshly loaded and ready to assist.",
-                "What are we working on today?");
-
-        // Accepting the path as an argument lets the tests use a scratch file
-        // instead of the real task list.
-        Storage storage = new Storage(args.length > 0 ? args[0] : DEFAULT_DATA_PATH);
-
-        // An ArrayList grows as needed, so there is no task limit to enforce
-        // and no separate count to keep in step with the contents.
-        TaskList tasks;
-        try {
-            tasks = new TaskList(storage.load());
-        } catch (SallmanException e) {
-            say(e.toLines());
-            tasks = new TaskList();
-        }
-        reportSkippedLines(storage.getSkippedLines());
-
-        // A "break" inside a switch leaves the switch, not the loop, so the
-        // bye command records its intent here instead.
-        boolean isExiting = false;
-
-        try (Scanner in = new Scanner(System.in)) {
-            // hasNextLine() also stops the loop if input ends without a "bye".
-            while (in.hasNextLine()) {
-                String input = in.nextLine().trim();
-                if (input.isEmpty()) {
-                    continue; // a blank line is not worth complaining about
-                }
-
-                // Everything up to the first space is the command, the rest are
-                // its arguments. Separating them up front means a command given
-                // without arguments still reaches its own branch, where the
-                // missing part can be named.
-                String[] words = input.split("\\s+", 2);
-                String keyword = words[0];
-                String arguments = words.length > 1 ? words[1].trim() : "";
-
-                // Each branch below either carries out the command or throws,
-                // so the happy path reads without the error cases in the way.
-                try {
-                    // Rejects an unknown keyword before the switch, so every
-                    // case below is one of the known commands.
-                    Command command = Command.fromKeyword(keyword);
-                    boolean isListChanged = false;
-
-                    switch (command) {
-                    case BYE -> {
-                        say("Bye. Hope to see you again soon!");
-                        isExiting = true;
-                    }
-                    case LIST -> say(numberedTasks(tasks));
-                    case ON -> {
-                        if (arguments.isEmpty()) {
-                            throw new SallmanException("on needs a date.",
-                                    "Try: on " + TaskDate.EXAMPLE);
-                        }
-                        say(tasksOnDate(tasks, TaskDate.parse(arguments)));
-                    }
-                    case MARK, UNMARK -> {
-                        int index = parseTaskNumber(keyword, arguments, tasks.size());
-                        Task task = tasks.get(index);
-                        if (command == Command.MARK) {
-                            task.markAsDone();
-                            say("Nice! I've marked this task as done:", "  " + task);
-                        } else {
-                            task.markAsNotDone();
-                            say("OK, I've marked this task as not done yet:", "  " + task);
-                        }
-                        isListChanged = true;
-                    }
-                    case DELETE -> {
-                        int index = parseTaskNumber(keyword, arguments, tasks.size());
-                        // remove() closes the gap itself and returns what it took out.
-                        Task removed = tasks.remove(index);
-                        say("Noted. I've removed this task:", "  " + removed,
-                                taskCountSummary(tasks.size()));
-                        isListChanged = true;
-                    }
-                    case TODO -> {
-                        addTask(tasks, parseTodo(arguments));
-                        isListChanged = true;
-                    }
-                    case DEADLINE -> {
-                        addTask(tasks, parseDeadline(arguments));
-                        isListChanged = true;
-                    }
-                    case EVENT -> {
-                        addTask(tasks, parseEvent(arguments));
-                        isListChanged = true;
-                    }
-                    }
-
-                    // Saving once here, rather than in each case above, means a
-                    // new command that changes the list only has to set the flag.
-                    if (isListChanged) {
-                        storage.save(tasks.asList());
-                    }
-                } catch (SallmanException e) {
-                    say(e.toLines());
-                }
-
-                if (isExiting) {
-                    break;
-                }
-            }
-        }
+        new Sallman(args.length > 0 ? args[0] : DEFAULT_DATA_PATH).run();
     }
 }
