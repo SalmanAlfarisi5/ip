@@ -1,3 +1,5 @@
+package sallman;
+
 /**
  * Signals that the user's input could not be carried out, for a reason worth
  * explaining to them.

@@ -1,3 +1,5 @@
+package sallman;
+
 /**
  * Ends the session.
  */

@@ -1,3 +1,5 @@
+package sallman;
+
 /**
  * Changes whether one task is done.
  * <p>

@@ -1,3 +1,5 @@
+package sallman;
+
 /**
  * Adds one task to the list.
  * <p>

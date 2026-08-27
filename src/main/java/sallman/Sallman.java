@@ -1,3 +1,5 @@
+package sallman;
+
 /**
  * Entry point of the saLLMan chatbot.
  * <p>

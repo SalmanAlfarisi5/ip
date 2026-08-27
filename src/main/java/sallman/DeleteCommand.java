@@ -1,3 +1,5 @@
+package sallman;
+
 /**
  * Removes one task from the list.
  */
