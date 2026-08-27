@@ -39,6 +39,16 @@ public class Task {
     }
 
     /**
+     * Returns this task as one line of the data file, without a type marker.
+     * Subclasses prepend their marker and append any dates they hold.
+     *
+     * @return the done flag and description, separated by {@code " | "}
+     */
+    public String toFileFormat() {
+        return (isDone ? "1" : "0") + " | " + description;
+    }
+
+    /**
      * Returns this task as it should appear to the user, e.g. {@code [X] read book}.
      */
     @Override

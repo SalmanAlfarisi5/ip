@@ -22,6 +22,15 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns this deadline as one line of the data file,
+     * e.g. {@code D | 0 | return book | Sunday}.
+     */
+    @Override
+    public String toFileFormat() {
+        return "D | " + super.toFileFormat() + " | " + by;
+    }
+
+    /**
      * Returns this deadline as it should appear to the user,
      * e.g. {@code [D][ ] return book (by: Sunday)}.
      */

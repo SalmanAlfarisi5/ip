@@ -18,6 +18,11 @@ python .claude/skills/test-ui/scripts/run-ui-tests.py --filter "TC3"
 
 Testing stops at the first failure and reports the expected and actual output.
 
+The app saves its task list, so the runner passes a scratch data file
+(`_temp/ui-test-data.txt`) and deletes it before each case. Cases therefore
+start with an empty list unless they declare a `Setup input:` session, which
+runs first against the same file to seed it.
+
 ## Session preamble
 
 Every session opens with the banner and greeting, so this block is prepended to
@@ -744,3 +749,164 @@ bye
   no fixed limit to bump into. Adding 150 tasks was checked by hand; it is left
   out of the plan because a 150-line test case would dominate the file. The
   earlier 100-task limit, and its "your list is full" error, no longer exist.
+
+### TC17: Tasks survive a restart
+
+**Aim:** Verify the list is written to disk when it changes and read back on
+startup. The setup session below runs first against the same data file; this
+case then starts a *fresh process* and lists what was saved. Marking is
+included so the done status is checked too, not just the descriptions.
+
+**Setup input:**
+
+```text
+todo read book
+deadline return book /by June 6th
+event project meeting /from Aug 6th 2pm /to 4pm
+mark 1
+bye
+```
+
+**Input:**
+
+```text
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][X] read book
+     2.[D][ ] return book (by: June 6th)
+     3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC18: A deletion is persisted too
+
+**Aim:** Verify saving happens on every change, not only on add. If save were
+wired only into the add commands, the deleted task would reappear here.
+
+**Setup input:**
+
+```text
+todo read book
+todo return book
+delete 1
+bye
+```
+
+**Input:**
+
+```text
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] return book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC19: A corrupted save file is repaired, not fatal
+
+**Aim:** Verify a damaged data file neither crashes the chatbot nor discards
+the tasks that are still readable. Each bad line is named with its line number
+and the specific fault, so a hand-edited file can be corrected. The six bad
+lines cover every rejection the loader makes: too few fields, unknown type,
+invalid done flag, empty description, deadline with no date, event missing an
+end. Line 8 is blank and must be skipped silently rather than reported.
+
+**Setup data file:**
+
+```text
+T | 1 | read book
+GARBAGE LINE
+D | 0 | return book | June 6th
+X | 0 | alien task
+T | 7 | bad flag
+T | 0 | 
+D | 0 | no due date
+
+E | 0 | meeting | Mon
+```
+
+**Input:**
+
+```text
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     I skipped 6 unreadable lines in your saved data:
+     line 2: expected at least 3 fields, found 1
+     line 4: unknown task type "X"
+     line 5: the done flag should be 0 or 1, found "7"
+     line 6: expected at least 3 fields, found 2
+     line 7: a deadline needs a due date
+     line 9: an event needs both a start and an end
+     Everything else loaded fine. The bad lines will be dropped
+     the next time your list changes.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][X] read book
+     2.[D][ ] return book (by: June 6th)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC20: A clean save file produces no warning
+
+**Aim:** Verify the skipped-line warning appears only when something was
+actually wrong. A loader that reported on every startup would train the user
+to ignore it.
+
+**Setup data file:**
+
+```text
+T | 0 | read book
+```
+
+**Input:**
+
+```text
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
