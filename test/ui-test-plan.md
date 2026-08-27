@@ -76,8 +76,8 @@ icon and date fields, and that the running total is reported.
 
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-10-15
+event project meeting /from 2019-08-06 /to 2019-08-07
 list
 bye
 ```
@@ -93,21 +93,21 @@ bye
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: June 6th)
+       [D][ ] return book (by: Oct 15 2019)
      Now you have 2 tasks in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+       [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
      Now you have 3 tasks in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][ ] read book
-     2.[D][ ] return book (by: June 6th)
-     3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+     2.[D][ ] return book (by: Oct 15 2019)
+     3.[E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -166,15 +166,22 @@ bye
     ____________________________________________________________
 ```
 
-### TC4: Free-text dates are accepted verbatim
+### TC4: Text that is not a date is refused
 
-**Aim:** Verify dates are still treated as plain strings, so unparseable text is
-stored and echoed back unchanged.
+**Aim:** Verify dates are now parsed rather than stored as free text, so
+anything that is not a real date is rejected with the expected format quoted
+back. Previously this case asserted the opposite: free text was accepted
+verbatim. A day name is included because it reads like a date to a human but
+is not one, and an impossible calendar date is included because it has the
+right shape yet cannot exist.
 
 **Input:**
 
 ```text
 deadline do homework /by no idea :-p
+deadline do homework /by Sunday
+deadline do homework /by 2019-02-30
+deadline do homework /by 2019-10-15
 list
 bye
 ```
@@ -183,14 +190,29 @@ bye
 
 ```text
     ____________________________________________________________
+     I couldn't read "no idea :-p" as a date.
+     Use yyyy-mm-dd, e.g. 2019-10-15.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     I couldn't read "Sunday" as a date.
+     Use yyyy-mm-dd, e.g. 2019-10-15.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     I couldn't read "2019-02-30" as a date.
+     Use yyyy-mm-dd, e.g. 2019-10-15.
+    ____________________________________________________________
+
+    ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] do homework (by: no idea :-p)
+       [D][ ] do homework (by: Oct 15 2019)
      Now you have 1 task in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Here are the tasks in your list:
-     1.[D][ ] do homework (by: no idea :-p)
+     1.[D][ ] do homework (by: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -217,7 +239,7 @@ bye
 ```text
     ____________________________________________________________
      Sorry, I don't know what "blah" means.
-     I understand: todo, deadline, event, list, mark, unmark, delete, bye.
+     I understand: todo, deadline, event, list, mark, unmark, delete, on, bye.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -440,9 +462,9 @@ afterwards confirms the rejections left the list usable.
 
 ```text
 deadline submit report
-deadline /by Sunday
+deadline /by 2019-10-15
 deadline report /by
-deadline return book /by Sunday
+deadline return book /by 2019-10-15
 list
 bye
 ```
@@ -452,28 +474,28 @@ bye
 ```text
     ____________________________________________________________
      I couldn't find a /by in that deadline.
-     Try: deadline return book /by Sunday
+     Try: deadline return book /by 2019-10-15
     ____________________________________________________________
 
     ____________________________________________________________
      That deadline has no description before the /by.
-     Try: deadline return book /by Sunday
+     Try: deadline return book /by 2019-10-15
     ____________________________________________________________
 
     ____________________________________________________________
      That deadline has no due date after the /by.
-     Try: deadline return book /by Sunday
+     Try: deadline return book /by 2019-10-15
     ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [D][ ] return book (by: Sunday)
+       [D][ ] return book (by: Oct 15 2019)
      Now you have 1 task in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Here are the tasks in your list:
-     1.[D][ ] return book (by: Sunday)
+     1.[D][ ] return book (by: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -491,11 +513,11 @@ valid event afterwards confirms the rejections left the list usable.
 
 ```text
 event meeting
-event meeting /from Mon
-event /from Mon 2pm /to 4pm
-event meeting /from /to 4pm
-event meeting /from Mon 2pm /to
-event project meeting /from Mon 2pm /to 4pm
+event meeting /from 2019-10-15
+event /from 2019-10-15 /to 2019-10-16
+event meeting /from /to 2019-10-16
+event meeting /from 2019-10-15 /to
+event project meeting /from 2019-10-15 /to 2019-10-16
 list
 bye
 ```
@@ -505,38 +527,38 @@ bye
 ```text
     ____________________________________________________________
      I couldn't find a /from in that event.
-     Try: event project meeting /from Mon 2pm /to 4pm
+     Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
      I couldn't find a /to in that event.
-     Try: event project meeting /from Mon 2pm /to 4pm
+     Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
      That event has no description before the /from.
-     Try: event project meeting /from Mon 2pm /to 4pm
+     Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
      That event has no start time after the /from.
-     Try: event project meeting /from Mon 2pm /to 4pm
+     Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
      That event has no end time after the /to.
-     Try: event project meeting /from Mon 2pm /to 4pm
+     Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
      Got it. I've added this task:
-       [E][ ] project meeting (from: Mon 2pm to: 4pm)
+       [E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
      Now you have 1 task in the list.
     ____________________________________________________________
 
     ____________________________________________________________
      Here are the tasks in your list:
-     1.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+     1.[E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -761,8 +783,8 @@ included so the done status is checked too, not just the descriptions.
 
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-10-15
+event project meeting /from 2019-08-06 /to 2019-08-07
 mark 1
 bye
 ```
@@ -780,8 +802,8 @@ bye
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][ ] return book (by: June 6th)
-     3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+     2.[D][ ] return book (by: Oct 15 2019)
+     3.[E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -830,20 +852,23 @@ the tasks that are still readable. Each bad line is named with its line number
 and the specific fault, so a hand-edited file can be corrected. The six bad
 lines cover every rejection the loader makes: too few fields, unknown type,
 invalid done flag, empty description, deadline with no date, event missing an
-end. Line 8 is blank and must be skipped silently rather than reported.
+end, and dates that are not dates. Line 8 is blank and must be skipped
+silently rather than reported.
 
 **Setup data file:**
 
 ```text
 T | 1 | read book
 GARBAGE LINE
-D | 0 | return book | June 6th
+D | 0 | return book | 2019-10-15
 X | 0 | alien task
 T | 7 | bad flag
 T | 0 | 
 D | 0 | no due date
 
 E | 0 | meeting | Mon
+D | 0 | broken date | not-a-date
+E | 0 | broken end | 2019-10-15 | Tuesday
 ```
 
 **Input:**
@@ -857,13 +882,15 @@ bye
 
 ```text
     ____________________________________________________________
-     I skipped 6 unreadable lines in your saved data:
+     I skipped 8 unreadable lines in your saved data:
      line 2: expected at least 3 fields, found 1
      line 4: unknown task type "X"
      line 5: the done flag should be 0 or 1, found "7"
      line 6: expected at least 3 fields, found 2
      line 7: a deadline needs a due date
      line 9: an event needs both a start and an end
+     line 10: the due date "not-a-date" is not a date
+     line 11: the end date "Tuesday" is not a date
      Everything else loaded fine. The bad lines will be dropped
      the next time your list changes.
     ____________________________________________________________
@@ -871,7 +898,7 @@ bye
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][X] read book
-     2.[D][ ] return book (by: June 6th)
+     2.[D][ ] return book (by: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -904,6 +931,106 @@ bye
     ____________________________________________________________
      Here are the tasks in your list:
      1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC21: Listing what falls on a given date
+
+**Aim:** Verify `on` selects tasks by date. The conference spans 14th to 17th
+and must match both the 15th and the 16th, which is the real check: an event
+occupies every day between its start and end, not just the two end points. The
+todo carries no date and must never match, and a date with nothing on it must
+say so rather than print an empty heading.
+
+**Input:**
+
+```text
+todo read book
+deadline return book /by 2019-10-15
+deadline pay bill /by 2019-10-16
+event conference /from 2019-10-14 /to 2019-10-17
+on 2019-10-15
+on 2019-10-16
+on 2019-12-25
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Oct 15 2019)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] pay bill (by: Oct 16 2019)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+     Now you have 4 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here is what you have on Oct 15 2019:
+     1.[D][ ] return book (by: Oct 15 2019)
+     2.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here is what you have on Oct 16 2019:
+     1.[D][ ] pay bill (by: Oct 16 2019)
+     2.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nothing on Dec 25 2019.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC22: The on command validates its date
+
+**Aim:** Verify `on` refuses a missing or unreadable date with the same
+wording used elsewhere, rather than silently listing nothing.
+
+**Input:**
+
+```text
+on
+on Sunday
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     on needs a date.
+     Try: on 2019-10-15
+    ____________________________________________________________
+
+    ____________________________________________________________
+     I couldn't read "Sunday" as a date.
+     Use yyyy-mm-dd, e.g. 2019-10-15.
     ____________________________________________________________
 
     ____________________________________________________________

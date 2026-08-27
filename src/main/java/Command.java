@@ -16,6 +16,7 @@ public enum Command {
     MARK("mark"),
     UNMARK("unmark"),
     DELETE("delete"),
+    ON("on"),
     BYE("bye");
 
     /** What the user types to invoke this command. */

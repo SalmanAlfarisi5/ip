@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -7,8 +8,9 @@ import java.util.Scanner;
  * <p>
  * At this stage the chatbot tracks todos, deadlines and events, lists them
  * back on request, and can mark them done or delete them, until the user
- * enters {@code bye}. The list is loaded from disk at startup and saved
- * again whenever it changes.
+ * enters {@code bye}. Tasks carry real dates, so the list can also be
+ * filtered to whatever falls on a given day. The list is loaded from disk
+ * at startup and saved again whenever it changes.
  * Invalid input is reported to the user rather than allowed to crash the
  * program.
  */
@@ -29,9 +31,10 @@ public class Sallman {
      * of a correct command instead of only being told what was wrong.
      */
     private static final String TODO_EXAMPLE = "Try: todo read book";
-    private static final String DEADLINE_EXAMPLE = "Try: deadline return book /by Sunday";
+    private static final String DEADLINE_EXAMPLE =
+            "Try: deadline return book /by " + TaskDate.EXAMPLE;
     private static final String EVENT_EXAMPLE =
-            "Try: event project meeting /from Mon 2pm /to 4pm";
+            "Try: event project meeting /from " + TaskDate.EXAMPLE + " /to 2019-10-16";
 
     /** Horizontal rule that separates the chatbot's replies from the user's input. */
     private static final String DIVIDER =
@@ -135,6 +138,32 @@ public class Sallman {
     }
 
     /**
+     * Formats the tasks falling on one date as a numbered list with a heading.
+     *
+     * @param tasks the tasks to search
+     * @param date  the date being asked about
+     * @return a heading followed by the matching tasks, or a single line
+     *         saying nothing falls on that date
+     */
+    private static String[] tasksOnDate(List<Task> tasks, LocalDate date) {
+        List<Task> matches = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.isOn(date)) {
+                matches.add(task);
+            }
+        }
+        if (matches.isEmpty()) {
+            return new String[] {"Nothing on " + TaskDate.format(date) + "."};
+        }
+        String[] lines = new String[matches.size() + 1];
+        lines[0] = "Here is what you have on " + TaskDate.format(date) + ":";
+        for (int i = 0; i < matches.size(); i++) {
+            lines[i + 1] = (i + 1) + "." + matches.get(i);
+        }
+        return lines;
+    }
+
+    /**
      * Formats the stored tasks as a numbered list with a heading, ready to be
      * passed to {@link #say(String...)}.
      *
@@ -166,12 +195,12 @@ public class Sallman {
 
     /**
      * Builds a deadline from the text following the {@code deadline} command,
-     * e.g. {@code return book /by Sunday}.
+     * e.g. {@code return book /by 2019-10-15}.
      *
      * @param arguments text the user typed after the command
      * @return the new task
      * @throws SallmanException if the {@code /by}, the description, or the due
-     *                          date is missing
+     *                          date is missing, or the date cannot be read
      */
     private static Task parseDeadline(String arguments) throws SallmanException {
         String[] parts = arguments.split("/by", 2);
@@ -189,17 +218,18 @@ public class Sallman {
             throw new SallmanException("That deadline has no due date after the /by.",
                     DEADLINE_EXAMPLE);
         }
-        return new Deadline(description, by);
+        return new Deadline(description, TaskDate.parse(by));
     }
 
     /**
      * Builds an event from the text following the {@code event} command,
-     * e.g. {@code project meeting /from Mon 2pm /to 4pm}.
+     * e.g. {@code project meeting /from 2019-10-15 /to 2019-10-16}.
      *
      * @param arguments text the user typed after the command
      * @return the new task
      * @throws SallmanException if any of the description, {@code /from} or
-     *                          {@code /to} parts is missing
+     *                          {@code /to} parts is missing, or a date cannot
+     *                          be read
      */
     private static Task parseEvent(String arguments) throws SallmanException {
         String[] fromParts = arguments.split("/from", 2);
@@ -226,7 +256,7 @@ public class Sallman {
             throw new SallmanException("That event has no end time after the /to.",
                     EVENT_EXAMPLE);
         }
-        return new Event(description, from, to);
+        return new Event(description, TaskDate.parse(from), TaskDate.parse(to));
     }
 
     /**
@@ -303,6 +333,13 @@ public class Sallman {
                         isExiting = true;
                     }
                     case LIST -> say(numberedTasks(tasks));
+                    case ON -> {
+                        if (arguments.isEmpty()) {
+                            throw new SallmanException("on needs a date.",
+                                    "Try: on " + TaskDate.EXAMPLE);
+                        }
+                        say(tasksOnDate(tasks, TaskDate.parse(arguments)));
+                    }
                     case MARK, UNMARK -> {
                         int index = parseTaskNumber(keyword, arguments, tasks.size());
                         Task task = tasks.get(index);
