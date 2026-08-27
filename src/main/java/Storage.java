@@ -20,6 +20,9 @@ import java.util.List;
  */
 public class Storage {
 
+    /** What separates the fields on one line of the data file. */
+    private static final String SEPARATOR = " | ";
+
     /** Where the task list is kept, relative to the folder the app runs in. */
     private final Path file;
 
@@ -112,6 +115,10 @@ public class Storage {
 
     /**
      * Rebuilds one task from its saved line.
+     * <p>
+     * Only the type and done flag are fixed fields. A description may itself
+     * contain the separator, so it is taken as everything left over once the
+     * trailing date fields have been split off from the right.
      *
      * @param line one non-blank line of the data file
      * @return the task that line describes
@@ -120,40 +127,72 @@ public class Storage {
      *                          for the caller to report against a line number
      */
     private static Task parseLine(String line) throws SallmanException {
-        String[] parts = line.split(" \\| ");
-        if (parts.length < 3) {
-            throw new SallmanException("expected at least 3 fields, found " + parts.length);
+        String[] head = line.split(" \\| ", 3);
+        if (head.length < 3) {
+            throw new SallmanException("expected at least 3 fields, found " + head.length);
         }
-        String type = parts[0];
-        String doneFlag = parts[1];
-        String description = parts[2].trim();
+        String type = head[0];
+        String doneFlag = head[1];
+        String rest = head[2];
         if (!doneFlag.equals("0") && !doneFlag.equals("1")) {
-            throw new SallmanException("the done flag should be 0 or 1, found \"" + doneFlag + "\"");
+            throw new SallmanException("the done flag should be 0 or 1, found \""
+                    + doneFlag + "\"");
         }
-        if (description.isEmpty()) {
-            throw new SallmanException("the description is empty");
-        }
-        Task task = switch (type) {
-        case "T" -> new Todo(description);
-        case "D" -> {
-            if (parts.length < 4 || parts[3].isBlank()) {
+
+        Task task;
+        if (type.equals("T")) {
+            task = new Todo(requireDescription(rest));
+        } else if (type.equals("D")) {
+            int cut = rest.lastIndexOf(SEPARATOR);
+            if (cut < 0) {
                 throw new SallmanException("a deadline needs a due date");
             }
-            yield new Deadline(description, parseStoredDate(parts[3].trim(), "due date"));
-        }
-        case "E" -> {
-            if (parts.length < 5 || parts[3].isBlank() || parts[4].isBlank()) {
+            task = new Deadline(requireDescription(rest.substring(0, cut)),
+                    parseStoredDate(after(rest, cut), "due date"));
+        } else if (type.equals("E")) {
+            int endCut = rest.lastIndexOf(SEPARATOR);
+            int startCut = endCut < 0 ? -1 : rest.lastIndexOf(SEPARATOR, endCut - 1);
+            if (startCut < 0) {
                 throw new SallmanException("an event needs both a start and an end");
             }
-            yield new Event(description, parseStoredDate(parts[3].trim(), "start date"),
-                    parseStoredDate(parts[4].trim(), "end date"));
+            task = new Event(requireDescription(rest.substring(0, startCut)),
+                    parseStoredDate(rest.substring(startCut + SEPARATOR.length(), endCut).trim(),
+                            "start date"),
+                    parseStoredDate(after(rest, endCut), "end date"));
+        } else {
+            throw new SallmanException("unknown task type \"" + type + "\"");
         }
-        default -> throw new SallmanException("unknown task type \"" + type + "\"");
-        };
+
         if (doneFlag.equals("1")) {
             task.markAsDone();
         }
         return task;
+    }
+
+    /**
+     * Returns the text following the separator at the given position.
+     *
+     * @param text  the field being split
+     * @param index where the separator starts
+     * @return the trimmed remainder after that separator
+     */
+    private static String after(String text, int index) {
+        return text.substring(index + SEPARATOR.length()).trim();
+    }
+
+    /**
+     * Checks that a saved description is not blank.
+     *
+     * @param text the description field as read from the file
+     * @return the trimmed description
+     * @throws SallmanException if nothing is left after trimming
+     */
+    private static String requireDescription(String text) throws SallmanException {
+        String description = text.trim();
+        if (description.isEmpty()) {
+            throw new SallmanException("the description is empty");
+        }
+        return description;
     }
 
     /**

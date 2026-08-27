@@ -886,7 +886,7 @@ bye
      line 2: expected at least 3 fields, found 1
      line 4: unknown task type "X"
      line 5: the done flag should be 0 or 1, found "7"
-     line 6: expected at least 3 fields, found 2
+     line 6: the description is empty
      line 7: a deadline needs a due date
      line 9: an event needs both a start and an end
      line 10: the due date "not-a-date" is not a date
@@ -1031,6 +1031,50 @@ bye
     ____________________________________________________________
      I couldn't read "Sunday" as a date.
      Use yyyy-mm-dd, e.g. 2019-10-15.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC23: Descriptions containing the field separator survive a restart
+
+**Aim:** Regression test. The data file separates fields with `" | "`, so a
+description containing that sequence used to break the round trip: a todo was
+silently truncated at the first occurrence, and a deadline or event was
+rejected outright on the next load. The description is the only free-text
+field, so the trailing dates must be split off from the right rather than the
+line being split left to right.
+
+The event description deliberately contains something that looks like a date,
+to confirm the split is positional and not a guess at which field looks most
+date-like.
+
+**Setup input:**
+
+```text
+todo read | book
+deadline pay a | b /by 2019-10-15
+event a | 2019-01-01 | b /from 2019-10-14 /to 2019-10-17
+bye
+```
+
+**Input:**
+
+```text
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] read | book
+     2.[D][ ] pay a | b (by: Oct 15 2019)
+     3.[E][ ] a | 2019-01-01 | b (from: Oct 14 2019 to: Oct 17 2019)
     ____________________________________________________________
 
     ____________________________________________________________
