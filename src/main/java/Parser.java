@@ -24,6 +24,38 @@ public class Parser {
     }
 
     /**
+     * Turns a line of input into the command it asks for.
+     * <p>
+     * Only the wording is checked here. Whether a task number is in range
+     * depends on the list, which this class does not see, so commands that
+     * take one check it when they run.
+     *
+     * @param input the whole line the user typed, already trimmed
+     * @return the command the user asked for
+     * @throws SallmanException if the command is unknown or its arguments
+     *                          cannot be read
+     */
+    public static Command parse(String input) throws SallmanException {
+        String[] parts = splitCommand(input);
+        String keyword = parts[0];
+        String arguments = parts[1];
+
+        // Rejects an unknown keyword first, so every case below is a known one.
+        CommandType type = CommandType.fromKeyword(keyword);
+        return switch (type) {
+        case BYE -> new ExitCommand();
+        case LIST -> new ListCommand();
+        case ON -> new OnCommand(parseOnDate(arguments));
+        case MARK -> new MarkCommand(true, arguments);
+        case UNMARK -> new MarkCommand(false, arguments);
+        case DELETE -> new DeleteCommand(arguments);
+        case TODO -> new AddCommand(parseTodo(arguments));
+        case DEADLINE -> new AddCommand(parseDeadline(arguments));
+        case EVENT -> new AddCommand(parseEvent(arguments));
+        };
+    }
+
+    /**
      * Splits a line into its command word and the arguments that follow.
      * <p>
      * Separating them up front means a command given without arguments still
@@ -34,7 +66,7 @@ public class Parser {
      * @return the command word at index 0 and its arguments at index 1, the
      *         latter empty when none were given
      */
-    public static String[] splitCommand(String input) {
+    private static String[] splitCommand(String input) {
         String[] words = input.split("\\s+", 2);
         String arguments = words.length > 1 ? words[1].trim() : "";
         return new String[] {words[0], arguments};
