@@ -1,14 +1,13 @@
+import java.time.LocalDate;
+
 /**
  * A task that must be done before a given point in time,
- * e.g. {@code submit report} by {@code Sunday}.
+ * e.g. {@code submit report} by {@code 2019-10-15}.
  */
 public class Deadline extends Task {
 
-    /**
-     * When the task is due. Kept as free text for now, since the chatbot does
-     * not yet interpret dates.
-     */
-    protected String by;
+    /** When the task is due. */
+    protected LocalDate by;
 
     /**
      * Creates a deadline that is initially not done.
@@ -16,26 +15,28 @@ public class Deadline extends Task {
      * @param description what the task involves
      * @param by          when the task is due
      */
-    public Deadline(String description, String by) {
+    public Deadline(String description, LocalDate by) {
         super(description);
         this.by = by;
     }
 
     /**
      * Returns this deadline as one line of the data file,
-     * e.g. {@code D | 0 | return book | Sunday}.
+     * e.g. {@code D | 0 | return book | 2019-10-15}.
      */
     @Override
     public String toFileFormat() {
+        // Saved in the input format, so the file stays readable and
+        // reloadable regardless of how dates are displayed.
         return "D | " + super.toFileFormat() + " | " + by;
     }
 
     /**
      * Returns this deadline as it should appear to the user,
-     * e.g. {@code [D][ ] return book (by: Sunday)}.
+     * e.g. {@code [D][ ] return book (by: Oct 15 2019)}.
      */
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + by + ")";
+        return "[D]" + super.toString() + " (by: " + TaskDate.format(by) + ")";
     }
 }

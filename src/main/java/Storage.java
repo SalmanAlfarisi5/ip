@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +13,8 @@ import java.util.List;
  * Each task occupies one line, with fields separated by {@code " | "}:
  * <pre>
  * T | 1 | read book
- * D | 0 | return book | June 6th
- * E | 0 | project meeting | Aug 6th 2pm | 4pm
+ * D | 0 | return book | 2019-10-15
+ * E | 0 | project meeting | 2019-10-15 | 2019-10-16
  * </pre>
  * The first field is the task type, the second is 1 when the task is done.
  */
@@ -137,13 +139,14 @@ public class Storage {
             if (parts.length < 4 || parts[3].isBlank()) {
                 throw new SallmanException("a deadline needs a due date");
             }
-            yield new Deadline(description, parts[3].trim());
+            yield new Deadline(description, parseStoredDate(parts[3].trim(), "due date"));
         }
         case "E" -> {
             if (parts.length < 5 || parts[3].isBlank() || parts[4].isBlank()) {
                 throw new SallmanException("an event needs both a start and an end");
             }
-            yield new Event(description, parts[3].trim(), parts[4].trim());
+            yield new Event(description, parseStoredDate(parts[3].trim(), "start date"),
+                    parseStoredDate(parts[4].trim(), "end date"));
         }
         default -> throw new SallmanException("unknown task type \"" + type + "\"");
         };
@@ -151,5 +154,22 @@ public class Storage {
             task.markAsDone();
         }
         return task;
+    }
+
+    /**
+     * Reads a date stored in the data file.
+     *
+     * @param text  the saved field
+     * @param field what the field represents, for the error message
+     * @return the date it represents
+     * @throws SallmanException if the field is not a valid date
+     */
+    private static LocalDate parseStoredDate(String text, String field)
+            throws SallmanException {
+        try {
+            return LocalDate.parse(text);
+        } catch (DateTimeParseException e) {
+            throw new SallmanException("the " + field + " \"" + text + "\" is not a date");
+        }
     }
 }

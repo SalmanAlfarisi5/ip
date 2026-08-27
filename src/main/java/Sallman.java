@@ -29,9 +29,10 @@ public class Sallman {
      * of a correct command instead of only being told what was wrong.
      */
     private static final String TODO_EXAMPLE = "Try: todo read book";
-    private static final String DEADLINE_EXAMPLE = "Try: deadline return book /by Sunday";
+    private static final String DEADLINE_EXAMPLE =
+            "Try: deadline return book /by " + TaskDate.EXAMPLE;
     private static final String EVENT_EXAMPLE =
-            "Try: event project meeting /from Mon 2pm /to 4pm";
+            "Try: event project meeting /from " + TaskDate.EXAMPLE + " /to 2019-10-16";
 
     /** Horizontal rule that separates the chatbot's replies from the user's input. */
     private static final String DIVIDER =
@@ -166,12 +167,12 @@ public class Sallman {
 
     /**
      * Builds a deadline from the text following the {@code deadline} command,
-     * e.g. {@code return book /by Sunday}.
+     * e.g. {@code return book /by 2019-10-15}.
      *
      * @param arguments text the user typed after the command
      * @return the new task
      * @throws SallmanException if the {@code /by}, the description, or the due
-     *                          date is missing
+     *                          date is missing, or the date cannot be read
      */
     private static Task parseDeadline(String arguments) throws SallmanException {
         String[] parts = arguments.split("/by", 2);
@@ -189,17 +190,18 @@ public class Sallman {
             throw new SallmanException("That deadline has no due date after the /by.",
                     DEADLINE_EXAMPLE);
         }
-        return new Deadline(description, by);
+        return new Deadline(description, TaskDate.parse(by));
     }
 
     /**
      * Builds an event from the text following the {@code event} command,
-     * e.g. {@code project meeting /from Mon 2pm /to 4pm}.
+     * e.g. {@code project meeting /from 2019-10-15 /to 2019-10-16}.
      *
      * @param arguments text the user typed after the command
      * @return the new task
      * @throws SallmanException if any of the description, {@code /from} or
-     *                          {@code /to} parts is missing
+     *                          {@code /to} parts is missing, or a date cannot
+     *                          be read
      */
     private static Task parseEvent(String arguments) throws SallmanException {
         String[] fromParts = arguments.split("/from", 2);
@@ -226,7 +228,7 @@ public class Sallman {
             throw new SallmanException("That event has no end time after the /to.",
                     EVENT_EXAMPLE);
         }
-        return new Event(description, from, to);
+        return new Event(description, TaskDate.parse(from), TaskDate.parse(to));
     }
 
     /**
