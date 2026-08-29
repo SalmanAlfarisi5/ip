@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class TaskListTest {
     public void constructor_fromExistingTasks_contentsCopied() {
         // Loading from disk hands over a plain list; the TaskList must hold its
         // own copy so later changes to either do not affect the other.
-        List<Task> loaded = new java.util.ArrayList<>(List.of(new Todo("read book")));
+        List<Task> loaded = new ArrayList<>(List.of(new Todo("read book")));
         TaskList tasks = new TaskList(loaded);
 
         loaded.clear();
