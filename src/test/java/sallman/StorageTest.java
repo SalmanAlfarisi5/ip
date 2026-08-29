@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -36,9 +37,9 @@ public class StorageTest {
         todo.markAsDone();
 
         storage.save(List.of(todo,
-                new Deadline("return book", java.time.LocalDate.of(2019, 10, 15)),
-                new Event("conference", java.time.LocalDate.of(2019, 10, 14),
-                        java.time.LocalDate.of(2019, 10, 17))));
+                new Deadline("return book", LocalDate.of(2019, 10, 15)),
+                new Event("conference", LocalDate.of(2019, 10, 14),
+                        LocalDate.of(2019, 10, 17))));
         List<Task> loaded = storage.load();
 
         // Comparing the display form checks the type, description, done status
@@ -84,7 +85,7 @@ public class StorageTest {
         // mistaken for extra fields and silently truncated.
         Storage storage = new Storage(folder.resolve("tasks.txt").toString());
         storage.save(List.of(new Todo("read | book"),
-                new Deadline("pay a | b", java.time.LocalDate.of(2019, 10, 15))));
+                new Deadline("pay a | b", LocalDate.of(2019, 10, 15))));
 
         List<Task> loaded = storage.load();
 
