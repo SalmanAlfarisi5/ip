@@ -53,4 +53,7 @@ shadowJar {
 
 run {
     standardInput = System.in
+    // Assertions are off by default when running Java, so a broken assertion
+    // would pass silently. Turning them on makes them worth writing.
+    enableAssertions = true
 }
