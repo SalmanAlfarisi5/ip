@@ -69,6 +69,37 @@ public class TaskListTest {
     }
 
     @Test
+    public void find_keywordInDescription_matchingTasksReturned() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.add(new Deadline("return book", LocalDate.of(2019, 10, 15)));
+        tasks.add(new Todo("buy bread"));
+
+        List<Task> matches = tasks.find("book");
+
+        assertEquals(2, matches.size());
+        assertEquals("[T][ ] read book", matches.get(0).toString());
+        assertEquals("[D][ ] return book (by: Oct 15 2019)", matches.get(1).toString());
+    }
+
+    @Test
+    public void find_differentCase_stillMatched() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("Read Book"));
+
+        assertEquals(1, tasks.find("book").size());
+        assertEquals(1, tasks.find("BOOK").size());
+    }
+
+    @Test
+    public void find_keywordMatchesNothing_emptyList() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+
+        assertTrue(tasks.find("zzz").isEmpty());
+    }
+
+    @Test
     public void tasksOn_deadlineDueThatDay_matched() {
         TaskList tasks = new TaskList();
         tasks.add(new Deadline("return book", LocalDate.of(2019, 10, 15)));

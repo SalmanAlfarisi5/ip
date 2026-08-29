@@ -43,6 +43,18 @@ public class Task {
     }
 
     /**
+     * Returns whether this task's description contains the given keyword.
+     * <p>
+     * The comparison ignores case, so searching for "book" also finds "Book".
+     *
+     * @param keyword the text being searched for
+     * @return true if the description contains it
+     */
+    public boolean hasKeyword(String keyword) {
+        return description.toLowerCase().contains(keyword.toLowerCase());
+    }
+
+    /**
      * Returns whether this task falls on the given date.
      * <p>
      * A plain task carries no date, so it never does. Subclasses that hold

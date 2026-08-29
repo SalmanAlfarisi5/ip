@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import sallman.command.AddCommand;
 import sallman.command.DeleteCommand;
 import sallman.command.ExitCommand;
+import sallman.command.FindCommand;
 import sallman.command.ListCommand;
 import sallman.command.MarkCommand;
 import sallman.command.OnCommand;
@@ -33,6 +34,7 @@ public class ParserTest {
         assertInstanceOf(MarkCommand.class, Parser.parse("unmark 1"));
         assertInstanceOf(DeleteCommand.class, Parser.parse("delete 1"));
         assertInstanceOf(AddCommand.class, Parser.parse("todo read book"));
+        assertInstanceOf(FindCommand.class, Parser.parse("find book"));
     }
 
     @Test
@@ -175,6 +177,18 @@ public class ParserTest {
         SallmanException e = assertThrows(SallmanException.class,
                 () -> Parser.parseTaskNumber("mark", "1", 0));
         assertEquals("There is no task 1: your list is empty.", e.getMessage());
+    }
+
+    @Test
+    public void parseSearchKeyword_keywordGiven_returnedUnchanged() throws Exception {
+        assertEquals("read book", Parser.parseSearchKeyword("read book"));
+    }
+
+    @Test
+    public void parseSearchKeyword_noKeyword_exceptionThrown() {
+        SallmanException e = assertThrows(SallmanException.class,
+                () -> Parser.parseSearchKeyword(""));
+        assertEquals("find needs something to search for.", e.getMessage());
     }
 
     @Test
