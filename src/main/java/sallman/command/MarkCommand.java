@@ -32,6 +32,15 @@ public class MarkCommand extends Command {
         this.arguments = arguments;
     }
 
+    /**
+     * Sets the done status of the numbered task, reports it, and saves the list.
+     *
+     * @param tasks   the list holding the task
+     * @param ui      used to confirm the change
+     * @param storage used to save the changed list
+     * @throws SallmanException if the number is missing, unreadable or outside
+     *                          the list, or if the list cannot be saved
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SallmanException {
         // The keyword is quoted back in the error messages, so it has to match

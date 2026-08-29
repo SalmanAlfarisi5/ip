@@ -24,6 +24,14 @@ public class OnCommand extends Command {
         this.date = date;
     }
 
+    /**
+     * Shows the tasks on this command's date. Nothing is changed, so nothing
+     * is saved.
+     *
+     * @param tasks   the list to search
+     * @param ui      used to show the matches
+     * @param storage unused, since this command changes nothing
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         ui.showTasksOn(tasks.tasksOn(date), date);

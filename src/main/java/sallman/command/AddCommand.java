@@ -26,6 +26,14 @@ public class AddCommand extends Command {
         this.task = task;
     }
 
+    /**
+     * Adds the task to the list, confirms it, and saves the list.
+     *
+     * @param tasks   the list to add to
+     * @param ui      used to confirm the addition
+     * @param storage used to save the enlarged list
+     * @throws SallmanException if the list cannot be saved
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SallmanException {
         tasks.add(task);
