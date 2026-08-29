@@ -21,6 +21,14 @@ public class FindCommand extends Command {
         this.keyword = keyword;
     }
 
+    /**
+     * Shows the tasks matching this command's keyword. Nothing is changed, so
+     * nothing is saved.
+     *
+     * @param tasks   the list to search
+     * @param ui      used to show the matches
+     * @param storage unused, since this command changes nothing
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         ui.showMatchingTasks(tasks.find(keyword), keyword);
