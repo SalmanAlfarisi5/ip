@@ -9,6 +9,13 @@ import sallman.Ui;
  */
 public class ListCommand extends Command {
 
+    /**
+     * Shows every task. Nothing is changed, so nothing is saved.
+     *
+     * @param tasks   the list to show
+     * @param ui      used to show it
+     * @param storage unused, since this command changes nothing
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) {
         ui.showTaskList(tasks);

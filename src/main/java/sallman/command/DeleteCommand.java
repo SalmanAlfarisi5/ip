@@ -24,6 +24,15 @@ public class DeleteCommand extends Command {
         this.arguments = arguments;
     }
 
+    /**
+     * Removes the numbered task, reports what was removed, and saves the list.
+     *
+     * @param tasks   the list to remove from
+     * @param ui      used to report the removal
+     * @param storage used to save the shortened list
+     * @throws SallmanException if the number is missing, unreadable or outside
+     *                          the list, or if the list cannot be saved
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SallmanException {
         // Checked here rather than while parsing, because whether a number is
