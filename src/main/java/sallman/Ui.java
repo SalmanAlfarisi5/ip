@@ -150,6 +150,25 @@ public class Ui {
     }
 
     /**
+     * Shows the tasks matching a search, or says there were none.
+     *
+     * @param matches the matching tasks, possibly empty
+     * @param keyword the text that was searched for
+     */
+    public void showMatchingTasks(List<Task> matches, String keyword) {
+        if (matches.isEmpty()) {
+            say("No tasks match \"" + keyword + "\".");
+            return;
+        }
+        String[] lines = new String[matches.size() + 1];
+        lines[0] = "Here are the matching tasks in your list:";
+        for (int i = 0; i < matches.size(); i++) {
+            lines[i + 1] = (i + 1) + "." + matches.get(i);
+        }
+        say(lines);
+    }
+
+    /**
      * Shows the tasks falling on one date, or says there are none.
      *
      * @param matches the tasks on that date, possibly empty

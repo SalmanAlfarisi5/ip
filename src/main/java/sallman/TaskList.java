@@ -92,6 +92,25 @@ public class TaskList {
     }
 
     /**
+     * Returns the tasks whose description contains the given keyword.
+     * <p>
+     * Each task decides for itself whether it matches, so this does not need
+     * to know how a description is stored.
+     *
+     * @param keyword the text being searched for
+     * @return the matching tasks, in list order, possibly empty
+     */
+    public List<Task> find(String keyword) {
+        List<Task> matches = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.hasKeyword(keyword)) {
+                matches.add(task);
+            }
+        }
+        return matches;
+    }
+
+    /**
      * Returns the tasks as a plain list, for saving.
      *
      * @return a copy of the tasks, so callers cannot change the list through it

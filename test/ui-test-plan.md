@@ -239,7 +239,7 @@ bye
 ```text
     ____________________________________________________________
      Sorry, I don't know what "blah" means.
-     I understand: todo, deadline, event, list, mark, unmark, delete, on, bye.
+     I understand: todo, deadline, event, list, find, mark, unmark, delete, on, bye.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -1115,6 +1115,105 @@ bye
     ____________________________________________________________
      Here is what you have on Oct 15 2019:
      1.[E][ ] standup (from: Oct 15 2019 to: Oct 15 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC23: Finding tasks by keyword
+
+**Aim:** Verify `find` shows only the tasks whose description contains the
+keyword, numbering them from 1 in their own right rather than by their position
+in the full list. The search is case-insensitive, and `bread` must not match
+`read` even though one contains the other in the opposite direction.
+
+**Input:**
+
+```text
+todo read book
+deadline return book /by 2019-10-15
+todo buy bread
+find book
+find BOOK
+find bread
+find zzz
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Oct 15 2019)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] buy bread
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the matching tasks in your list:
+     1.[T][ ] read book
+     2.[D][ ] return book (by: Oct 15 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the matching tasks in your list:
+     1.[T][ ] read book
+     2.[D][ ] return book (by: Oct 15 2019)
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the matching tasks in your list:
+     1.[T][ ] buy bread
+    ____________________________________________________________
+
+    ____________________________________________________________
+     No tasks match "zzz".
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC24: find with no keyword is refused
+
+**Aim:** Verify a bare `find` asks for something to search for, rather than
+listing every task or nothing at all.
+
+**Input:**
+
+```text
+todo read book
+find
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     find needs something to search for.
+     Try: find book
     ____________________________________________________________
 
     ____________________________________________________________

@@ -7,6 +7,7 @@ import sallman.command.Command;
 import sallman.command.CommandType;
 import sallman.command.DeleteCommand;
 import sallman.command.ExitCommand;
+import sallman.command.FindCommand;
 import sallman.command.ListCommand;
 import sallman.command.MarkCommand;
 import sallman.command.OnCommand;
@@ -62,6 +63,7 @@ public class Parser {
         return switch (type) {
         case BYE -> new ExitCommand();
         case LIST -> new ListCommand();
+        case FIND -> new FindCommand(parseSearchKeyword(arguments));
         case ON -> new OnCommand(parseOnDate(arguments));
         case MARK -> new MarkCommand(true, arguments);
         case UNMARK -> new MarkCommand(false, arguments);
@@ -87,6 +89,21 @@ public class Parser {
         String[] words = input.split("\\s+", 2);
         String arguments = words.length > 1 ? words[1].trim() : "";
         return new String[] {words[0], arguments};
+    }
+
+    /**
+     * Reads the keyword given to a {@code find} command.
+     *
+     * @param arguments text the user typed after the command
+     * @return the keyword to search for
+     * @throws SallmanException if no keyword was given
+     */
+    public static String parseSearchKeyword(String arguments) throws SallmanException {
+        if (arguments.isEmpty()) {
+            throw new SallmanException("find needs something to search for.",
+                    "Try: find book");
+        }
+        return arguments;
     }
 
     /**

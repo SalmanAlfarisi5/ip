@@ -56,6 +56,33 @@ public class TaskTest {
     }
 
     @Test
+    public void hasKeyword_partOfDescription_matched() {
+        // A substring counts, so searching "book" finds "read book".
+        Task task = new Todo("read book");
+
+        assertTrue(task.hasKeyword("book"));
+        assertTrue(task.hasKeyword("read book"));
+        assertTrue(task.hasKeyword("ead bo"));
+        assertFalse(task.hasKeyword("bread"));
+    }
+
+    @Test
+    public void hasKeyword_differentCase_matched() {
+        assertTrue(new Todo("Read Book").hasKeyword("book"));
+        assertTrue(new Todo("read book").hasKeyword("BOOK"));
+    }
+
+    @Test
+    public void hasKeyword_searchesDescriptionOnly_notTheDates() {
+        // The date is shown as part of a deadline, but is not part of its
+        // description, so searching for it must not match.
+        Task deadline = new Deadline("return book", LocalDate.of(2019, 10, 15));
+
+        assertTrue(deadline.hasKeyword("return"));
+        assertFalse(deadline.hasKeyword("2019"));
+    }
+
+    @Test
     public void isOn_todo_neverOnAnyDate() {
         // A todo carries no date, so it must not appear under any day.
         assertFalse(new Todo("read book").isOn(LocalDate.of(2019, 10, 15)));
