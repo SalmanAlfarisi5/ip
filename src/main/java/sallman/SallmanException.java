@@ -11,39 +11,35 @@ package sallman;
 public class SallmanException extends Exception {
 
     /**
-     * An example of a correct command, shown under the message so the user can
-     * see how to fix the problem. May be {@code null} when no example helps.
+     * Advice shown under the message, such as an example of the correct
+     * command. Empty when the message speaks for itself.
      */
-    private final String hint;
+    private final String[] hints;
 
     /**
-     * Creates an exception carrying only an explanation.
+     * Creates an exception carrying an explanation and any advice on fixing it.
+     * <p>
+     * Taking the hints as varargs means one constructor covers a bare message,
+     * a message with an example, and a message needing more than one line of
+     * advice, rather than an overload for each.
      *
      * @param message what went wrong, phrased for the user
+     * @param hints   zero or more lines of advice, one per line of output
      */
-    public SallmanException(String message) {
-        this(message, null);
-    }
-
-    /**
-     * Creates an exception carrying an explanation and a suggested fix.
-     *
-     * @param message what went wrong, phrased for the user
-     * @param hint    an example of the correct command
-     */
-    public SallmanException(String message, String hint) {
+    public SallmanException(String message, String... hints) {
         super(message);
-        this.hint = hint;
+        this.hints = hints.clone();
     }
 
     /**
      * Returns this problem as the lines of a chatbot reply.
      *
-     * @return the message, followed by the hint when there is one
+     * @return the message, followed by any hints
      */
     public String[] toLines() {
-        return hint == null
-                ? new String[] {getMessage()}
-                : new String[] {getMessage(), hint};
+        String[] lines = new String[hints.length + 1];
+        lines[0] = getMessage();
+        System.arraycopy(hints, 0, lines, 1, hints.length);
+        return lines;
     }
 }
