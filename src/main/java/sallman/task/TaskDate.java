@@ -18,15 +18,15 @@ import sallman.SallmanException;
  */
 public final class TaskDate {
 
-    /** How a date is shown to the user. */
-    private static final DateTimeFormatter DISPLAY_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy");
-
     /** The input format, named here so error messages can quote it. */
     public static final String INPUT_FORMAT = "yyyy-mm-dd";
 
     /** An example date in the input format, for use in error hints. */
     public static final String EXAMPLE = "2019-10-15";
+
+    /** How a date is shown to the user. */
+    private static final DateTimeFormatter DISPLAY_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy");
 
     /** Not meant to be instantiated: this class only holds static helpers. */
     private TaskDate() {

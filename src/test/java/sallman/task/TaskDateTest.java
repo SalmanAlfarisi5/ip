@@ -42,8 +42,7 @@ public class TaskDateTest {
 
     @Test
     public void parse_wordsRatherThanADate_exceptionNamesTheFormat() {
-        SallmanException e = assertThrows(SallmanException.class,
-                () -> TaskDate.parse("Sunday"));
+        SallmanException e = assertThrows(SallmanException.class, () -> TaskDate.parse("Sunday"));
         assertEquals("I couldn't read \"Sunday\" as a date.", e.getMessage());
     }
 

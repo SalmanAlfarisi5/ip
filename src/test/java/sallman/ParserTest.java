@@ -70,8 +70,7 @@ public class ParserTest {
 
     @Test
     public void parseDeadline_missingBy_exceptionNamesTheDelimiter() {
-        SallmanException e = assertThrows(SallmanException.class,
-                () -> Parser.parseDeadline("submit report"));
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseDeadline("submit report"));
         assertEquals("I couldn't find a /by in that deadline.", e.getMessage());
     }
 
@@ -79,22 +78,19 @@ public class ParserTest {
     public void parseDeadline_missingDescription_exceptionNamesTheDescription() {
         // Distinct from the missing-/by case: the delimiter is present, so the
         // user needs to be told which side of it is empty.
-        SallmanException e = assertThrows(SallmanException.class,
-                () -> Parser.parseDeadline("/by 2019-10-15"));
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseDeadline("/by 2019-10-15"));
         assertEquals("That deadline has no description before the /by.", e.getMessage());
     }
 
     @Test
     public void parseDeadline_missingDate_exceptionNamesTheDate() {
-        SallmanException e = assertThrows(SallmanException.class,
-                () -> Parser.parseDeadline("return book /by"));
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseDeadline("return book /by"));
         assertEquals("That deadline has no due date after the /by.", e.getMessage());
     }
 
     @Test
     public void parseDeadline_unreadableDate_exceptionThrown() {
-        assertThrows(SallmanException.class,
-                () -> Parser.parseDeadline("return book /by Sunday"));
+        assertThrows(SallmanException.class, () -> Parser.parseDeadline("return book /by Sunday"));
     }
 
     @Test
@@ -113,28 +109,32 @@ public class ParserTest {
 
     @Test
     public void parseEvent_endBeforeStart_exceptionThrown() {
-        SallmanException e = assertThrows(SallmanException.class,
-                () -> Parser.parseEvent("oops /from 2019-10-20 /to 2019-10-10"));
+        String backwards = "oops /from 2019-10-20 /to 2019-10-10";
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseEvent(backwards));
         assertEquals("That event ends before it starts.", e.getMessage());
     }
 
     @Test
     public void parseEvent_missingParts_eachNamedSeparately() {
-        assertEquals("I couldn't find a /from in that event.",
-                assertThrows(SallmanException.class,
-                        () -> Parser.parseEvent("meeting")).getMessage());
-        assertEquals("I couldn't find a /to in that event.",
-                assertThrows(SallmanException.class,
-                        () -> Parser.parseEvent("meeting /from 2019-10-15")).getMessage());
+        assertEquals("I couldn't find a /from in that event.", eventErrorFor("meeting"));
+        assertEquals("I couldn't find a /to in that event.", eventErrorFor("meeting /from 2019-10-15"));
         assertEquals("That event has no description before the /from.",
-                assertThrows(SallmanException.class,
-                        () -> Parser.parseEvent("/from 2019-10-15 /to 2019-10-16")).getMessage());
+                eventErrorFor("/from 2019-10-15 /to 2019-10-16"));
         assertEquals("That event has no start time after the /from.",
-                assertThrows(SallmanException.class,
-                        () -> Parser.parseEvent("meeting /from /to 2019-10-16")).getMessage());
+                eventErrorFor("meeting /from /to 2019-10-16"));
         assertEquals("That event has no end time after the /to.",
-                assertThrows(SallmanException.class,
-                        () -> Parser.parseEvent("meeting /from 2019-10-15 /to")).getMessage());
+                eventErrorFor("meeting /from 2019-10-15 /to"));
+    }
+
+    /**
+     * Returns the message from the exception thrown by parsing the given event
+     * arguments, so each case above states only its input and its message.
+     *
+     * @param arguments the text following the {@code event} keyword
+     * @return the message of the exception that parsing it throws
+     */
+    private String eventErrorFor(String arguments) {
+        return assertThrows(SallmanException.class, () -> Parser.parseEvent(arguments)).getMessage();
     }
 
     @Test
@@ -149,17 +149,14 @@ public class ParserTest {
         // The message quotes whichever command was used, since mark, unmark and
         // delete all share this method.
         assertEquals("mark needs a task number.",
-                assertThrows(SallmanException.class,
-                        () -> Parser.parseTaskNumber("mark", "", 3)).getMessage());
+                assertThrows(SallmanException.class, () -> Parser.parseTaskNumber("mark", "", 3)).getMessage());
         assertEquals("delete needs a task number.",
-                assertThrows(SallmanException.class,
-                        () -> Parser.parseTaskNumber("delete", "", 3)).getMessage());
+                assertThrows(SallmanException.class, () -> Parser.parseTaskNumber("delete", "", 3)).getMessage());
     }
 
     @Test
     public void parseTaskNumber_notANumber_exceptionQuotesInput() {
-        SallmanException e = assertThrows(SallmanException.class,
-                () -> Parser.parseTaskNumber("mark", "abc", 3));
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseTaskNumber("mark", "abc", 3));
         assertEquals("\"abc\" is not a number.", e.getMessage());
     }
 
@@ -174,8 +171,7 @@ public class ParserTest {
 
     @Test
     public void parseTaskNumber_emptyList_exceptionSaysListIsEmpty() {
-        SallmanException e = assertThrows(SallmanException.class,
-                () -> Parser.parseTaskNumber("mark", "1", 0));
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseTaskNumber("mark", "1", 0));
         assertEquals("There is no task 1: your list is empty.", e.getMessage());
     }
 
@@ -186,8 +182,7 @@ public class ParserTest {
 
     @Test
     public void parseSearchKeyword_noKeyword_exceptionThrown() {
-        SallmanException e = assertThrows(SallmanException.class,
-                () -> Parser.parseSearchKeyword(""));
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseSearchKeyword(""));
         assertEquals("find needs something to search for.", e.getMessage());
     }
 

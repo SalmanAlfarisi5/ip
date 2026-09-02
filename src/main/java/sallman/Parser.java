@@ -61,16 +61,16 @@ public class Parser {
         // Rejects an unknown keyword first, so every case below is a known one.
         CommandType type = CommandType.fromKeyword(keyword);
         return switch (type) {
-        case BYE -> new ExitCommand();
-        case LIST -> new ListCommand();
-        case FIND -> new FindCommand(parseSearchKeyword(arguments));
-        case ON -> new OnCommand(parseOnDate(arguments));
-        case MARK -> new MarkCommand(true, arguments);
-        case UNMARK -> new MarkCommand(false, arguments);
-        case DELETE -> new DeleteCommand(arguments);
-        case TODO -> new AddCommand(parseTodo(arguments));
-        case DEADLINE -> new AddCommand(parseDeadline(arguments));
-        case EVENT -> new AddCommand(parseEvent(arguments));
+            case BYE -> new ExitCommand();
+            case LIST -> new ListCommand();
+            case FIND -> new FindCommand(parseSearchKeyword(arguments));
+            case ON -> new OnCommand(parseOnDate(arguments));
+            case MARK -> new MarkCommand(true, arguments);
+            case UNMARK -> new MarkCommand(false, arguments);
+            case DELETE -> new DeleteCommand(arguments);
+            case TODO -> new AddCommand(parseTodo(arguments));
+            case DEADLINE -> new AddCommand(parseDeadline(arguments));
+            case EVENT -> new AddCommand(parseEvent(arguments));
         };
     }
 
