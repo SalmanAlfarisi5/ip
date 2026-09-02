@@ -38,18 +38,62 @@ public class Ui {
     private final Scanner scanner = new Scanner(System.in);
 
     /**
+     * Whether replies are printed to the console as well as collected.
+     * <p>
+     * The console front end prints as it goes; the GUI collects instead and
+     * asks for the text when the command is finished.
+     */
+    private final boolean isPrintingToConsole;
+
+    /** Replies said since the last {@link #drainText()}, without decoration. */
+    private final StringBuilder saidText = new StringBuilder();
+
+    /** Creates a user interface that prints to the console. */
+    public Ui() {
+        this(true);
+    }
+
+    /**
+     * Creates a user interface, optionally silent.
+     *
+     * @param isPrintingToConsole false to collect replies without printing them
+     */
+    public Ui(boolean isPrintingToConsole) {
+        this.isPrintingToConsole = isPrintingToConsole;
+    }
+
+    /**
+     * Returns everything said since this was last called, and forgets it.
+     * <p>
+     * The text has no dividers or indentation: those belong to the console,
+     * whereas a GUI puts each reply in a box of its own.
+     *
+     * @return the replies since the last call, one line each
+     */
+    public String drainText() {
+        String text = saidText.toString().strip();
+        saidText.setLength(0);
+        return text;
+    }
+
+    /**
      * Prints the given lines as one chatbot reply, wrapped between horizontal
      * rules so replies stand out from what the user typed.
      *
      * @param lines lines of the reply, printed in order
      */
     public void say(String... lines) {
-        System.out.println("    " + DIVIDER);
-        for (String line : lines) {
-            System.out.println("     " + line);
+        if (isPrintingToConsole) {
+            System.out.println("    " + DIVIDER);
+            for (String line : lines) {
+                System.out.println("     " + line);
+            }
+            System.out.println("    " + DIVIDER);
+            System.out.println();
         }
-        System.out.println("    " + DIVIDER);
-        System.out.println();
+        for (String line : lines) {
+            saidText.append(line).append(System.lineSeparator());
+        }
     }
 
     /**
@@ -58,7 +102,9 @@ public class Ui {
      * @param name the name the chatbot introduces itself with
      */
     public void showWelcome(String name) {
-        System.out.println(BANNER);
+        if (isPrintingToConsole) {
+            System.out.println(BANNER);
+        }
         say("Hello! I'm " + name + ", freshly loaded and ready to assist.",
                 "What are we working on today?");
     }

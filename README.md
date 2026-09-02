@@ -49,13 +49,20 @@ installed separately.
 
 | Command | What it does |
 |---|---|
-| `./gradlew run` | Runs the chatbot |
+| `./gradlew run` | Runs the chatbot's GUI |
 | `./gradlew build` | Compiles, tests, and assembles the project |
 | `./gradlew test` | Runs the JUnit tests |
 | `./gradlew clean` | Deletes the build directory |
 | `./gradlew clean shadowJar` | Builds a runnable JAR at `build/libs/sallman.jar` |
 
 Assertions are enabled for `run`, since Java otherwise ignores them.
+
+The text-based interface is still there alongside the GUI, and is what the
+text-UI tests drive:
+
+```
+java src/main/java/sallman/Sallman.java
+```
 
 ## Commands
 

@@ -19,6 +19,24 @@ repositories {
 }
 
 dependencies {
+    // Copied verbatim from the JavaFX tutorial's build.gradle.
+    String javaFxVersion = '17.0.7'
+
+    // All three platforms are listed, not just this one, so the app still
+    // works when it is built or run on a different OS.
+    implementation("org.openjfx:javafx-base:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-base:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-base:${javaFxVersion}:linux")
+    implementation("org.openjfx:javafx-controls:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-controls:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-controls:${javaFxVersion}:linux")
+    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-fxml:${javaFxVersion}:linux")
+    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:win")
+    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:mac")
+    implementation("org.openjfx:javafx-graphics:${javaFxVersion}:linux")
+
     String jUnitVersion = '5.14.4'
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
@@ -42,7 +60,7 @@ test {
 }
 
 application {
-    mainClass = 'sallman.Sallman'
+    mainClass = 'sallman.gui.Launcher'
 }
 
 jar {
