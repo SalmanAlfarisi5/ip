@@ -187,10 +187,24 @@ public class Ui {
      * @param tasks the tasks to show
      */
     public void showTaskList(TaskList tasks) {
-        String[] lines = new String[tasks.size() + 1];
-        lines[0] = "Here are the tasks in your list:";
-        for (int i = 0; i < tasks.size(); i++) {
-            lines[i + 1] = (i + 1) + "." + tasks.get(i);
+        sayNumbered("Here are the tasks in your list:", tasks.asList());
+    }
+
+    /**
+     * Shows a heading followed by tasks numbered from 1.
+     * <p>
+     * The lines are gathered into an array and handed to {@link #say(String...)}
+     * as its varargs argument, which is what lets one reply hold a heading and
+     * however many tasks there happen to be.
+     *
+     * @param heading the line introducing the tasks
+     * @param items   the tasks to number, in the order to show them
+     */
+    private void sayNumbered(String heading, List<Task> items) {
+        String[] lines = new String[items.size() + 1];
+        lines[0] = heading;
+        for (int i = 0; i < items.size(); i++) {
+            lines[i + 1] = (i + 1) + "." + items.get(i);
         }
         say(lines);
     }
@@ -206,12 +220,7 @@ public class Ui {
             say("No tasks match \"" + keyword + "\".");
             return;
         }
-        String[] lines = new String[matches.size() + 1];
-        lines[0] = "Here are the matching tasks in your list:";
-        for (int i = 0; i < matches.size(); i++) {
-            lines[i + 1] = (i + 1) + "." + matches.get(i);
-        }
-        say(lines);
+        sayNumbered("Here are the matching tasks in your list:", matches);
     }
 
     /**
@@ -225,12 +234,7 @@ public class Ui {
             say("Nothing on " + TaskDate.format(date) + ".");
             return;
         }
-        String[] lines = new String[matches.size() + 1];
-        lines[0] = "Here is what you have on " + TaskDate.format(date) + ":";
-        for (int i = 0; i < matches.size(); i++) {
-            lines[i + 1] = (i + 1) + "." + matches.get(i);
-        }
-        say(lines);
+        sayNumbered("Here is what you have on " + TaskDate.format(date) + ":", matches);
     }
 
     /**
