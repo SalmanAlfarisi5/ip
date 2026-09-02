@@ -33,6 +33,17 @@ Ensure that Java 25 is used when running the application or build tasks. On macO
 All Java code in this project follows the SE-EDU Java coding standard
 (intermediate level): https://se-education.org/guides/conventions/java/intermediate.html
 
+Checkstyle enforces it mechanically, using the configuration from AddressBook
+Level 3 in `config/checkstyle/`. Run it with:
+
+```
+./gradlew checkstyleMain checkstyleTest
+```
+
+The build must report no violations before a change is committed. Where
+Checkstyle and this document disagree, Checkstyle wins: it is the version that
+is actually checked.
+
 Any new or edited code must comply with it. The points this project has had to
 watch:
 
