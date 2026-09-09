@@ -20,7 +20,7 @@ public class Todo extends Task {
      */
     @Override
     public String toFileFormat() {
-        return "T | " + super.toFileFormat();
+        return "T" + SEPARATOR + super.toFileFormat();
     }
 
     /**

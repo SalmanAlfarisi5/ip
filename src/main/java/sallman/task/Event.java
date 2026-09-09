@@ -49,7 +49,8 @@ public class Event extends Task {
     public String toFileFormat() {
         // Saved in the input format, so the file stays readable and
         // reloadable regardless of how dates are displayed.
-        return "E | " + super.toFileFormat() + " | " + from + " | " + to;
+        return "E" + SEPARATOR + super.toFileFormat()
+                + SEPARATOR + from + SEPARATOR + to;
     }
 
     /**
