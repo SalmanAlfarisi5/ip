@@ -212,6 +212,16 @@ public class Ui {
     }
 
     /**
+     * Shows the task list in its new order.
+     *
+     * @param tasks     the tasks, already sorted
+     * @param orderName what they were sorted by, named as the user typed it
+     */
+    public void showSorted(TaskList tasks, String orderName) {
+        sayNumbered("Sorted your list by " + orderName + ":", tasks.asList());
+    }
+
+    /**
      * Shows the whole task list, numbered from 1.
      *
      * @param tasks the tasks to show

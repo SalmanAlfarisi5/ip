@@ -14,6 +14,8 @@ import sallman.command.FindCommand;
 import sallman.command.ListCommand;
 import sallman.command.MarkCommand;
 import sallman.command.OnCommand;
+import sallman.command.SortCommand;
+import sallman.command.SortOrder;
 import sallman.command.TagCommand;
 import sallman.command.UndoCommand;
 import sallman.task.Deadline;
@@ -86,6 +88,7 @@ public class Parser {
             case TAG -> new TagCommand(true, arguments);
             case UNTAG -> new TagCommand(false, arguments);
             case UNDO -> new UndoCommand();
+            case SORT -> new SortCommand(arguments);
         };
     }
 
@@ -194,6 +197,23 @@ public class Parser {
             }
         }
         return tags;
+    }
+
+    /**
+     * Reads the order given to a {@code sort} command.
+     * <p>
+     * Sorting by date is what the command is most often wanted for, so it is
+     * what a bare {@code sort} does.
+     *
+     * @param arguments text the user typed after the command
+     * @return the order to sort into
+     * @throws SallmanException if the order given is not one that is understood
+     */
+    public static SortOrder parseSortOrder(String arguments) throws SallmanException {
+        if (arguments.isEmpty()) {
+            return SortOrder.DATE;
+        }
+        return SortOrder.fromKeyword(arguments);
     }
 
     /**

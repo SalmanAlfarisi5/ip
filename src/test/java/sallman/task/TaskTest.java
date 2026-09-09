@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -157,6 +158,17 @@ public class TaskTest {
         task.addTag("fun");
 
         assertThrows(UnsupportedOperationException.class, () -> task.getTags().add("sneaky"));
+    }
+
+    @Test
+    public void getSortDate_eachType_theDateItComesUpOn() {
+        // An event is ordered by when it starts, not when it ends.
+        assertEquals(Optional.empty(), new Todo("read book").getSortDate());
+        assertEquals(Optional.of(LocalDate.of(2019, 10, 15)),
+                new Deadline("return book", LocalDate.of(2019, 10, 15)).getSortDate());
+        assertEquals(Optional.of(LocalDate.of(2019, 10, 14)),
+                new Event("conference", LocalDate.of(2019, 10, 14),
+                        LocalDate.of(2019, 10, 17)).getSortDate());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package sallman.task;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 /**
  * A task that runs from one point in time to another,
@@ -39,6 +40,16 @@ public class Event extends Task {
     @Override
     public boolean isOn(LocalDate date) {
         return !date.isBefore(from) && !date.isAfter(to);
+    }
+
+    /**
+     * Returns the start date, which is when this event comes up.
+     *
+     * @return the date the event begins
+     */
+    @Override
+    public Optional<LocalDate> getSortDate() {
+        return Optional.of(from);
     }
 
     /**

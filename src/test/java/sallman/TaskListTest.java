@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import sallman.command.SortOrder;
 import sallman.task.Deadline;
 import sallman.task.Event;
 import sallman.task.Task;
@@ -21,6 +22,76 @@ import sallman.task.Todo;
  * the way it was.
  */
 public class TaskListTest {
+
+    @Test
+    public void sort_byDate_soonestFirstAndUndatedLast() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.add(new Deadline("pay bill", LocalDate.of(2019, 12, 1)));
+        tasks.add(new Event("conference", LocalDate.of(2019, 10, 14),
+                LocalDate.of(2019, 10, 17)));
+
+        tasks.sort(SortOrder.DATE.getComparator());
+
+        // An event is ordered by when it starts, and a todo has no date at
+        // all, so it goes last rather than being dropped or coming first.
+        assertEquals("[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)",
+                tasks.get(0).toString());
+        assertEquals("[D][ ] pay bill (by: Dec 01 2019)", tasks.get(1).toString());
+        assertEquals("[T][ ] read book", tasks.get(2).toString());
+    }
+
+    @Test
+    public void sort_tasksTheOrderCannotSeparate_keptInTheOrderAdded() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("zebra"));
+        tasks.add(new Todo("apple"));
+
+        tasks.sort(SortOrder.DATE.getComparator());
+
+        assertEquals("[T][ ] zebra", tasks.get(0).toString());
+        assertEquals("[T][ ] apple", tasks.get(1).toString());
+    }
+
+    @Test
+    public void sort_byName_alphabeticalIgnoringCase() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("Zebra"));
+        tasks.add(new Todo("apple"));
+
+        tasks.sort(SortOrder.NAME.getComparator());
+
+        assertEquals("[T][ ] apple", tasks.get(0).toString());
+        assertEquals("[T][ ] Zebra", tasks.get(1).toString());
+    }
+
+    @Test
+    public void sort_byStatus_unfinishedFirst() {
+        TaskList tasks = new TaskList();
+        Todo done = new Todo("read book");
+        done.markAsDone();
+        tasks.add(done);
+        tasks.add(new Todo("buy milk"));
+
+        tasks.sort(SortOrder.STATUS.getComparator());
+
+        assertEquals("[T][ ] buy milk", tasks.get(0).toString());
+        assertEquals("[T][X] read book", tasks.get(1).toString());
+    }
+
+    @Test
+    public void undo_afterSort_originalOrderBack() throws Exception {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("zebra"));
+        tasks.add(new Todo("apple"));
+        tasks.saveSnapshot();
+        tasks.sort(SortOrder.NAME.getComparator());
+
+        tasks.undo();
+
+        assertEquals("[T][ ] zebra", tasks.get(0).toString());
+        assertEquals("[T][ ] apple", tasks.get(1).toString());
+    }
 
     @Test
     public void undo_afterAdd_taskGone() throws Exception {

@@ -3,6 +3,7 @@ package sallman.task;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,6 +50,37 @@ public class Task {
     public Task(String description) {
         this.description = description;
         this.isDone = false;
+    }
+
+    /**
+     * Returns what this task involves, as the user described it.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Returns whether this task has been completed.
+     *
+     * @return true once the task has been marked done
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
+     * Returns the date this task should be ordered by.
+     * <p>
+     * A plain task carries no date, so it has nothing to be ordered by.
+     * Subclasses that hold dates return the one that decides when the task
+     * comes up: a deadline is due on one date, an event starts on one.
+     *
+     * @return the date to sort by, empty for a task that carries no date
+     */
+    public Optional<LocalDate> getSortDate() {
+        return Optional.empty();
     }
 
     /**

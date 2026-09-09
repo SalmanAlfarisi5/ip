@@ -94,6 +94,7 @@ java src/main/java/sallman/Sallman.java
 | Mark done / not done | `mark 2`, `unmark 2` |
 | Delete | `delete 2` |
 | Tag / untag | `tag 2 fun books`, `untag 2 fun` |
+| Sort | `sort`, `sort name`, `sort status` |
 | Undo the last change | `undo` |
 | Exit | `bye` |
 
@@ -103,6 +104,10 @@ Tags are shown after the task, e.g. `[T][ ] read book #fun #books`. A leading
 `#` is optional when typing one, tags are matched without regard to case, and
 `find` searches them as well as the description. A tag may contain letters,
 digits, hyphens and underscores.
+
+`sort` reorders the list and keeps the new order. A bare `sort` puts the
+soonest task first, with undated todos last; `sort name` orders by description
+and `sort status` puts unfinished tasks first. Sorting can be undone.
 
 `undo` reverses the last change to the list, and can be repeated to walk back
 through the last 20 changes. Only changes made since the chatbot started can

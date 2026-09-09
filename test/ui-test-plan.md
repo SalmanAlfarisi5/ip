@@ -239,7 +239,7 @@ bye
 ```text
     ____________________________________________________________
      Sorry, I don't know what "blah" means.
-     I understand: todo, deadline, event, list, find, mark, unmark, delete, tag, untag, undo, on, bye.
+     I understand: todo, deadline, event, list, find, mark, unmark, delete, tag, untag, undo, sort, on, bye.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -1482,6 +1482,136 @@ bye
     ____________________________________________________________
      There is nothing to undo.
      I can only undo changes made since the chatbot started.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC30: Sorting the list
+
+**Aim:** Verify a bare `sort` orders by date with undated tasks last, that an event
+is placed by when it starts, and that `sort name` and `sort status` order by
+description and by whether the task is done.
+
+**Input:**
+
+```text
+todo zebra
+deadline pay bill /by 2019-12-01
+event conference /from 2019-10-14 /to 2019-10-17
+mark 1
+sort
+sort name
+sort status
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] zebra
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] pay bill (by: Dec 01 2019)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+     Now you have 3 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [T][X] zebra
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Sorted your list by date:
+     1.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+     2.[D][ ] pay bill (by: Dec 01 2019)
+     3.[T][X] zebra
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Sorted your list by name:
+     1.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+     2.[D][ ] pay bill (by: Dec 01 2019)
+     3.[T][X] zebra
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Sorted your list by status:
+     1.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+     2.[D][ ] pay bill (by: Dec 01 2019)
+     3.[T][X] zebra
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC31: An unknown sort order is refused, and a sort can be undone
+
+**Aim:** Verify an order the chatbot does not know is named back with the orders it
+does know, and that `undo` restores the order the list was in before a sort.
+
+**Input:**
+
+```text
+todo zebra
+todo apple
+sort sideways
+sort name
+undo
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] zebra
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] apple
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     I don't know how to sort by "sideways".
+     I can sort by: date, name, status.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Sorted your list by name:
+     1.[T][ ] apple
+     2.[T][ ] zebra
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OK, I've put your list back the way it was.
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] zebra
+     2.[T][ ] apple
     ____________________________________________________________
 
     ____________________________________________________________

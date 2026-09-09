@@ -17,6 +17,8 @@ import sallman.command.FindCommand;
 import sallman.command.ListCommand;
 import sallman.command.MarkCommand;
 import sallman.command.OnCommand;
+import sallman.command.SortCommand;
+import sallman.command.SortOrder;
 import sallman.command.TagCommand;
 import sallman.task.Deadline;
 import sallman.task.Event;
@@ -40,6 +42,7 @@ public class ParserTest {
         assertInstanceOf(FindCommand.class, Parser.parse("find book"));
         assertInstanceOf(TagCommand.class, Parser.parse("tag 1 fun"));
         assertInstanceOf(TagCommand.class, Parser.parse("untag 1 fun"));
+        assertInstanceOf(SortCommand.class, Parser.parse("sort"));
     }
 
     @Test
@@ -214,6 +217,25 @@ public class ParserTest {
     @Test
     public void splitTaskNumberAndTags_nothingGiven_rejected() {
         assertThrows(SallmanException.class, () -> Parser.splitTaskNumberAndTags("tag", ""));
+    }
+
+    @Test
+    public void parseSortOrder_noOrderGiven_sortsByDate() throws Exception {
+        assertEquals(SortOrder.DATE, Parser.parseSortOrder(""));
+    }
+
+    @Test
+    public void parseSortOrder_namedOrder_thatOrderChosen() throws Exception {
+        assertEquals(SortOrder.NAME, Parser.parseSortOrder("name"));
+        assertEquals(SortOrder.STATUS, Parser.parseSortOrder("status"));
+    }
+
+    @Test
+    public void parseSortOrder_unknownOrder_rejectedAndListsTheKnownOnes() {
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseSortOrder("sideways"));
+
+        assertEquals("I don't know how to sort by \"sideways\".", e.getMessage());
+        assertEquals("date, name, status", SortOrder.keywords());
     }
 
     @Test
