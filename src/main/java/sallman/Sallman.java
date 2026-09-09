@@ -69,6 +69,9 @@ public class Sallman {
             ui.showError(e);
             loaded = new TaskList();
         }
+        // Whichever branch above ran, the chatbot starts with a usable list:
+        // a failed load leaves an empty one rather than nothing at all.
+        assert loaded != null : "the chatbot must start with a task list";
         this.tasks = loaded;
     }
 
@@ -85,6 +88,9 @@ public class Sallman {
             }
             try {
                 Command command = Parser.parse(fullCommand);
+                // Parser.parse either returns a command or throws, so there is
+                // no third case for the loop to handle.
+                assert command != null : "parser returned no command for: " + fullCommand;
                 command.execute(tasks, ui, storage);
                 isExit = command.isExit();
             } catch (SallmanException e) {
@@ -122,6 +128,7 @@ public class Sallman {
         }
         try {
             Command command = Parser.parse(trimmed);
+            assert command != null : "parser returned no command for: " + trimmed;
             command.execute(tasks, ui, storage);
             isExitRequested = command.isExit();
             lastCommandType = command.getClass().getSimpleName();

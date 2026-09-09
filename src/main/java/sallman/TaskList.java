@@ -50,6 +50,11 @@ public class TaskList {
      * @return the task that was removed
      */
     public Task remove(int index) {
+        // Parser.parseTaskNumber has already rejected a number outside the
+        // list, so an index arriving here out of range is a bug in the chatbot
+        // rather than something the user typed.
+        assert index >= 0 && index < tasks.size()
+                : "removing index " + index + " from " + tasks.size() + " tasks";
         return tasks.remove(index);
     }
 
@@ -60,6 +65,9 @@ public class TaskList {
      * @return the task there
      */
     public Task get(int index) {
+        // Checked by the parser before the command runs, as with remove().
+        assert index >= 0 && index < tasks.size()
+                : "reading index " + index + " of " + tasks.size() + " tasks";
         return tasks.get(index);
     }
 
