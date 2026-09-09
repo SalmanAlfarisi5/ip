@@ -87,6 +87,9 @@ public class Parser {
      */
     private static String[] splitCommand(String input) {
         String[] words = input.split("\\s+", 2);
+        // split() returns at least one element for any input, including an
+        // empty one, so words[0] below never needs a length check of its own.
+        assert words.length >= 1 : "split returned nothing for: " + input;
         String arguments = words.length > 1 ? words[1].trim() : "";
         return new String[] {words[0], arguments};
     }
@@ -155,6 +158,10 @@ public class Parser {
                             ? "You only have task 1."
                             : "Pick a number from 1 to " + taskCount + ".");
         }
+        // Every out-of-range number has been rejected above, so whoever called
+        // this can index the list straight away without checking again.
+        assert index >= 0 && index < taskCount
+                : "returning out-of-range index " + index + " for " + taskCount + " tasks";
         return index;
     }
 
