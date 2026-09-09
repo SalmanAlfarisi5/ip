@@ -52,6 +52,47 @@ public class StorageTest {
     }
 
     @Test
+    public void loadThenSave_taggedTasks_tagsRoundTrip() throws Exception {
+        Storage storage = new Storage(folder.resolve("tasks.txt").toString());
+        Todo todo = new Todo("read book");
+        todo.addTag("fun");
+        todo.addTag("books");
+        Deadline deadline = new Deadline("return book", LocalDate.of(2019, 10, 15));
+        deadline.addTag("urgent");
+
+        storage.save(List.of(todo, deadline));
+        List<Task> loaded = storage.load();
+
+        assertEquals("[T][ ] read book #fun #books", loaded.get(0).toString());
+        assertEquals("[D][ ] return book (by: Oct 15 2019) #urgent",
+                loaded.get(1).toString());
+    }
+
+    @Test
+    public void load_fileWrittenBeforeTagsExisted_stillReadsCorrectly() throws Exception {
+        // The tag field is optional and marked with #, so a line without one
+        // must not have its last field mistaken for tags.
+        Storage storage = write("T | 0 | read book",
+                "D | 0 | return book | 2019-10-15",
+                "E | 0 | conference | 2019-10-14 | 2019-10-17");
+
+        List<Task> loaded = storage.load();
+
+        assertTrue(storage.getSkippedLines().isEmpty());
+        assertEquals("[T][ ] read book", loaded.get(0).toString());
+        assertEquals("[D][ ] return book (by: Oct 15 2019)", loaded.get(1).toString());
+        assertEquals("[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)",
+                loaded.get(2).toString());
+    }
+
+    @Test
+    public void load_descriptionContainsSeparator_notMistakenForTags() throws Exception {
+        Storage storage = write("T | 0 | pipe | in description");
+
+        assertEquals("[T][ ] pipe | in description", storage.load().get(0).toString());
+    }
+
+    @Test
     public void load_fileDoesNotExist_emptyListAndNoError() throws Exception {
         // The first run on a new computer has no data file, which is not a fault.
         Storage storage = new Storage(folder.resolve("never-written.txt").toString());

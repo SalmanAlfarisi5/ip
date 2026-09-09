@@ -34,14 +34,34 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns the due date as a saved field.
+     *
+     * @return the separator followed by the date in the input format
+     */
+    @Override
+    protected String dateFields() {
+        // Saved in the input format, so the file stays readable and
+        // reloadable regardless of how dates are displayed.
+        return SEPARATOR + by;
+    }
+
+    /**
+     * Returns the due date as it is shown, e.g. {@code " (by: Oct 15 2019)"}.
+     *
+     * @return the due date in brackets, after the description
+     */
+    @Override
+    protected String details() {
+        return " (by: " + TaskDate.format(by) + ")";
+    }
+
+    /**
      * Returns this deadline as one line of the data file,
      * e.g. {@code D | 0 | return book | 2019-10-15}.
      */
     @Override
     public String toFileFormat() {
-        // Saved in the input format, so the file stays readable and
-        // reloadable regardless of how dates are displayed.
-        return "D" + SEPARATOR + super.toFileFormat() + SEPARATOR + by;
+        return "D" + SEPARATOR + super.toFileFormat();
     }
 
     /**
@@ -50,6 +70,6 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + TaskDate.format(by) + ")";
+        return "[D]" + super.toString();
     }
 }

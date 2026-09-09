@@ -1,10 +1,12 @@
 package sallman;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +17,7 @@ import sallman.command.FindCommand;
 import sallman.command.ListCommand;
 import sallman.command.MarkCommand;
 import sallman.command.OnCommand;
+import sallman.command.TagCommand;
 import sallman.task.Deadline;
 import sallman.task.Event;
 import sallman.task.Todo;
@@ -35,6 +38,8 @@ public class ParserTest {
         assertInstanceOf(DeleteCommand.class, Parser.parse("delete 1"));
         assertInstanceOf(AddCommand.class, Parser.parse("todo read book"));
         assertInstanceOf(FindCommand.class, Parser.parse("find book"));
+        assertInstanceOf(TagCommand.class, Parser.parse("tag 1 fun"));
+        assertInstanceOf(TagCommand.class, Parser.parse("untag 1 fun"));
     }
 
     @Test
@@ -173,6 +178,42 @@ public class ParserTest {
     public void parseTaskNumber_emptyList_exceptionSaysListIsEmpty() {
         SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseTaskNumber("mark", "1", 0));
         assertEquals("There is no task 1: your list is empty.", e.getMessage());
+    }
+
+    @Test
+    public void parseTags_leadingHashOptional_strippedEitherWay() throws Exception {
+        assertEquals(List.of("fun", "books"), Parser.parseTags("tag", "fun #books"));
+    }
+
+    @Test
+    public void parseTags_noTagGiven_rejected() {
+        assertThrows(SallmanException.class, () -> Parser.parseTags("tag", ""));
+        assertThrows(SallmanException.class, () -> Parser.parseTags("tag", "#"));
+    }
+
+    @Test
+    public void parseTags_tagWithPunctuation_rejected() {
+        // A tag sharing the file's field separator, or containing spaces,
+        // could not be written and read back reliably.
+        assertThrows(SallmanException.class, () -> Parser.parseTags("tag", "bad!tag"));
+        assertThrows(SallmanException.class, () -> Parser.parseTags("tag", "a|b"));
+    }
+
+    @Test
+    public void parseTags_hyphensAndUnderscores_accepted() throws Exception {
+        assertEquals(List.of("in-tray", "read_later"),
+                Parser.parseTags("tag", "in-tray read_later"));
+    }
+
+    @Test
+    public void splitTaskNumberAndTags_numberThenTags_separated() throws Exception {
+        assertArrayEquals(new String[] {"2", "fun books"},
+                Parser.splitTaskNumberAndTags("tag", "2 fun books"));
+    }
+
+    @Test
+    public void splitTaskNumberAndTags_nothingGiven_rejected() {
+        assertThrows(SallmanException.class, () -> Parser.splitTaskNumberAndTags("tag", ""));
     }
 
     @Test

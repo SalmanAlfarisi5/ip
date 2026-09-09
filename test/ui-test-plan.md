@@ -239,7 +239,7 @@ bye
 ```text
     ____________________________________________________________
      Sorry, I don't know what "blah" means.
-     I understand: todo, deadline, event, list, find, mark, unmark, delete, on, bye.
+     I understand: todo, deadline, event, list, find, mark, unmark, delete, tag, untag, on, bye.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -1214,6 +1214,155 @@ bye
     ____________________________________________________________
      find needs something to search for.
      Try: find book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC25: Tagging tasks
+
+**Aim:** Verify `tag` attaches labels to a task and that the tags are shown
+after any dates the task carries, rather than between the description and them.
+A leading `#` is optional when typing a tag.
+
+**Input:**
+
+```text
+todo read book
+deadline return book /by 2019-10-15
+tag 1 fun books
+tag 2 #urgent
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [D][ ] return book (by: Oct 15 2019)
+     Now you have 2 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Tagged this task:
+       [T][ ] read book #fun #books
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Tagged this task:
+       [D][ ] return book (by: Oct 15 2019) #urgent
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][ ] read book #fun #books
+     2.[D][ ] return book (by: Oct 15 2019) #urgent
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC26: Untagging, including a tag that is not there
+
+**Aim:** Verify `untag` removes a tag whatever case it is typed in, and that
+removing a tag the task does not have is reported rather than silently doing
+nothing.
+
+**Input:**
+
+```text
+todo read book
+tag 1 fun
+untag 1 FUN
+untag 1 fun
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Tagged this task:
+       [T][ ] read book #fun
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Untagged this task:
+       [T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     That task has none of the tags you named:
+       [T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC27: Tag commands with bad arguments are refused
+
+**Aim:** Verify each way of misusing `tag` and `untag` is named specifically:
+a task number outside the list, no tag at all, and a tag containing characters
+that could not be written to the data file.
+
+**Input:**
+
+```text
+todo read book
+tag 5 fun
+tag 1
+tag 1 bad!tag
+untag
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There is no task 5 in your list.
+     You only have task 1.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     tag needs at least one tag.
+     Try: tag 2 fun
+    ____________________________________________________________
+
+    ____________________________________________________________
+     I can't use "bad!tag" as a tag.
+     A tag is made of letters, digits, hyphens or underscores.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     untag needs a task number and a tag.
+     Try: untag 2 fun
     ____________________________________________________________
 
     ____________________________________________________________

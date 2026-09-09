@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -24,8 +25,12 @@ import sallman.task.Todo;
  * T | 1 | read book
  * D | 0 | return book | 2019-10-15
  * E | 0 | project meeting | 2019-10-15 | 2019-10-16
+ * T | 0 | read book | #fun,books
  * </pre>
  * The first field is the task type, the second is 1 when the task is done.
+ * A line may end with a tag field, recognised by its {@code #} prefix; a task
+ * with no tags simply leaves it out, so files written before tags existed are
+ * still read correctly.
  */
 public class Storage {
 
@@ -160,11 +165,53 @@ public class Storage {
                     + doneFlag + "\"");
         }
 
-        Task task = readTask(type, rest);
+        String[] fieldsAndTags = splitOffTags(rest);
+        Task task = readTask(type, fieldsAndTags[0]);
+        applyTags(task, fieldsAndTags[1]);
         if (doneFlag.equals("1")) {
             task.markAsDone();
         }
         return task;
+    }
+
+    /**
+     * Splits the optional tag field off the end of a line's remaining fields.
+     * <p>
+     * The field is recognised by its {@code #} prefix rather than by its
+     * position, because a task may carry dates, tags, both or neither, and
+     * because a file saved before tags existed has no such field at all.
+     *
+     * @param rest everything on the line after the done flag
+     * @return the remaining fields at index 0, and the tag field without its
+     *         prefix at index 1, the latter empty when there is no tag field
+     */
+    private static String[] splitOffTags(String rest) {
+        int cut = rest.lastIndexOf(SEPARATOR);
+        if (cut < 0) {
+            return new String[] {rest, ""};
+        }
+        String last = rest.substring(cut + SEPARATOR.length()).trim();
+        if (!last.startsWith(Task.TAG_FIELD_PREFIX)) {
+            return new String[] {rest, ""};
+        }
+        return new String[] {rest.substring(0, cut),
+                last.substring(Task.TAG_FIELD_PREFIX.length())};
+    }
+
+    /**
+     * Attaches the tags read from a saved line to the task built from it.
+     *
+     * @param task     the task that line describes
+     * @param tagField the tag field without its prefix, possibly empty
+     */
+    private static void applyTags(Task task, String tagField) {
+        if (tagField.isEmpty()) {
+            return;
+        }
+        Arrays.stream(tagField.split(","))
+                .map(String::trim)
+                .filter(tag -> !tag.isEmpty())
+                .forEach(task::addTag);
     }
 
     /**
