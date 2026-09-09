@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import sallman.task.Task;
 import sallman.task.TaskDate;
@@ -201,11 +203,11 @@ public class Ui {
      * @param items   the tasks to number, in the order to show them
      */
     private void sayNumbered(String heading, List<Task> items) {
-        String[] lines = new String[items.size() + 1];
-        lines[0] = heading;
-        for (int i = 0; i < items.size(); i++) {
-            lines[i + 1] = (i + 1) + "." + items.get(i);
-        }
+        String[] lines = Stream.concat(
+                        Stream.of(heading),
+                        IntStream.range(0, items.size())
+                                .mapToObj(i -> (i + 1) + "." + items.get(i)))
+                .toArray(String[]::new);
         say(lines);
     }
 

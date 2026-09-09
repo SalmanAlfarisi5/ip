@@ -1,5 +1,8 @@
 package sallman;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 /**
  * Signals that the user's input could not be carried out, for a reason worth
  * explaining to them.
@@ -37,9 +40,7 @@ public class SallmanException extends Exception {
      * @return the message, followed by any hints
      */
     public String[] toLines() {
-        String[] lines = new String[hints.length + 1];
-        lines[0] = getMessage();
-        System.arraycopy(hints, 0, lines, 1, hints.length);
-        return lines;
+        return Stream.concat(Stream.of(getMessage()), Arrays.stream(hints))
+                .toArray(String[]::new);
     }
 }
