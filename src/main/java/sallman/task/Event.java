@@ -42,15 +42,36 @@ public class Event extends Task {
     }
 
     /**
+     * Returns the start and end dates as saved fields.
+     *
+     * @return the two dates in the input format, each behind a separator
+     */
+    @Override
+    protected String dateFields() {
+        // Saved in the input format, so the file stays readable and
+        // reloadable regardless of how dates are displayed.
+        return SEPARATOR + from + SEPARATOR + to;
+    }
+
+    /**
+     * Returns the dates as they are shown, e.g.
+     * {@code " (from: Oct 15 2019 to: Oct 16 2019)"}.
+     *
+     * @return the span in brackets, after the description
+     */
+    @Override
+    protected String details() {
+        return " (from: " + TaskDate.format(from)
+                + " to: " + TaskDate.format(to) + ")";
+    }
+
+    /**
      * Returns this event as one line of the data file,
      * e.g. {@code E | 0 | project meeting | 2019-10-15 | 2019-10-16}.
      */
     @Override
     public String toFileFormat() {
-        // Saved in the input format, so the file stays readable and
-        // reloadable regardless of how dates are displayed.
-        return "E" + SEPARATOR + super.toFileFormat()
-                + SEPARATOR + from + SEPARATOR + to;
+        return "E" + SEPARATOR + super.toFileFormat();
     }
 
     /**
@@ -59,7 +80,6 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + TaskDate.format(from)
-                + " to: " + TaskDate.format(to) + ")";
+        return "[E]" + super.toString();
     }
 }

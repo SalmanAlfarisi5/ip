@@ -184,6 +184,25 @@ public class Ui {
     }
 
     /**
+     * Confirms a change to a task's tags, or says there was nothing to change.
+     *
+     * @param task         the task, already updated
+     * @param isAddingTags true if tags were being attached rather than removed
+     * @param hasChanged   false when the task already had, or already lacked,
+     *                     every tag named
+     */
+    public void showTagged(Task task, boolean isAddingTags, boolean hasChanged) {
+        if (!hasChanged) {
+            say(isAddingTags
+                            ? "That task already has every tag you named:"
+                            : "That task has none of the tags you named:",
+                    "  " + task);
+            return;
+        }
+        say(isAddingTags ? "Tagged this task:" : "Untagged this task:", "  " + task);
+    }
+
+    /**
      * Shows the whole task list, numbered from 1.
      *
      * @param tasks the tasks to show

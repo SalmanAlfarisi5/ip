@@ -1,6 +1,9 @@
 package sallman;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import sallman.command.AddCommand;
 import sallman.command.Command;
@@ -11,6 +14,7 @@ import sallman.command.FindCommand;
 import sallman.command.ListCommand;
 import sallman.command.MarkCommand;
 import sallman.command.OnCommand;
+import sallman.command.TagCommand;
 import sallman.task.Deadline;
 import sallman.task.Event;
 import sallman.task.Task;
@@ -36,6 +40,13 @@ public class Parser {
             "Try: deadline return book /by " + TaskDate.EXAMPLE;
     private static final String EVENT_EXAMPLE =
             "Try: event project meeting /from " + TaskDate.EXAMPLE + " /to 2019-10-16";
+
+    /**
+     * What a tag may be made of. Whitespace is excluded because tags are
+     * separated by it, and the field separator because a tag is saved on the
+     * same line as one.
+     */
+    private static final Pattern TAG_PATTERN = Pattern.compile("[A-Za-z0-9_\\-]+");
 
     /** Not meant to be instantiated: this class only holds static helpers. */
     private Parser() {
@@ -71,6 +82,8 @@ public class Parser {
             case TODO -> new AddCommand(parseTodo(arguments));
             case DEADLINE -> new AddCommand(parseDeadline(arguments));
             case EVENT -> new AddCommand(parseEvent(arguments));
+            case TAG -> new TagCommand(true, arguments);
+            case UNTAG -> new TagCommand(false, arguments);
         };
     }
 
@@ -130,6 +143,55 @@ public class Parser {
         if (value.isEmpty()) {
             throw new SallmanException(message, example);
         }
+    }
+
+    /**
+     * Splits the arguments of a tag command into the task number and the tags.
+     *
+     * @param command   the command the arguments were given to, for messages
+     * @param arguments text the user typed after the command
+     * @return the task number at index 0 and the tags at index 1
+     * @throws SallmanException if nothing was given after the command
+     */
+    public static String[] splitTaskNumberAndTags(String command, String arguments)
+            throws SallmanException {
+        if (arguments.isEmpty()) {
+            throw new SallmanException(command + " needs a task number and a tag.",
+                    "Try: " + command + " 2 fun");
+        }
+        String[] words = arguments.split("\\s+", 2);
+        String tags = words.length > 1 ? words[1].trim() : "";
+        return new String[] {words[0], tags};
+    }
+
+    /**
+     * Reads the tags given to a tag command.
+     * <p>
+     * A leading {@code #} is optional, so both {@code tag 2 fun} and
+     * {@code tag 2 #fun} work; the tag is stored without it either way.
+     *
+     * @param command the command the tags were given to, for messages
+     * @param text    the part of the arguments after the task number
+     * @return the tags, in the order they were typed
+     * @throws SallmanException if no tag was given, or one is not a valid tag
+     */
+    public static List<String> parseTags(String command, String text)
+            throws SallmanException {
+        List<String> tags = Arrays.stream(text.split("\\s+"))
+                .map(tag -> tag.startsWith("#") ? tag.substring(1) : tag)
+                .filter(tag -> !tag.isEmpty())
+                .toList();
+        if (tags.isEmpty()) {
+            throw new SallmanException(command + " needs at least one tag.",
+                    "Try: " + command + " 2 fun");
+        }
+        for (String tag : tags) {
+            if (!TAG_PATTERN.matcher(tag).matches()) {
+                throw new SallmanException("I can't use \"" + tag + "\" as a tag.",
+                        "A tag is made of letters, digits, hyphens or underscores.");
+            }
+        }
+        return tags;
     }
 
     /**

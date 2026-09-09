@@ -93,9 +93,15 @@ java src/main/java/sallman/Sallman.java
 | List one day | `on 2019-10-15` |
 | Mark done / not done | `mark 2`, `unmark 2` |
 | Delete | `delete 2` |
+| Tag / untag | `tag 2 fun books`, `untag 2 fun` |
 | Exit | `bye` |
 
 Dates are entered as `yyyy-mm-dd` and shown back as `MMM dd yyyy`.
+
+Tags are shown after the task, e.g. `[T][ ] read book #fun #books`. A leading
+`#` is optional when typing one, tags are matched without regard to case, and
+`find` searches them as well as the description. A tag may contain letters,
+digits, hyphens and underscores.
 
 ## Where your tasks are saved
 
