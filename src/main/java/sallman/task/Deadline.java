@@ -56,6 +56,16 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns an independent copy of this deadline.
+     *
+     * @return a deadline equal to this one, sharing none of its mutable state
+     */
+    @Override
+    public Task copy() {
+        return copyInto(new Deadline(description, by));
+    }
+
+    /**
      * Returns this deadline as one line of the data file,
      * e.g. {@code D | 0 | return book | 2019-10-15}.
      */

@@ -50,6 +50,7 @@ public class MarkCommand extends Command {
                 : CommandType.UNMARK.getKeyword();
         int index = Parser.parseTaskNumber(keyword, arguments, tasks.size());
         Task task = tasks.get(index);
+        tasks.saveSnapshot();
         if (isMarkingDone) {
             task.markAsDone();
             ui.showMarked(task);

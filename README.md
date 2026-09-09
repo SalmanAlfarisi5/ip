@@ -94,6 +94,7 @@ java src/main/java/sallman/Sallman.java
 | Mark done / not done | `mark 2`, `unmark 2` |
 | Delete | `delete 2` |
 | Tag / untag | `tag 2 fun books`, `untag 2 fun` |
+| Undo the last change | `undo` |
 | Exit | `bye` |
 
 Dates are entered as `yyyy-mm-dd` and shown back as `MMM dd yyyy`.
@@ -102,6 +103,10 @@ Tags are shown after the task, e.g. `[T][ ] read book #fun #books`. A leading
 `#` is optional when typing one, tags are matched without regard to case, and
 `find` searches them as well as the description. A tag may contain letters,
 digits, hyphens and underscores.
+
+`undo` reverses the last change to the list, and can be repeated to walk back
+through the last 20 changes. Only changes made since the chatbot started can
+be undone, and a command the chatbot rejected does not count as one.
 
 ## Where your tasks are saved
 

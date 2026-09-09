@@ -71,6 +71,34 @@ public class Task {
     }
 
     /**
+     * Returns an independent copy of this task.
+     * <p>
+     * Undo remembers past states of the list, and a task is mutable, so a
+     * remembered state has to hold copies. Sharing the tasks would let a later
+     * mark or tag change the very state that undo is meant to restore.
+     *
+     * @return a task equal to this one that can be changed without affecting it
+     */
+    public Task copy() {
+        return copyInto(new Task(description));
+    }
+
+    /**
+     * Copies the state every task has into a new task of the right type.
+     * <p>
+     * Subclasses pass a new instance carrying their own fields, which spares
+     * each of them from having to know about the done flag and the tags.
+     *
+     * @param copy a new task holding this one's description and any dates
+     * @return the same task, with the done status and tags filled in
+     */
+    protected Task copyInto(Task copy) {
+        copy.isDone = this.isDone;
+        copy.tags.addAll(this.tags);
+        return copy;
+    }
+
+    /**
      * Returns whether this task's description contains the given keyword.
      * <p>
      * The comparison ignores case, so searching for "book" also finds "Book".

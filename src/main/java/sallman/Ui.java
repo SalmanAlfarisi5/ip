@@ -203,6 +203,15 @@ public class Ui {
     }
 
     /**
+     * Confirms that the last change was undone.
+     *
+     * @param taskCount number of tasks in the restored list
+     */
+    public void showUndone(int taskCount) {
+        say("OK, I've put your list back the way it was.", taskCountSummary(taskCount));
+    }
+
+    /**
      * Shows the whole task list, numbered from 1.
      *
      * @param tasks the tasks to show

@@ -160,6 +160,32 @@ public class TaskTest {
     }
 
     @Test
+    public void copy_changingTheCopy_leavesTheOriginalAlone() {
+        Deadline original = new Deadline("return book", LocalDate.of(2019, 10, 15));
+        original.addTag("fun");
+
+        Task copy = original.copy();
+        copy.markAsDone();
+        copy.addTag("later");
+        copy.removeTag("fun");
+
+        assertEquals("[D][ ] return book (by: Oct 15 2019) #fun", original.toString());
+        assertEquals("[D][X] return book (by: Oct 15 2019) #later", copy.toString());
+    }
+
+    @Test
+    public void copy_eachType_keepsTypeAndFields() {
+        Todo todo = new Todo("read book");
+        todo.markAsDone();
+        Event event = new Event("conference", LocalDate.of(2019, 10, 14),
+                LocalDate.of(2019, 10, 17));
+
+        assertEquals("[T][X] read book", todo.copy().toString());
+        assertEquals("[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)",
+                event.copy().toString());
+    }
+
+    @Test
     public void isOn_todo_neverOnAnyDate() {
         // A todo carries no date, so it must not appear under any day.
         assertFalse(new Todo("read book").isOn(LocalDate.of(2019, 10, 15)));

@@ -15,6 +15,7 @@ import sallman.command.ListCommand;
 import sallman.command.MarkCommand;
 import sallman.command.OnCommand;
 import sallman.command.TagCommand;
+import sallman.command.UndoCommand;
 import sallman.task.Deadline;
 import sallman.task.Event;
 import sallman.task.Task;
@@ -84,6 +85,7 @@ public class Parser {
             case EVENT -> new AddCommand(parseEvent(arguments));
             case TAG -> new TagCommand(true, arguments);
             case UNTAG -> new TagCommand(false, arguments);
+            case UNDO -> new UndoCommand();
         };
     }
 
