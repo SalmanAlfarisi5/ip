@@ -41,7 +41,7 @@ public class Deadline extends Task {
     public String toFileFormat() {
         // Saved in the input format, so the file stays readable and
         // reloadable regardless of how dates are displayed.
-        return "D | " + super.toFileFormat() + " | " + by;
+        return "D" + SEPARATOR + super.toFileFormat() + SEPARATOR + by;
     }
 
     /**

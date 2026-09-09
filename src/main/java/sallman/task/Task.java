@@ -7,6 +7,13 @@ import java.time.LocalDate;
  */
 public class Task {
 
+    /**
+     * What separates the fields of one saved line. Defined here because the
+     * task classes are what write those lines; {@link sallman.Storage} reads
+     * the same constant back, so the two cannot drift apart.
+     */
+    public static final String SEPARATOR = " | ";
+
     /** Description of what the task involves, as typed by the user. */
     protected String description;
 
@@ -74,7 +81,7 @@ public class Task {
      * @return the done flag and description, separated by {@code " | "}
      */
     public String toFileFormat() {
-        return (isDone ? "1" : "0") + " | " + description;
+        return (isDone ? "1" : "0") + SEPARATOR + description;
     }
 
     /**
