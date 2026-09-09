@@ -1,5 +1,7 @@
 # saLLMan
 
+[![Java CI](https://github.com/SalmanAlfarisi5/ip/actions/workflows/gradle.yml/badge.svg)](https://github.com/SalmanAlfarisi5/ip/actions/workflows/gradle.yml)
+
 saLLMan is a chatbot that helps you keep track of your tasks:
 todos, deadlines and events. Your list is saved to disk automatically and
 loaded again the next time you start it.
