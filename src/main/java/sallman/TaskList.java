@@ -1,7 +1,9 @@
 package sallman;
 
 import java.time.LocalDate;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 import sallman.task.Task;
@@ -17,8 +19,18 @@ import sallman.task.Task;
  */
 public class TaskList {
 
+    /**
+     * How many past states are remembered. Undo is expected to walk back over
+     * a mistake, not over a whole session, and every remembered state holds a
+     * copy of every task, so the list is capped.
+     */
+    private static final int HISTORY_LIMIT = 20;
+
     /** The tasks, in the order the user added them. */
     private final List<Task> tasks;
+
+    /** Past states of the list, most recent first. */
+    private final Deque<List<Task>> history = new ArrayDeque<>();
 
     /** Creates an empty list. */
     public TaskList() {
@@ -108,6 +120,45 @@ public class TaskList {
         return tasks.stream()
                 .filter(task -> task.hasKeyword(keyword))
                 .toList();
+    }
+
+    /**
+     * Remembers the current state, so that the change about to be made can be
+     * undone.
+     * <p>
+     * Called by a command once it knows it is going to change something, so
+     * that a command rejected for a bad task number does not leave a state
+     * that undo would then restore to no effect.
+     */
+    public void saveSnapshot() {
+        history.push(tasks.stream().map(Task::copy).toList());
+        while (history.size() > HISTORY_LIMIT) {
+            history.removeLast();
+        }
+    }
+
+    /**
+     * Restores the state from before the most recent remembered change.
+     *
+     * @throws SallmanException if nothing has been changed yet this session
+     */
+    public void undo() throws SallmanException {
+        if (history.isEmpty()) {
+            throw new SallmanException("There is nothing to undo.",
+                    "I can only undo changes made since the chatbot started.");
+        }
+        List<Task> previous = history.pop();
+        tasks.clear();
+        tasks.addAll(previous);
+    }
+
+    /**
+     * Returns how many changes can still be undone.
+     *
+     * @return the number of remembered states
+     */
+    public int getUndoCount() {
+        return history.size();
     }
 
     /**

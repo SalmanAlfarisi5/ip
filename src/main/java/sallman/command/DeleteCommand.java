@@ -39,6 +39,7 @@ public class DeleteCommand extends Command {
         // in range depends on the list, which the parser does not see.
         int index = Parser.parseTaskNumber(CommandType.DELETE.getKeyword(), arguments,
                 tasks.size());
+        tasks.saveSnapshot();
         Task removed = tasks.remove(index);
         ui.showRemoved(removed, tasks.size());
         storage.save(tasks.asList());

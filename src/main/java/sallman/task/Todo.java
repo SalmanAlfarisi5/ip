@@ -15,6 +15,16 @@ public class Todo extends Task {
     }
 
     /**
+     * Returns an independent copy of this todo.
+     *
+     * @return a todo equal to this one, sharing none of its mutable state
+     */
+    @Override
+    public Task copy() {
+        return copyInto(new Todo(description));
+    }
+
+    /**
      * Returns this todo as one line of the data file,
      * e.g. {@code T | 0 | borrow book}.
      */

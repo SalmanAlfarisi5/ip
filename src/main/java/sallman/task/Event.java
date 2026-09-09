@@ -66,6 +66,16 @@ public class Event extends Task {
     }
 
     /**
+     * Returns an independent copy of this event.
+     *
+     * @return a event equal to this one, sharing none of its mutable state
+     */
+    @Override
+    public Task copy() {
+        return copyInto(new Event(description, from, to));
+    }
+
+    /**
      * Returns this event as one line of the data file,
      * e.g. {@code E | 0 | project meeting | 2019-10-15 | 2019-10-16}.
      */

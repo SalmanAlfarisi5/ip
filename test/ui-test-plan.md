@@ -239,7 +239,7 @@ bye
 ```text
     ____________________________________________________________
      Sorry, I don't know what "blah" means.
-     I understand: todo, deadline, event, list, find, mark, unmark, delete, tag, untag, on, bye.
+     I understand: todo, deadline, event, list, find, mark, unmark, delete, tag, untag, undo, on, bye.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -1363,6 +1363,125 @@ bye
     ____________________________________________________________
      untag needs a task number and a tag.
      Try: untag 2 fun
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC28: Undoing a chain of changes
+
+**Aim:** Verify `undo` walks back through the most recent changes one at a time,
+and that a change made inside a task, such as a mark or a tag, is reversed
+as well as a change to the list itself.
+
+**Input:**
+
+```text
+todo read book
+mark 1
+tag 1 fun
+list
+undo
+undo
+undo
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [T][X] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Tagged this task:
+       [T][X] read book #fun
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][X] read book #fun
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OK, I've put your list back the way it was.
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OK, I've put your list back the way it was.
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OK, I've put your list back the way it was.
+     Now you have 0 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC29: Undo has nothing to undo
+
+**Aim:** Verify `undo` says so when no change has been made yet, and that a command
+the chatbot rejected does not count as a change: after a refused `delete`,
+the single `undo` available reverses the `todo` before it.
+
+**Input:**
+
+```text
+undo
+todo read book
+delete 9
+undo
+undo
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     There is nothing to undo.
+     I can only undo changes made since the chatbot started.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There is no task 9 in your list.
+     You only have task 1.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OK, I've put your list back the way it was.
+     Now you have 0 tasks in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There is nothing to undo.
+     I can only undo changes made since the chatbot started.
     ____________________________________________________________
 
     ____________________________________________________________

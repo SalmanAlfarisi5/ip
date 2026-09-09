@@ -58,10 +58,21 @@ public class TagCommand extends Command {
         List<String> tags = Parser.parseTags(keyword, parts[1]);
 
         Task task = tasks.get(index);
-        boolean hasChanged = false;
-        for (String tag : tags) {
-            boolean didChange = isAddingTags ? task.addTag(tag) : task.removeTag(tag);
-            hasChanged = hasChanged || didChange;
+        // Worked out before anything is changed, so that a command which turns
+        // out to be a no-op neither saves the file nor leaves a state that undo
+        // would restore to no visible effect.
+        boolean hasChanged = tags.stream()
+                .anyMatch(tag -> task.getTags().contains(tag.toLowerCase()) != isAddingTags);
+
+        if (hasChanged) {
+            tasks.saveSnapshot();
+            for (String tag : tags) {
+                if (isAddingTags) {
+                    task.addTag(tag);
+                } else {
+                    task.removeTag(tag);
+                }
+            }
         }
 
         ui.showTagged(task, isAddingTags, hasChanged);

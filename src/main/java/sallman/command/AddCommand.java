@@ -36,6 +36,7 @@ public class AddCommand extends Command {
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SallmanException {
+        tasks.saveSnapshot();
         tasks.add(task);
         ui.showAdded(task, tasks.size());
         storage.save(tasks.asList());

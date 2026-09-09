@@ -1,6 +1,7 @@
 package sallman;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
@@ -16,9 +17,85 @@ import sallman.task.Todo;
 
 /**
  * Tests that {@link TaskList} keeps its contents in order as tasks are added
- * and removed, and selects the right tasks for a given date.
+ * and removed, selects the right tasks for a given date, and can be put back
+ * the way it was.
  */
 public class TaskListTest {
+
+    @Test
+    public void undo_afterAdd_taskGone() throws Exception {
+        TaskList tasks = new TaskList();
+        tasks.saveSnapshot();
+        tasks.add(new Todo("read book"));
+
+        tasks.undo();
+
+        assertEquals(0, tasks.size());
+    }
+
+    @Test
+    public void undo_afterRemove_taskBackInItsPlace() throws Exception {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.add(new Todo("buy milk"));
+        tasks.saveSnapshot();
+        tasks.remove(0);
+
+        tasks.undo();
+
+        assertEquals(2, tasks.size());
+        assertEquals("[T][ ] read book", tasks.get(0).toString());
+        assertEquals("[T][ ] buy milk", tasks.get(1).toString());
+    }
+
+    @Test
+    public void undo_afterChangingATaskInPlace_changeReversed() throws Exception {
+        // The list still holds the same tasks after a mark or a tag, so undo
+        // only works if the remembered state holds copies rather than the
+        // tasks themselves.
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.saveSnapshot();
+        tasks.get(0).markAsDone();
+        tasks.get(0).addTag("fun");
+
+        tasks.undo();
+
+        assertEquals("[T][ ] read book", tasks.get(0).toString());
+    }
+
+    @Test
+    public void undo_severalChanges_walkedBackOneAtATime() throws Exception {
+        TaskList tasks = new TaskList();
+        tasks.saveSnapshot();
+        tasks.add(new Todo("read book"));
+        tasks.saveSnapshot();
+        tasks.add(new Todo("buy milk"));
+
+        tasks.undo();
+        assertEquals(1, tasks.size());
+
+        tasks.undo();
+        assertEquals(0, tasks.size());
+    }
+
+    @Test
+    public void undo_nothingRemembered_rejected() {
+        assertThrows(SallmanException.class, () -> new TaskList().undo());
+    }
+
+    @Test
+    public void saveSnapshot_pastTheLimit_oldestForgotten() {
+        // The cap keeps a long session from holding a copy of the list for
+        // every change ever made.
+        TaskList tasks = new TaskList();
+        for (int i = 0; i < 30; i++) {
+            tasks.saveSnapshot();
+            tasks.add(new Todo("task " + i));
+        }
+
+        assertEquals(20, tasks.getUndoCount());
+    }
 
     @Test
     public void remove_fromTheMiddle_laterTasksMoveUp() {
