@@ -1,5 +1,8 @@
 package sallman.command;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import sallman.SallmanException;
 
 /**
@@ -47,13 +50,12 @@ public enum CommandType {
      * @throws SallmanException if no command uses that keyword
      */
     public static CommandType fromKeyword(String keyword) throws SallmanException {
-        for (CommandType command : values()) {
-            if (command.keyword.equals(keyword)) {
-                return command;
-            }
-        }
-        throw new SallmanException("Sorry, I don't know what \"" + keyword + "\" means.",
-                "I understand: " + keywords() + ".");
+        return Arrays.stream(values())
+                .filter(command -> command.keyword.equals(keyword))
+                .findFirst()
+                .orElseThrow(() -> new SallmanException(
+                        "Sorry, I don't know what \"" + keyword + "\" means.",
+                        "I understand: " + keywords() + "."));
     }
 
     /**
@@ -62,13 +64,8 @@ public enum CommandType {
      * @return the keywords separated by commas, e.g. {@code todo, deadline, ...}
      */
     public static String keywords() {
-        StringBuilder list = new StringBuilder();
-        for (CommandType command : values()) {
-            if (list.length() > 0) {
-                list.append(", ");
-            }
-            list.append(command.keyword);
-        }
-        return list.toString();
+        return Arrays.stream(values())
+                .map(CommandType::getKeyword)
+                .collect(Collectors.joining(", "));
     }
 }

@@ -122,11 +122,9 @@ public class Storage {
                 // Creating the folder is harmless when it already exists.
                 Files.createDirectories(folder);
             }
-            List<String> lines = new ArrayList<>();
-            for (Task task : tasks) {
-                lines.add(task.toFileFormat());
-            }
-            Files.write(file, lines);
+            Files.write(file, tasks.stream()
+                    .map(Task::toFileFormat)
+                    .toList());
         } catch (IOException e) {
             throw new SallmanException("I couldn't save your tasks to " + file + ".",
                     "The change is still in this session, but may be lost when you exit.");
