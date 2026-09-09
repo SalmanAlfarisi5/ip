@@ -1,8 +1,24 @@
 # saLLMan
 
-saLLMan is a command-line chatbot that helps you keep track of your tasks:
+saLLMan is a chatbot that helps you keep track of your tasks:
 todos, deadlines and events. Your list is saved to disk automatically and
 loaded again the next time you start it.
+
+## Download and run
+
+Download `sallman.jar` from the [latest release][latest], put it in an empty
+folder, and run it from that folder:
+
+```
+java -jar sallman.jar
+```
+
+This opens the chatbot's window. Java 25 is the only prerequisite; JavaFX is
+bundled inside the JAR, so it does not need to be installed separately. Tasks
+are written to `data/sallman.txt` beside the JAR, so run it from a folder you
+are happy for it to write into.
+
+[latest]: https://github.com/SalmanAlfarisi5/ip/releases/latest
 
 ## Setting up in IntelliJ
 
