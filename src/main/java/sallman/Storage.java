@@ -137,6 +137,9 @@ public class Storage {
         if (head.length < 3) {
             throw new SallmanException("expected at least 3 fields, found " + head.length);
         }
+        // The check above rules out fewer than three fields, and the split was
+        // capped at three, so exactly three is all that is left.
+        assert head.length == 3 : "expected 3 fields, found " + head.length;
         String type = head[0];
         String doneFlag = head[1];
         String rest = head[2];
