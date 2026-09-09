@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import sallman.task.Deadline;
 import sallman.task.Event;
@@ -28,8 +29,19 @@ import sallman.task.Todo;
  */
 public class Storage {
 
-    /** What separates the fields on one line of the data file. */
-    private static final String SEPARATOR = " | ";
+    /**
+     * What separates the fields on one line of the data file. Taken from the
+     * task classes that write those lines, so the reader and the writer cannot
+     * disagree about the format.
+     */
+    private static final String SEPARATOR = Task.SEPARATOR;
+
+    /**
+     * The separator as a regular expression, for splitting a line into fields.
+     * Quoted rather than written out by hand, so it keeps matching SEPARATOR
+     * even if that is ever changed to something containing regex characters.
+     */
+    private static final String SEPARATOR_PATTERN = Pattern.quote(SEPARATOR);
 
     /** Where the task list is kept, relative to the folder the app runs in. */
     private final Path file;
@@ -133,7 +145,7 @@ public class Storage {
      *                          for the caller to report against a line number
      */
     private static Task parseLine(String line) throws SallmanException {
-        String[] head = line.split(" \\| ", 3);
+        String[] head = line.split(SEPARATOR_PATTERN, 3);
         if (head.length < 3) {
             throw new SallmanException("expected at least 3 fields, found " + head.length);
         }
@@ -148,34 +160,65 @@ public class Storage {
                     + doneFlag + "\"");
         }
 
-        Task task;
-        if (type.equals("T")) {
-            task = new Todo(requireDescription(rest));
-        } else if (type.equals("D")) {
-            int cut = rest.lastIndexOf(SEPARATOR);
-            if (cut < 0) {
-                throw new SallmanException("a deadline needs a due date");
-            }
-            task = new Deadline(requireDescription(rest.substring(0, cut)),
-                    parseStoredDate(after(rest, cut), "due date"));
-        } else if (type.equals("E")) {
-            int endCut = rest.lastIndexOf(SEPARATOR);
-            int startCut = endCut < 0 ? -1 : rest.lastIndexOf(SEPARATOR, endCut - 1);
-            if (startCut < 0) {
-                throw new SallmanException("an event needs both a start and an end");
-            }
-            task = new Event(requireDescription(rest.substring(0, startCut)),
-                    parseStoredDate(rest.substring(startCut + SEPARATOR.length(), endCut).trim(),
-                            "start date"),
-                    parseStoredDate(after(rest, endCut), "end date"));
-        } else {
-            throw new SallmanException("unknown task type \"" + type + "\"");
-        }
-
+        Task task = readTask(type, rest);
         if (doneFlag.equals("1")) {
             task.markAsDone();
         }
         return task;
+    }
+
+    /**
+     * Builds the task named by a type marker from the fields that follow the
+     * done flag.
+     *
+     * @param type the type marker from the start of the line
+     * @param rest everything on the line after the done flag
+     * @return the task those fields describe
+     * @throws SallmanException if the type is unknown, or its fields are not
+     *                          in the expected shape
+     */
+    private static Task readTask(String type, String rest) throws SallmanException {
+        return switch (type) {
+            case "T" -> new Todo(requireDescription(rest));
+            case "D" -> readDeadline(rest);
+            case "E" -> readEvent(rest);
+            default -> throw new SallmanException("unknown task type \"" + type + "\"");
+        };
+    }
+
+    /**
+     * Builds a deadline from its saved fields.
+     *
+     * @param rest the description followed by the due date
+     * @return the deadline that describes
+     * @throws SallmanException if the due date is missing or is not a date
+     */
+    private static Task readDeadline(String rest) throws SallmanException {
+        int cut = rest.lastIndexOf(SEPARATOR);
+        if (cut < 0) {
+            throw new SallmanException("a deadline needs a due date");
+        }
+        return new Deadline(requireDescription(rest.substring(0, cut)),
+                parseStoredDate(after(rest, cut), "due date"));
+    }
+
+    /**
+     * Builds an event from its saved fields.
+     *
+     * @param rest the description followed by the start and end dates
+     * @return the event that describes
+     * @throws SallmanException if either date is missing or is not a date
+     */
+    private static Task readEvent(String rest) throws SallmanException {
+        int endCut = rest.lastIndexOf(SEPARATOR);
+        int startCut = endCut < 0 ? -1 : rest.lastIndexOf(SEPARATOR, endCut - 1);
+        if (startCut < 0) {
+            throw new SallmanException("an event needs both a start and an end");
+        }
+        return new Event(requireDescription(rest.substring(0, startCut)),
+                parseStoredDate(rest.substring(startCut + SEPARATOR.length(), endCut).trim(),
+                        "start date"),
+                parseStoredDate(after(rest, endCut), "end date"));
     }
 
     /**

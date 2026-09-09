@@ -95,6 +95,44 @@ public class Parser {
     }
 
     /**
+     * Splits arguments at a marker such as {@code /by}.
+     * <p>
+     * The marker is named in the error, so a user who left it out or spelled
+     * it differently is told which one was expected.
+     *
+     * @param arguments text the user typed after the command
+     * @param marker    the marker to split at, e.g. {@code /by}
+     * @param taskKind  the kind of task being built, for the error message
+     * @param example   a worked example shown alongside the error
+     * @return the text before the marker at index 0, and after it at index 1
+     * @throws SallmanException if the marker is not there
+     */
+    private static String[] splitAtMarker(String arguments, String marker, String taskKind,
+            String example) throws SallmanException {
+        String[] parts = arguments.split(marker, 2);
+        if (parts.length < 2) {
+            throw new SallmanException("I couldn't find a " + marker + " in that "
+                    + taskKind + ".", example);
+        }
+        return parts;
+    }
+
+    /**
+     * Rejects a part of a command that the user left out.
+     *
+     * @param value   the part as typed, already trimmed
+     * @param message what to tell the user when it is missing
+     * @param example a worked example shown alongside the error
+     * @throws SallmanException if nothing was given for that part
+     */
+    private static void requirePresent(String value, String message, String example)
+            throws SallmanException {
+        if (value.isEmpty()) {
+            throw new SallmanException(message, example);
+        }
+    }
+
+    /**
      * Reads the keyword given to a {@code find} command.
      *
      * @param arguments text the user typed after the command
@@ -189,21 +227,12 @@ public class Parser {
      *                          date is missing, or the date cannot be read
      */
     public static Task parseDeadline(String arguments) throws SallmanException {
-        String[] parts = arguments.split("/by", 2);
-        if (parts.length < 2) {
-            throw new SallmanException("I couldn't find a /by in that deadline.",
-                    DEADLINE_EXAMPLE);
-        }
+        String[] parts = splitAtMarker(arguments, "/by", "deadline", DEADLINE_EXAMPLE);
         String description = parts[0].trim();
         String by = parts[1].trim();
-        if (description.isEmpty()) {
-            throw new SallmanException("That deadline has no description before the /by.",
-                    DEADLINE_EXAMPLE);
-        }
-        if (by.isEmpty()) {
-            throw new SallmanException("That deadline has no due date after the /by.",
-                    DEADLINE_EXAMPLE);
-        }
+        requirePresent(description, "That deadline has no description before the /by.",
+                DEADLINE_EXAMPLE);
+        requirePresent(by, "That deadline has no due date after the /by.", DEADLINE_EXAMPLE);
         return new Deadline(description, TaskDate.parse(by));
     }
 
@@ -218,30 +247,15 @@ public class Parser {
      *                          read, or the end falls before the start
      */
     public static Task parseEvent(String arguments) throws SallmanException {
-        String[] fromParts = arguments.split("/from", 2);
-        if (fromParts.length < 2) {
-            throw new SallmanException("I couldn't find a /from in that event.",
-                    EVENT_EXAMPLE);
-        }
-        String[] toParts = fromParts[1].split("/to", 2);
-        if (toParts.length < 2) {
-            throw new SallmanException("I couldn't find a /to in that event.", EVENT_EXAMPLE);
-        }
+        String[] fromParts = splitAtMarker(arguments, "/from", "event", EVENT_EXAMPLE);
+        String[] toParts = splitAtMarker(fromParts[1], "/to", "event", EVENT_EXAMPLE);
         String description = fromParts[0].trim();
         String from = toParts[0].trim();
         String to = toParts[1].trim();
-        if (description.isEmpty()) {
-            throw new SallmanException("That event has no description before the /from.",
-                    EVENT_EXAMPLE);
-        }
-        if (from.isEmpty()) {
-            throw new SallmanException("That event has no start time after the /from.",
-                    EVENT_EXAMPLE);
-        }
-        if (to.isEmpty()) {
-            throw new SallmanException("That event has no end time after the /to.",
-                    EVENT_EXAMPLE);
-        }
+        requirePresent(description, "That event has no description before the /from.",
+                EVENT_EXAMPLE);
+        requirePresent(from, "That event has no start time after the /from.", EVENT_EXAMPLE);
+        requirePresent(to, "That event has no end time after the /to.", EVENT_EXAMPLE);
         LocalDate start = TaskDate.parse(from);
         LocalDate end = TaskDate.parse(to);
         if (end.isBefore(start)) {
