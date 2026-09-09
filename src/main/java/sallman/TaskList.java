@@ -3,6 +3,7 @@ package sallman;
 import java.time.LocalDate;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 
@@ -120,6 +121,18 @@ public class TaskList {
         return tasks.stream()
                 .filter(task -> task.hasKeyword(keyword))
                 .toList();
+    }
+
+    /**
+     * Puts the tasks in the given order.
+     * <p>
+     * The sort is stable, so tasks the order cannot tell apart stay in the
+     * order the user added them.
+     *
+     * @param order how to compare one task with another
+     */
+    public void sort(Comparator<Task> order) {
+        tasks.sort(order);
     }
 
     /**

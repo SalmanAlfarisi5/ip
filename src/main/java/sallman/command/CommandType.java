@@ -27,6 +27,7 @@ public enum CommandType {
     TAG("tag"),
     UNTAG("untag"),
     UNDO("undo"),
+    SORT("sort"),
     ON("on"),
     BYE("bye");
 

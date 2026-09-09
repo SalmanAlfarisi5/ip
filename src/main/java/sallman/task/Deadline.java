@@ -1,6 +1,7 @@
 package sallman.task;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 /**
  * A task that must be done before a given point in time,
@@ -31,6 +32,16 @@ public class Deadline extends Task {
     @Override
     public boolean isOn(LocalDate date) {
         return by.equals(date);
+    }
+
+    /**
+     * Returns the due date, which is when this deadline comes up.
+     *
+     * @return the date the task is due
+     */
+    @Override
+    public Optional<LocalDate> getSortDate() {
+        return Optional.of(by);
     }
 
     /**
