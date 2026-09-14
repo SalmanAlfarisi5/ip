@@ -26,3 +26,15 @@ jobs:
       - name: Build and check with Gradle
         run: ./gradlew check
 
+      - name: Assemble the runnable JAR
+        if: matrix.platform == 'ubuntu-latest'
+        run: ./gradlew shadowJar
+
+      - name: Publish the JAR as a build artifact
+        if: matrix.platform == 'ubuntu-latest'
+        uses: actions/upload-artifact@v7
+        with:
+          name: sallman-jar
+          path: build/libs/sallman.jar
+          if-no-files-found: error
+
