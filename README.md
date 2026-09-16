@@ -151,7 +151,11 @@ report as a `coverage-report` artifact on every push.
 
 There is also a text-UI test plan in [`test/ui-test-plan.md`](test/ui-test-plan.md),
 which feeds commands to the chatbot and checks the console output against the
-expected transcript.
+expected transcript. Run it from the repository root with:
+
+```
+python test/run-ui-tests.py
+```
 
 ## Acknowledgements
 
