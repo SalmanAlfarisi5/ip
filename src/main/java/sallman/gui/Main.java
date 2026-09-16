@@ -5,8 +5,8 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import sallman.Sallman;
 
@@ -28,16 +28,16 @@ public class Main extends Application {
     public void start(Stage stage) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
-            AnchorPane root = fxmlLoader.load();
+            Parent root = fxmlLoader.load();
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("saLLMan");
 
             // Below roughly this size the layout stops making sense: the input
-            // row and one line of dialogue need the height, and the Send button
-            // needs the width.
-            stage.setMinHeight(220);
-            stage.setMinWidth(417);
+            // row and a line or two of dialogue need the height, and the input
+            // box needs room beside the Send button to show what is typed.
+            stage.setMinHeight(240);
+            stage.setMinWidth(320);
 
             fxmlLoader.<MainWindow>getController().setSallman(sallman);
             stage.show();

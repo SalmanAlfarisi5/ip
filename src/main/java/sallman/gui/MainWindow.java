@@ -7,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import sallman.Sallman;
@@ -15,7 +14,7 @@ import sallman.Sallman;
 /**
  * Controller for the main window.
  */
-public class MainWindow extends AnchorPane {
+public class MainWindow {
 
     /** How long the goodbye stays on screen before the window closes. */
     private static final Duration EXIT_DELAY = Duration.seconds(1.5);
@@ -31,7 +30,6 @@ public class MainWindow extends AnchorPane {
 
     private Sallman sallman;
 
-    private final Image userImage = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
     private final Image sallmanImage = new Image(this.getClass().getResourceAsStream("/images/DaSallman.png"));
 
     /** Makes the dialogue scroll to the newest message as it grows. */
@@ -54,8 +52,9 @@ public class MainWindow extends AnchorPane {
     /**
      * Shows what the user typed and the reply to it, then clears the input box.
      * <p>
-     * A command that ends the session leaves its reply on screen briefly before
-     * the window closes, so the goodbye can be read.
+     * A reply reporting a problem is drawn differently from an ordinary one, so
+     * that it is noticed. A command that ends the session leaves its reply on
+     * screen briefly before the window closes, so the goodbye can be read.
      */
     @FXML
     private void handleUserInput() {
@@ -64,9 +63,10 @@ public class MainWindow extends AnchorPane {
             return;
         }
         String response = sallman.getResponse(input);
-        dialogContainer.getChildren().addAll(
-                DialogBox.getUserDialog(input, userImage),
-                DialogBox.getSallmanDialog(response, sallmanImage, sallman.getLastCommandType()));
+        DialogBox reply = sallman.isLastResponseError()
+                ? DialogBox.getErrorDialog(response, sallmanImage)
+                : DialogBox.getSallmanDialog(response, sallmanImage, sallman.getLastCommandType());
+        dialogContainer.getChildren().addAll(DialogBox.getUserDialog(input), reply);
         userInput.clear();
 
         if (sallman.isExitRequested()) {
