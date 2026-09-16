@@ -209,14 +209,24 @@ public class Task {
 
     /**
      * Returns the tags as the final field of a saved line.
+     * <p>
+     * An untagged task usually has no tag field. The exception is a line whose
+     * last field would itself start with the tag prefix, as a todo described as
+     * {@code buy milk | #urgent} would: read back, that part would be taken for
+     * tags. An empty tag field is written after it instead, so the description
+     * comes back exactly as it was typed.
      *
-     * @return the separator and tag field, or an empty string when untagged
+     * @return the separator and tag field, or an empty string when none is needed
      */
     private String tagField() {
-        if (tags.isEmpty()) {
-            return "";
+        if (!tags.isEmpty()) {
+            return SEPARATOR + TAG_FIELD_PREFIX + String.join(TAG_SEPARATOR, tags);
         }
-        return SEPARATOR + TAG_FIELD_PREFIX + String.join(TAG_SEPARATOR, tags);
+        String fields = description + dateFields();
+        int lastSeparator = fields.lastIndexOf(SEPARATOR);
+        boolean isMistakableForTags = lastSeparator >= 0
+                && fields.substring(lastSeparator + SEPARATOR.length()).trim().startsWith(TAG_FIELD_PREFIX);
+        return isMistakableForTags ? SEPARATOR + TAG_FIELD_PREFIX : "";
     }
 
     /**

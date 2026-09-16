@@ -7,13 +7,13 @@ against `Expected output:` (with the shared session preamble prepended).
 Run all cases from the repository root:
 
 ```bash
-python .claude/skills/test-ui/scripts/run-ui-tests.py
+python test/run-ui-tests.py
 ```
 
 Run a single case:
 
 ```bash
-python .claude/skills/test-ui/scripts/run-ui-tests.py --filter "TC3"
+python test/run-ui-tests.py --filter "TC3:"
 ```
 
 Testing stops at the first failure and reports the expected and actual output.
@@ -389,7 +389,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC8b: The valid range is reported when several tasks exist
+### TC9: The valid range is reported when several tasks exist
 
 **Aim:** Verify the out-of-range message switches from the singular
 "You only have task 1." to a range once there is more than one task.
@@ -428,7 +428,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC9: Marking on an empty list is refused
+### TC10: Marking on an empty list is refused
 
 **Aim:** Verify `mark 1` on an empty list is refused. Task 1 is a valid number
 in general, so this checks the range is compared against the current task
@@ -455,7 +455,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC10: Incomplete deadlines are refused
+### TC11: Incomplete deadlines are refused
 
 **Aim:** Verify a deadline missing its `/by`, its description, or its date is
 refused with a *different* message in each case, so the user is told which
@@ -507,7 +507,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC11: Incomplete events are refused
+### TC12: Incomplete events are refused
 
 **Aim:** Verify each of the five ways an event can be incomplete gets its own
 message: no `/from`, no `/to`, no description, no start time, no end time. A
@@ -570,7 +570,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC12: A blank line is ignored
+### TC13: A blank line is ignored
 
 **Aim:** Verify pressing Enter on its own produces no reply at all, rather than
 an unknown-command complaint.
@@ -597,7 +597,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC13: Deleting from the middle renumbers the rest
+### TC14: Deleting from the middle renumbers the rest
 
 **Aim:** Verify `delete` removes the right task, reports the new total, and
 that the tasks after it move up. Marking task 3 afterwards is the real check:
@@ -675,7 +675,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC14: Deleting the last task, then an out-of-range delete
+### TC15: Deleting the last task, then an out-of-range delete
 
 **Aim:** Verify deleting the final task leaves an empty list rather than
 running off the end, and that the now-stale task number is refused afterwards.
@@ -720,7 +720,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC15: A bad delete number is refused
+### TC16: A bad delete number is refused
 
 **Aim:** Verify `delete` reuses the same task-number validation as `mark`, and
 that its error hints name `delete` rather than another command.
@@ -1127,7 +1127,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC23: Finding tasks by keyword
+### TC25: Finding tasks by keyword
 
 **Aim:** Verify `find` shows only the tasks whose description contains the
 keyword, numbering them from 1 in their own right rather than by their position
@@ -1194,7 +1194,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC24: find with no keyword is refused
+### TC26: find with no keyword is refused
 
 **Aim:** Verify a bare `find` asks for something to search for, rather than
 listing every task or nothing at all.
@@ -1226,7 +1226,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC25: Tagging tasks
+### TC27: Tagging tasks
 
 **Aim:** Verify `tag` attaches labels to a task and that the tags are shown
 after any dates the task carries, rather than between the description and them.
@@ -1279,7 +1279,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC26: Untagging, including a tag that is not there
+### TC28: Untagging, including a tag that is not there
 
 **Aim:** Verify `untag` removes a tag whatever case it is typed in, and that
 removing a tag the task does not have is reported rather than silently doing
@@ -1324,7 +1324,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC27: Tag commands with bad arguments are refused
+### TC29: Tag commands with bad arguments are refused
 
 **Aim:** Verify each way of misusing `tag` and `untag` is named specifically:
 a task number outside the list, no tag at all, and a tag containing characters
@@ -1375,7 +1375,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC28: Undoing a chain of changes
+### TC30: Undoing a chain of changes
 
 **Aim:** Verify `undo` walks back through the most recent changes one at a time,
 and that a change made inside a task, such as a mark or a tag, is reversed
@@ -1444,7 +1444,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC29: Undo has nothing to undo
+### TC31: Undo has nothing to undo
 
 **Aim:** Verify `undo` says so when no change has been made yet, and that a command
 the chatbot rejected does not count as a change: after a refused `delete`,
@@ -1495,7 +1495,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC30: Sorting the list
+### TC32: Sorting the list
 
 **Aim:** Verify a bare `sort` orders by date with undated tasks last, that an event
 is placed by when it starts, and that `sort name` and `sort status` order by
@@ -1566,7 +1566,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC31: An unknown sort order is refused, and a sort can be undone
+### TC33: An unknown sort order is refused, and a sort can be undone
 
 **Aim:** Verify an order the chatbot does not know is named back with the orders it
 does know, and that `undo` restores the order the list was in before a sort.
@@ -1625,7 +1625,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC32: Dates and markers that are wrong in a specific way are explained
+### TC34: Dates and markers that are wrong in a specific way are explained
 
 **Aim:** Verify each mistake is named for what it is rather than reported as an
 unreadable date or a missing marker: a day past the end of the month, a
@@ -1676,7 +1676,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC33: Duplicate tasks and marks that change nothing are refused
+### TC35: Duplicate tasks and marks that change nothing are refused
 
 **Aim:** Verify a task matching an existing one (ignoring case and extra spaces) is
 not added again, that marking a done task or unmarking an undone one is
@@ -1747,7 +1747,7 @@ bye
     ____________________________________________________________
 ```
 
-### TC34: Command keywords and task numbers are read forgivingly
+### TC36: Command keywords and task numbers are read forgivingly
 
 **Aim:** Verify a keyword in the wrong case still works, a keyword one typo away is
 suggested, a far-off word still lists every command, and task numbers that
