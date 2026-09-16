@@ -21,6 +21,7 @@ import sallman.command.OnCommand;
 import sallman.command.SortCommand;
 import sallman.command.SortOrder;
 import sallman.command.TagCommand;
+import sallman.command.UndoCommand;
 import sallman.task.Deadline;
 import sallman.task.Event;
 import sallman.task.Task;
@@ -332,6 +333,42 @@ public class ParserTest {
         SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseTaskNumber("mark", number, 3));
 
         assertEquals("I'm sorry, but mark takes one task number at a time.", e.getMessage());
+    }
+
+    @Test
+    public void parse_eachAddingCommand_routedToAnAddCommand() throws Exception {
+        assertInstanceOf(AddCommand.class, Parser.parse("deadline return book /by 2019-10-15"));
+        assertInstanceOf(AddCommand.class, Parser.parse("event trip /from 2019-10-15 /to 2019-10-16"));
+        assertInstanceOf(UndoCommand.class, Parser.parse("undo"));
+    }
+
+    @Test
+    public void parse_longKeywordTwoTyposAway_stillSuggested() {
+        // Longer keywords allow two slips, since they are less likely to match by accident.
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parse("dleete"));
+
+        assertEquals("Did you mean delete?", e.toLines()[1]);
+    }
+
+    @Test
+    public void parse_typoEquallyCloseToTwoCommands_suggestsTheOneListedFirst() {
+        // "tndo" is one slip from both todo and undo; the suggestion must not vary between runs.
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parse("tndo"));
+
+        assertEquals("Did you mean todo?", e.toLines()[1]);
+    }
+
+    @Test
+    public void splitTaskNumberAndTags_numberOnly_tagsEmpty() throws Exception {
+        assertArrayEquals(new String[] {"2", ""}, Parser.splitTaskNumberAndTags("tag", "2"));
+    }
+
+    @Test
+    public void parseTaskNumber_listOfOne_hintSaysOnlyTaskOne() {
+        String number = "5";
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseTaskNumber("mark", number, 1));
+
+        assertEquals("You only have task 1.", e.toLines()[1]);
     }
 
     @Test

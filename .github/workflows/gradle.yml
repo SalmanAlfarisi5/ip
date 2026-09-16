@@ -26,6 +26,18 @@ jobs:
       - name: Build and check with Gradle
         run: ./gradlew check
 
+      - name: Measure test coverage
+        if: matrix.platform == 'ubuntu-latest'
+        run: ./gradlew jacocoTestReport
+
+      - name: Publish the coverage report
+        if: matrix.platform == 'ubuntu-latest'
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: build/reports/jacoco/test/html
+          if-no-files-found: error
+
       - name: Assemble the runnable JAR
         if: matrix.platform == 'ubuntu-latest'
         run: ./gradlew shadowJar

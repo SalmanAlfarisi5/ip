@@ -137,6 +137,18 @@ JUnit tests belong in `src/test/java` and run with `./gradlew test`. The
 build already declares JUnit 5, so adding a test file there is enough for
 Gradle to pick it up.
 
+To see how much of the code the tests reach, run:
+
+```
+./gradlew test jacocoTestReport
+```
+
+and open `build/reports/jacoco/test/html/index.html`. The GUI is left out of
+the report, since it is tested by hand; the rest of the code is covered almost
+entirely, and what remains is described in
+[`test/manual-testing.md`](test/manual-testing.md). CI publishes the same
+report as a `coverage-report` artifact on every push.
+
 There is also a text-UI test plan in [`test/ui-test-plan.md`](test/ui-test-plan.md),
 which feeds commands to the chatbot and checks the console output against the
 expected transcript.

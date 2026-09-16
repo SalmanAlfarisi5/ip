@@ -227,6 +227,22 @@ public class TaskTest {
     }
 
     @Test
+    public void copy_plainTask_independentCopy() {
+        Task original = new Task("read book");
+
+        Task copy = original.copy();
+        copy.markAsDone();
+
+        assertEquals("[ ] read book", original.toString());
+        assertEquals("[X] read book", copy.toString());
+    }
+
+    @Test
+    public void isSameTask_differentDescriptions_notSame() {
+        assertFalse(new Todo("read book").isSameTask(new Todo("buy milk")));
+    }
+
+    @Test
     public void isOn_todo_neverOnAnyDate() {
         // A todo carries no date, so it must not appear under any day.
         assertFalse(new Todo("read book").isOn(LocalDate.of(2019, 10, 15)));

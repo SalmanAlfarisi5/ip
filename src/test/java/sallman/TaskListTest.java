@@ -94,6 +94,17 @@ public class TaskListTest {
     }
 
     @Test
+    public void get_indexOutsideTheList_assertionFails() {
+        // Callers must check the number first; an index out of range here is a
+        // bug, and the assertion reports it where it happens.
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+
+        assertThrows(AssertionError.class, () -> tasks.get(1));
+        assertThrows(AssertionError.class, () -> tasks.remove(-1));
+    }
+
+    @Test
     public void undo_afterAdd_taskGone() throws Exception {
         TaskList tasks = new TaskList();
         tasks.saveSnapshot();

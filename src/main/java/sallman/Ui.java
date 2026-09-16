@@ -135,12 +135,14 @@ public class Ui {
         if (skippedLines.isEmpty()) {
             return;
         }
+        boolean isOneLine = skippedLines.size() == 1;
         List<String> reply = new ArrayList<>();
         reply.add("I noticed " + skippedLines.size()
-                + (skippedLines.size() == 1 ? " unreadable line" : " unreadable lines")
-                + " in your saved data, so I skipped them:");
+                + (isOneLine ? " unreadable line" : " unreadable lines")
+                + " in your saved data, so I skipped " + (isOneLine ? "it:" : "them:"));
         reply.addAll(skippedLines);
-        reply.add("Everything else loaded perfectly! I'll drop the unreadable lines");
+        reply.add("Everything else loaded perfectly! I'll drop the unreadable "
+                + (isOneLine ? "line" : "lines"));
         reply.add("the next time your list changes.");
         say(reply.toArray(new String[0]));
     }

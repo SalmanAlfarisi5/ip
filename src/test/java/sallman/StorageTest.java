@@ -2,6 +2,7 @@ package sallman;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -171,6 +172,56 @@ public class StorageTest {
 
         assertEquals(1, loaded.size());
         assertEquals(List.of("line 2: the event ends before it starts"), storage.getSkippedLines());
+    }
+
+    @Test
+    public void load_dataPathIsAFolder_exceptionSaysItCouldNotRead() throws Exception {
+        Storage storage = new Storage(Files.createDirectory(folder.resolve("tasks.txt")).toString());
+
+        SallmanException e = assertThrows(SallmanException.class, storage::load);
+
+        assertTrue(e.getMessage().startsWith("I couldn't read your saved tasks"));
+    }
+
+    @Test
+    public void save_folderPathTakenByAFile_exceptionSaysItCouldNotSave() throws Exception {
+        // The data file's folder cannot be created where a file already has that name.
+        Path blocker = Files.createFile(folder.resolve("data"));
+        Storage storage = new Storage(blocker.resolve("tasks.txt").toString());
+
+        SallmanException e = assertThrows(SallmanException.class, () -> storage.save(List.of()));
+
+        assertTrue(e.getMessage().startsWith("I couldn't save your tasks"));
+    }
+
+    @Test
+    public void save_folderMissing_createdFirst() throws Exception {
+        Storage storage = new Storage(folder.resolve("new/nested/tasks.txt").toString());
+
+        storage.save(List.of(new Todo("read book")));
+
+        assertEquals(1, storage.load().size());
+    }
+
+    @Test
+    public void load_linesMissingTheirDatesOrDescription_eachSkippedWithTheReason() throws Exception {
+        Storage storage = write("D | 0 | return book",
+                "E | 0 | trip | 2019-10-15",
+                "E | 0 | trip",
+                "T | 0 | ");
+
+        assertTrue(storage.load().isEmpty());
+        assertEquals(List.of("line 1: a deadline needs a due date",
+                "line 2: an event needs both a start and an end",
+                "line 3: an event needs both a start and an end",
+                "line 4: the description is empty"), storage.getSkippedLines());
+    }
+
+    @Test
+    public void load_tagFieldWithEmptyEntries_emptyEntriesIgnored() throws Exception {
+        Storage storage = write("T | 0 | read book | #fun,, ,books");
+
+        assertEquals("[T][ ] read book #fun #books", storage.load().get(0).toString());
     }
 
     @Test
