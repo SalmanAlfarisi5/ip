@@ -2,11 +2,30 @@ plugins {
     id 'java'
     id 'application'
     id 'checkstyle'
+    id 'jacoco'
     id 'com.gradleup.shadow' version '9.5.1'
 }
 
 checkstyle {
     toolVersion = '11.0.0'
+}
+
+jacoco {
+    // Older versions cannot read the class files that Java 25 produces.
+    toolVersion = '0.8.15'
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true
+        xml.required = true
+    }
+    // The GUI is checked by hand rather than by JUnit, so it is left out of the
+    // report instead of making the figure for the rest of the code look lower.
+    classDirectories.setFrom(sourceSets.main.output.classesDirs.asFileTree.matching {
+        exclude 'sallman/gui/**'
+    })
 }
 
 java {

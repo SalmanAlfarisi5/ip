@@ -71,6 +71,13 @@ public class TaskDateTest {
     }
 
     @Test
+    public void parse_monthZero_exceptionNamesTheMonth() {
+        SallmanException e = assertThrows(SallmanException.class, () -> TaskDate.parse("2019-00-15"));
+
+        assertEquals("Months run from 01 to 12.", e.toLines()[1]);
+    }
+
+    @Test
     public void parse_emptyText_exceptionThrown() {
         assertThrows(SallmanException.class, () -> TaskDate.parse(""));
     }
