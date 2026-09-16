@@ -3,6 +3,7 @@ package sallman.task;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -139,8 +140,8 @@ public class Task {
      * @return true if the description contains it
      */
     public boolean hasKeyword(String keyword) {
-        String wanted = keyword.toLowerCase();
-        return description.toLowerCase().contains(wanted)
+        String wanted = keyword.toLowerCase(Locale.ROOT);
+        return description.toLowerCase(Locale.ROOT).contains(wanted)
                 || tags.stream().anyMatch(tag -> tag.contains(wanted));
     }
 
@@ -170,7 +171,7 @@ public class Task {
      * @return true if the tag was not already on this task
      */
     public boolean addTag(String tag) {
-        return tags.add(tag.toLowerCase());
+        return tags.add(tag.toLowerCase(Locale.ROOT));
     }
 
     /**
@@ -180,7 +181,7 @@ public class Task {
      * @return true if the task had that tag
      */
     public boolean removeTag(String tag) {
-        return tags.remove(tag.toLowerCase());
+        return tags.remove(tag.toLowerCase(Locale.ROOT));
     }
 
     /**

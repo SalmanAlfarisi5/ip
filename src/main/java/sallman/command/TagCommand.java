@@ -1,6 +1,7 @@
 package sallman.command;
 
 import java.util.List;
+import java.util.Locale;
 
 import sallman.Parser;
 import sallman.SallmanException;
@@ -62,7 +63,7 @@ public class TagCommand extends Command {
         // out to be a no-op neither saves the file nor leaves a state that undo
         // would restore to no visible effect.
         boolean hasChanged = tags.stream()
-                .anyMatch(tag -> task.getTags().contains(tag.toLowerCase()) != isAddingTags);
+                .anyMatch(tag -> task.getTags().contains(tag.toLowerCase(Locale.ROOT)) != isAddingTags);
 
         if (hasChanged) {
             tasks.saveSnapshot();

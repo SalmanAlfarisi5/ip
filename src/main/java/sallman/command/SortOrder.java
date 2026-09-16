@@ -3,6 +3,7 @@ package sallman.command;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import sallman.SallmanException;
@@ -26,7 +27,7 @@ public enum SortOrder {
     DATE("date", Comparator.comparing(task -> task.getSortDate().orElse(LocalDate.MAX))),
 
     /** Alphabetical by description, ignoring case. */
-    NAME("name", Comparator.comparing(task -> task.getDescription().toLowerCase())),
+    NAME("name", Comparator.comparing(task -> task.getDescription().toLowerCase(Locale.ROOT))),
 
     /** Tasks still to do first, finished ones after them. */
     STATUS("status", Comparator.comparing(Task::isDone));

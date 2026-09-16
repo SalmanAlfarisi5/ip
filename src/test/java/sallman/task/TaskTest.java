@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -240,6 +241,23 @@ public class TaskTest {
     @Test
     public void isSameTask_differentDescriptions_notSame() {
         assertFalse(new Todo("read book").isSameTask(new Todo("buy milk")));
+    }
+
+    @Test
+    public void addTagAndHasKeyword_computerSetToTurkish_capitalIStillMatches() {
+        // In Turkish, a capital I lower-cases to a dotless i, so "LIST" would
+        // become "list" spelled with that dotless i, and stop matching "list" if case followed the computer.
+        Locale original = Locale.getDefault();
+        try {
+            Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+            Task task = new Todo("shopping list");
+            task.addTag("WISHLIST");
+
+            assertTrue(task.hasKeyword("LIST"));
+            assertTrue(task.removeTag("wishlist"));
+        } finally {
+            Locale.setDefault(original);
+        }
     }
 
     @Test
