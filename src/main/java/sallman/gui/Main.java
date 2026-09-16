@@ -29,6 +29,15 @@ public class Main extends Application {
      */
     private final Sallman sallman = new Sallman(DATA_PATH, false);
 
+    /**
+     * Builds the saLLMan window from its layout, gives it its title, icon and
+     * minimum size, connects it to the chatbot, and shows it.
+     * <p>
+     * If the layout cannot be loaded there is nothing to show, so the reason is
+     * printed and JavaFX is shut down rather than left running without a window.
+     *
+     * @param stage the window JavaFX provides for the application
+     */
     @Override
     public void start(Stage stage) {
         try {

@@ -416,6 +416,9 @@ public class Parser {
                 EVENT_EXAMPLE);
         LocalDate start = TaskDate.parse(from);
         LocalDate end = TaskDate.parse(to);
+        // An event may start and end on the same date. Events are recorded in
+        // whole days, with no times, so that is a one-day event rather than one
+        // lasting no time at all; rejecting it would leave no way to record one.
         if (end.isBefore(start)) {
             // Such an event covers no days at all, so it could never be found
             // by the on command and is almost certainly a typo.
