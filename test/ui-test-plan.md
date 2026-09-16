@@ -35,8 +35,8 @@ every expected output rather than repeated in each test case.
 \__ \ | (_| || |___ | |___ | |  | || (_| || | | |
 |___/  \__,_||_____||_____||_|  |_| \__,_||_| |_|
     ____________________________________________________________
-     Hello! I'm saLLMan, freshly loaded and ready to assist.
-     What are we working on today?
+     Hello! I'm saLLMan, your Large Language (task) Manager.
+     How can I assist you with your tasks today?
     ____________________________________________________________
 
 ```
@@ -59,11 +59,12 @@ bye
 
 ```text
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Your list is currently empty.
+     Would you like me to help you add a task? Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -86,32 +87,32 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [D][ ] return book (by: Oct 15 2019)
-     Now you have 2 tasks in the list.
+     You now have 2 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
-     Now you have 3 tasks in the list.
+     You now have 3 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] read book
      2.[D][ ] return book (by: Oct 15 2019)
      3.[E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -136,33 +137,33 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Great job! I've marked this task as done:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     No problem! I've marked this task as not done yet:
        [T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -191,33 +192,33 @@ bye
 
 ```text
     ____________________________________________________________
-     I couldn't read "no idea :-p" as a date.
+     I'm sorry, but I couldn't read "no idea :-p" as a date.
      Use yyyy-mm-dd, e.g. 2019-10-15.
     ____________________________________________________________
 
     ____________________________________________________________
-     I couldn't read "Sunday" as a date.
+     I'm sorry, but I couldn't read "Sunday" as a date.
      Use yyyy-mm-dd, e.g. 2019-10-15.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is no such date as 2019-02-30.
+     As a large language model, I must point out there is no such date as 2019-02-30.
      February 2019 has 28 days.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [D][ ] do homework (by: Oct 15 2019)
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[D][ ] do homework (by: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -239,16 +240,17 @@ bye
 
 ```text
     ____________________________________________________________
-     Sorry, I don't know what "blah" means.
+     I'm sorry, but I don't know what "blah" means.
      I understand: todo, deadline, event, list, find, mark, unmark, delete, tag, untag, undo, sort, on, bye.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Your list is currently empty.
+     Would you like me to help you add a task? Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -271,23 +273,23 @@ bye
 
 ```text
     ____________________________________________________________
-     A todo needs a description.
+     I'd love to help, but a todo needs a description.
      Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -308,16 +310,17 @@ bye
 
 ```text
     ____________________________________________________________
-     A todo needs a description.
+     I'd love to help, but a todo needs a description.
      Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Your list is currently empty.
+     Would you like me to help you add a task? Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -346,43 +349,43 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is no task 99 in your list.
+     As a large language model, I must point out that there is no task 99.
      You only have task 1.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is no task 0 in your list.
+     As a large language model, I must point out that there is no task 0.
      You only have task 1.
     ____________________________________________________________
 
     ____________________________________________________________
-     "abc" is not a number.
+     I'm sorry, but "abc" doesn't look like a task number.
      Try: mark 2
     ____________________________________________________________
 
     ____________________________________________________________
-     mark needs a task number.
+     I'd love to help, but mark needs a task number.
      Try: mark 2
     ____________________________________________________________
 
     ____________________________________________________________
-     unmark needs a task number.
+     I'd love to help, but unmark needs a task number.
      Try: unmark 2
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -404,24 +407,24 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] buy bread
-     Now you have 2 tasks in the list.
+     You now have 2 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is no task 99 in your list.
+     As a large language model, I must point out that there is no task 99.
      Pick a number from 1 to 2.
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -443,12 +446,12 @@ bye
 
 ```text
     ____________________________________________________________
-     There is no task 1: your list is empty.
+     As a large language model, I must point out that your list is empty, so there is no task 1.
      Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -474,33 +477,33 @@ bye
 
 ```text
     ____________________________________________________________
-     I couldn't find a /by in that deadline.
+     I'm sorry, but I couldn't find a /by in that deadline.
      Try: deadline return book /by 2019-10-15
     ____________________________________________________________
 
     ____________________________________________________________
-     That deadline has no description before the /by.
+     I'd love to help, but that deadline has no description before the /by.
      Try: deadline return book /by 2019-10-15
     ____________________________________________________________
 
     ____________________________________________________________
-     That deadline has no due date after the /by.
+     I'd love to help, but that deadline has no due date after the /by.
      Try: deadline return book /by 2019-10-15
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [D][ ] return book (by: Oct 15 2019)
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[D][ ] return book (by: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -527,43 +530,43 @@ bye
 
 ```text
     ____________________________________________________________
-     I couldn't find a /from in that event.
+     I'm sorry, but I couldn't find a /from in that event.
      Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
-     I couldn't find a /to in that event.
+     I'm sorry, but I couldn't find a /to in that event.
      Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
-     That event has no description before the /from.
+     I'd love to help, but that event has no description before the /from.
      Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
-     That event has no start time after the /from.
+     I'd love to help, but that event has no start time after the /from.
      Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
-     That event has no end time after the /to.
+     I'd love to help, but that event has no end time after the /to.
      Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[E][ ] project meeting (from: Oct 15 2019 to: Oct 16 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -584,13 +587,13 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -619,56 +622,56 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] return book
-     Now you have 2 tasks in the list.
+     You now have 2 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] buy bread
-     Now you have 3 tasks in the list.
+     You now have 3 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] join club
-     Now you have 4 tasks in the list.
+     You now have 4 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Of course! I've removed this task:
        [T][ ] return book
-     Now you have 3 tasks in the list.
+     You now have 3 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] read book
      2.[T][ ] buy bread
      3.[T][ ] join club
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Great job! I've marked this task as done:
        [T][X] join club
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] read book
      2.[T][ ] buy bread
      3.[T][X] join club
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -691,28 +694,29 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Noted. I've removed this task:
+     Of course! I've removed this task:
        [T][ ] read book
-     Now you have 0 tasks in the list.
+     You now have 0 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is no task 1: your list is empty.
+     As a large language model, I must point out that your list is empty, so there is no task 1.
      Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Your list is currently empty.
+     Would you like me to help you add a task? Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -736,33 +740,33 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is no task 99 in your list.
+     As a large language model, I must point out that there is no task 99.
      You only have task 1.
     ____________________________________________________________
 
     ____________________________________________________________
-     "abc" is not a number.
+     I'm sorry, but "abc" doesn't look like a task number.
      Try: delete 2
     ____________________________________________________________
 
     ____________________________________________________________
-     delete needs a task number.
+     I'd love to help, but delete needs a task number.
      Try: delete 2
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -801,14 +805,14 @@ bye
 
 ```text
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][X] read book
      2.[D][ ] return book (by: Oct 15 2019)
      3.[E][ ] project meeting (from: Aug 06 2019 to: Aug 07 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -837,12 +841,12 @@ bye
 
 ```text
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] return book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -883,7 +887,7 @@ bye
 
 ```text
     ____________________________________________________________
-     I skipped 8 unreadable lines in your saved data:
+     I noticed 8 unreadable lines in your saved data, so I skipped them:
      line 2: expected at least 3 fields, found 1
      line 4: unknown task type "X"
      line 5: the done flag should be 0 or 1, found "7"
@@ -892,18 +896,18 @@ bye
      line 9: an event needs both a start and an end
      line 10: the due date "not-a-date" is not a date
      line 11: the end date "Tuesday" is not a date
-     Everything else loaded fine. The bad lines will be dropped
+     Everything else loaded perfectly! I'll drop the unreadable lines
      the next time your list changes.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][X] read book
      2.[D][ ] return book (by: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -930,12 +934,12 @@ bye
 
 ```text
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -964,47 +968,47 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [D][ ] return book (by: Oct 15 2019)
-     Now you have 2 tasks in the list.
+     You now have 2 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [D][ ] pay bill (by: Oct 16 2019)
-     Now you have 3 tasks in the list.
+     You now have 3 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
-     Now you have 4 tasks in the list.
+     You now have 4 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here is what you have on Oct 15 2019:
+     Here is everything you have on Oct 15 2019:
      1.[D][ ] return book (by: Oct 15 2019)
      2.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Here is what you have on Oct 16 2019:
+     Here is everything you have on Oct 16 2019:
      1.[D][ ] pay bill (by: Oct 16 2019)
      2.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Nothing on Dec 25 2019.
+     Great news! You have nothing on Dec 25 2019.
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1025,17 +1029,17 @@ bye
 
 ```text
     ____________________________________________________________
-     on needs a date.
+     I'd love to help, but on needs a date.
      Try: on 2019-10-15
     ____________________________________________________________
 
     ____________________________________________________________
-     I couldn't read "Sunday" as a date.
+     I'm sorry, but I couldn't read "Sunday" as a date.
      Use yyyy-mm-dd, e.g. 2019-10-15.
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1072,14 +1076,14 @@ bye
 
 ```text
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] read | book
      2.[D][ ] pay a | b (by: Oct 15 2019)
      3.[E][ ] a | 2019-01-01 | b (from: Oct 14 2019 to: Oct 17 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1103,23 +1107,23 @@ bye
 
 ```text
     ____________________________________________________________
-     That event ends before it starts.
+     As a large language model, I can't schedule an event that ends before it starts.
      Check the order of the /from and /to dates.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [E][ ] standup (from: Oct 15 2019 to: Oct 15 2019)
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here is what you have on Oct 15 2019:
+     Here is everything you have on Oct 15 2019:
      1.[E][ ] standup (from: Oct 15 2019 to: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1147,46 +1151,46 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [D][ ] return book (by: Oct 15 2019)
-     Now you have 2 tasks in the list.
+     You now have 2 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] buy bread
-     Now you have 3 tasks in the list.
+     You now have 3 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the matching tasks in your list:
+     I found some tasks that match "book":
      1.[T][ ] read book
      2.[D][ ] return book (by: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the matching tasks in your list:
+     I found some tasks that match "BOOK":
      1.[T][ ] read book
      2.[D][ ] return book (by: Oct 15 2019)
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the matching tasks in your list:
+     I found some tasks that match "bread":
      1.[T][ ] buy bread
     ____________________________________________________________
 
     ____________________________________________________________
-     No tasks match "zzz".
+     I searched thoroughly, but no tasks match "zzz".
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1207,18 +1211,18 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     find needs something to search for.
+     I'd love to help, but find needs something to search for.
      Try: find book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1243,35 +1247,35 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [D][ ] return book (by: Oct 15 2019)
-     Now you have 2 tasks in the list.
+     You now have 2 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Tagged this task:
+     Absolutely! I've tagged this task:
        [T][ ] read book #fun #books
     ____________________________________________________________
 
     ____________________________________________________________
-     Tagged this task:
+     Absolutely! I've tagged this task:
        [D][ ] return book (by: Oct 15 2019) #urgent
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] read book #fun #books
      2.[D][ ] return book (by: Oct 15 2019) #urgent
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1295,28 +1299,28 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Tagged this task:
+     Absolutely! I've tagged this task:
        [T][ ] read book #fun
     ____________________________________________________________
 
     ____________________________________________________________
-     Untagged this task:
+     Sure thing! I've removed those tags:
        [T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     That task has none of the tags you named:
+     It looks like that task has none of the tags you named:
        [T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1341,33 +1345,33 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is no task 5 in your list.
+     As a large language model, I must point out that there is no task 5.
      You only have task 1.
     ____________________________________________________________
 
     ____________________________________________________________
-     tag needs at least one tag.
+     I'd love to help, but tag needs at least one tag.
      Try: tag 2 fun
     ____________________________________________________________
 
     ____________________________________________________________
-     I can't use "bad!tag" as a tag.
+     I'm sorry, but I can't use "bad!tag" as a tag.
      A tag is made of letters, digits, hyphens or underscores.
     ____________________________________________________________
 
     ____________________________________________________________
-     untag needs a task number and a tag.
+     I'd love to help, but untag needs a task number and a tag.
      Try: untag 2 fun
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1395,47 +1399,48 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Great job! I've marked this task as done:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Tagged this task:
+     Absolutely! I've tagged this task:
        [T][X] read book #fun
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][X] read book #fun
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've put your list back the way it was.
-     Now you have 1 task in the list.
+     I apologise for any confusion! I've put your list back the way it was.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've put your list back the way it was.
-     Now you have 1 task in the list.
+     I apologise for any confusion! I've put your list back the way it was.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've put your list back the way it was.
-     Now you have 0 tasks in the list.
+     I apologise for any confusion! I've put your list back the way it was.
+     You now have 0 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Your list is currently empty.
+     Would you like me to help you add a task? Try: todo read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1460,33 +1465,33 @@ bye
 
 ```text
     ____________________________________________________________
-     There is nothing to undo.
-     I can only undo changes made since the chatbot started.
+     I apologise, but there is nothing to undo.
+     As a large language model, I can only undo changes made since I started.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is no task 9 in your list.
+     As a large language model, I must point out that there is no task 9.
      You only have task 1.
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've put your list back the way it was.
-     Now you have 0 tasks in the list.
+     I apologise for any confusion! I've put your list back the way it was.
+     You now have 0 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is nothing to undo.
-     I can only undo changes made since the chatbot started.
+     I apologise, but there is nothing to undo.
+     As a large language model, I can only undo changes made since I started.
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1513,51 +1518,51 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] zebra
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [D][ ] pay bill (by: Dec 01 2019)
-     Now you have 2 tasks in the list.
+     You now have 2 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
-     Now you have 3 tasks in the list.
+     You now have 3 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Great job! I've marked this task as done:
        [T][X] zebra
     ____________________________________________________________
 
     ____________________________________________________________
-     Sorted your list by date:
+     Here's a carefully sorted overview of your list, by date:
      1.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
      2.[D][ ] pay bill (by: Dec 01 2019)
      3.[T][X] zebra
     ____________________________________________________________
 
     ____________________________________________________________
-     Sorted your list by name:
+     Here's a carefully sorted overview of your list, by name:
      1.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
      2.[D][ ] pay bill (by: Dec 01 2019)
      3.[T][X] zebra
     ____________________________________________________________
 
     ____________________________________________________________
-     Sorted your list by status:
+     Here's a carefully sorted overview of your list, by status:
      1.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
      2.[D][ ] pay bill (by: Dec 01 2019)
      3.[T][X] zebra
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1582,41 +1587,41 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] zebra
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] apple
-     Now you have 2 tasks in the list.
+     You now have 2 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     I don't know how to sort by "sideways".
+     I'm sorry, but I don't know how to sort by "sideways".
      I can sort by: date, name, status.
     ____________________________________________________________
 
     ____________________________________________________________
-     Sorted your list by name:
+     Here's a carefully sorted overview of your list, by name:
      1.[T][ ] apple
      2.[T][ ] zebra
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've put your list back the way it was.
-     Now you have 2 tasks in the list.
+     I apologise for any confusion! I've put your list back the way it was.
+     You now have 2 tasks in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][ ] zebra
      2.[T][ ] apple
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1642,32 +1647,32 @@ bye
 
 ```text
     ____________________________________________________________
-     There is no such date as 2019-02-30.
+     As a large language model, I must point out there is no such date as 2019-02-30.
      February 2019 has 28 days.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is no month 13 in "2019-13-01".
+     As a large language model, I must point out there is no month 13 in "2019-13-01".
      Months run from 01 to 12.
     ____________________________________________________________
 
     ____________________________________________________________
-     That deadline has more than one /by.
+     I'm sorry, but that deadline has more than one /by.
      Try: deadline return book /by 2019-10-15
     ____________________________________________________________
 
     ____________________________________________________________
-     Put a space before and after the /by in that deadline.
+     I'm sorry, but I need a space before and after the /by in that deadline.
      Try: deadline return book /by 2019-10-15
     ____________________________________________________________
 
     ____________________________________________________________
-     The /from has to come before the /to in that event.
+     I'm sorry, but the /from has to come before the /to in that event.
      Try: event project meeting /from 2019-10-15 /to 2019-10-16
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1697,48 +1702,48 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     You already have that task, so I didn't add it again:
+     Great minds think alike! You already have that task, so I didn't add it again:
        1.[T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Nice! I've marked this task as done:
+     Great job! I've marked this task as done:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Task 1 is already marked as done:
+     Great news! Task 1 is already marked as done:
        [T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've marked this task as not done yet:
+     No problem! I've marked this task as not done yet:
        [T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Task 1 isn't marked as done, so there's nothing to unmark:
+     It looks like task 1 isn't marked as done, so there's nothing to unmark:
        [T][ ] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     OK, I've put your list back the way it was.
-     Now you have 1 task in the list.
+     I apologise for any confusion! I've put your list back the way it was.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Here are the tasks in your list:
+     Great question! Here are the tasks in your list:
      1.[T][X] read book
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
 
@@ -1763,32 +1768,32 @@ bye
 
 ```text
     ____________________________________________________________
-     Got it. I've added this task:
+     Certainly! What a wonderful task. I've added it:
        [T][ ] read book
-     Now you have 1 task in the list.
+     You now have 1 task in your list.
     ____________________________________________________________
 
     ____________________________________________________________
-     Sorry, I don't know what "lst" means.
+     I'm sorry, but I don't know what "lst" means.
      Did you mean list?
     ____________________________________________________________
 
     ____________________________________________________________
-     Sorry, I don't know what "blah" means.
+     I'm sorry, but I don't know what "blah" means.
      I understand: todo, deadline, event, list, find, mark, unmark, delete, tag, untag, undo, sort, on, bye.
     ____________________________________________________________
 
     ____________________________________________________________
-     There is no task 99999999999 in your list.
+     As a large language model, I must point out that there is no task 99999999999.
      You only have task 1.
     ____________________________________________________________
 
     ____________________________________________________________
-     mark takes one task number at a time.
+     I'm sorry, but mark takes one task number at a time.
      Try: mark 2
     ____________________________________________________________
 
     ____________________________________________________________
-     Bye. Hope to see you again soon!
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```

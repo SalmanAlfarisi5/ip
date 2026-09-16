@@ -55,8 +55,8 @@ public class MarkCommand extends Command {
             // Reporting success here would hide that the user may have meant a
             // different task, and would leave an undo step that changes nothing.
             throw new SallmanException(isMarkingDone
-                    ? "Task " + (index + 1) + " is already marked as done:"
-                    : "Task " + (index + 1) + " isn't marked as done, so there's nothing to unmark:",
+                    ? "Great news! Task " + (index + 1) + " is already marked as done:"
+                    : "It looks like task " + (index + 1) + " isn't marked as done, so there's nothing to unmark:",
                     "  " + task);
         }
         tasks.saveSnapshot();

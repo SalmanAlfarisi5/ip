@@ -30,7 +30,7 @@ public class MainWindow {
 
     private Sallman sallman;
 
-    private final Image sallmanImage = new Image(this.getClass().getResourceAsStream("/images/DaSallman.png"));
+    private final Image sallmanImage = new Image(this.getClass().getResourceAsStream("/images/sallman.png"));
 
     /** Makes the dialogue scroll to the newest message as it grows. */
     @FXML

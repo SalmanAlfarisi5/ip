@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import sallman.Sallman;
 
@@ -32,6 +33,9 @@ public class Main extends Application {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("saLLMan");
+            // The sparkle is the same icon the chatbot's replies carry, so the
+            // taskbar entry is recognisably the same assistant.
+            stage.getIcons().add(new Image(Main.class.getResourceAsStream("/images/sallman.png")));
 
             // Below roughly this size the layout stops making sense: the input
             // row and a line or two of dialogue need the height, and the input

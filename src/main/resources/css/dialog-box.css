@@ -12,7 +12,7 @@
  * nearest the right edge is squared off to show which side it came from.
  */
 .user-label {
-    -fx-background-color: accent;
+    -fx-background-color: linear-gradient(to right, accent, accent-deep);
     -fx-text-fill: on-accent;
     -fx-background-radius: 14px 14px 4px 14px;
 }

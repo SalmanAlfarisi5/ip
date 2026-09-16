@@ -163,7 +163,7 @@ public class Sallman {
      */
     private static SallmanException unexpectedError(RuntimeException e) {
         e.printStackTrace();
-        return new SallmanException("Something went wrong on my side while doing that.",
+        return new SallmanException("I apologise, but something went wrong on my side while doing that.",
                 "Please check your list with: list");
     }
 

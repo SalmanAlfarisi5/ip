@@ -43,7 +43,7 @@ public class CommandTest {
         AddCommand duplicate = new AddCommand(new Todo("Read Book"));
         SallmanException e = assertThrows(SallmanException.class, () -> duplicate.execute(tasks, ui, storage));
 
-        assertEquals("You already have that task, so I didn't add it again:", e.getMessage());
+        assertEquals("Great minds think alike! You already have that task, so I didn't add it again:", e.getMessage());
         assertEquals("  1.[T][ ] read book", e.toLines()[1]);
         assertEquals(1, tasks.size());
     }
@@ -68,7 +68,7 @@ public class CommandTest {
         MarkCommand markAgain = new MarkCommand(true, "1");
         SallmanException e = assertThrows(SallmanException.class, () -> markAgain.execute(tasks, ui, storage));
 
-        assertEquals("Task 1 is already marked as done:", e.getMessage());
+        assertEquals("Great news! Task 1 is already marked as done:", e.getMessage());
         assertEquals(undoStepsBefore, tasks.getUndoCount());
     }
 
@@ -79,6 +79,6 @@ public class CommandTest {
         MarkCommand unmark = new MarkCommand(false, "1");
         SallmanException e = assertThrows(SallmanException.class, () -> unmark.execute(tasks, ui, storage));
 
-        assertTrue(e.getMessage().startsWith("Task 1 isn't marked as done"));
+        assertTrue(e.getMessage().startsWith("It looks like task 1 isn't marked as done"));
     }
 }

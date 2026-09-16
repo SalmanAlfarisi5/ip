@@ -72,7 +72,7 @@ public enum SortOrder {
                 .filter(order -> order.keyword.equals(keyword))
                 .findFirst()
                 .orElseThrow(() -> new SallmanException(
-                        "I don't know how to sort by \"" + keyword + "\".",
+                        "I'm sorry, but I don't know how to sort by \"" + keyword + "\".",
                         "I can sort by: " + keywords() + "."));
     }
 
