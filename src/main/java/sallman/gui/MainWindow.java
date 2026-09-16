@@ -13,6 +13,10 @@ import sallman.Sallman;
 
 /**
  * Controller for the main window.
+ * <p>
+ * Based on the SE-EDU JavaFX tutorial (https://se-education.org/guides/tutorials/javaFx.html),
+ * extended here to style errors differently and to close the window after a
+ * short pause when the user says goodbye.
  */
 public class MainWindow {
 

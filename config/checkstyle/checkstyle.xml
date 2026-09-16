@@ -6,6 +6,8 @@
 <!--
     This configuration file enforces rules for the coding standard at
     https://se-education.org/guides/conventions/java/intermediate.html
+
+    Adapted from AddressBook-Level3: https://github.com/se-edu/addressbook-level3
 -->
 
 <module name="Checker">

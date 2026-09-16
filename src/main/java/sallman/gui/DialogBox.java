@@ -22,6 +22,9 @@ import javafx.scene.shape.Circle;
  * person and an app, not between two people, so the user's messages are
  * compact bubbles with no picture, while the chatbot's replies carry a small
  * avatar and a style that says what kind of reply they are.
+ * <p>
+ * The idea of a dialog box loaded from FXML, and flipped for the chatbot's side,
+ * comes from the SE-EDU JavaFX tutorial (https://se-education.org/guides/tutorials/javaFx.html).
  */
 public class DialogBox extends HBox {
 
