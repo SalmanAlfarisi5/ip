@@ -1,26 +1,21 @@
+/*
+ * The colours every stylesheet refers to by name. Defining them once on the
+ * root lets the whole look be retuned here, and they are inherited by the
+ * dialog boxes even though those load a stylesheet of their own.
+ */
 .root {
-    main-color: rgb(237, 255, 242);       /* Create a looked-up color called "main-color" within root. */
-    -fx-background-color: main-color;
-}
+    background: #f4f5f7;
+    surface: #ffffff;
+    divider: #dfe2e7;
+    ink: #1f2328;
+    muted: #6b7280;
+    accent: #3b5bdb;
+    on-accent: #ffffff;
+    error: #c92a2a;
+    error-surface: #fff5f5;
 
-.text-field {
-    -fx-background-color: #d9ffe2;
-    -fx-font: 20px "Arial";
-}
-
-.button {
-    -fx-background-color: mediumspringgreen;
-    -fx-font: italic bold 16px "Arial";
-}
-
-.button:hover {
-    -fx-background-color:cyan;
-    -fx-font-size: 18px;
-}
-
-.button:pressed {
-    -fx-background-color:orange;
-    -fx-font-size: 20px;
+    -fx-background-color: background;
+    -fx-font-size: 13px;
 }
 
 .scroll-pane,
@@ -28,19 +23,63 @@
     -fx-background-color: transparent;
 }
 
-.scroll-bar {
-    -fx-font-size: 10px;  /* Change width of scroll bar. */
-    -fx-background-color: main-color;
+/* A slim, quiet scroll bar: it is there to be used, not looked at. */
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
 }
 
 .scroll-bar .thumb {
-    -fx-background-color: #ff9cb4;
-    -fx-background-radius: 1em;
+    -fx-background-color: divider;
+    -fx-background-radius: 4px;
 }
 
-/* Hides the increment and decrement buttons. */
+.scroll-bar .thumb:hover {
+    -fx-background-color: muted;
+}
+
 .scroll-bar .increment-button,
 .scroll-bar .decrement-button {
     -fx-pref-height: 0;
+    -fx-padding: 0;
     -fx-opacity: 0;
+}
+
+/* The input row is set apart from the conversation above it. */
+.input-bar {
+    -fx-background-color: surface;
+    -fx-border-color: divider transparent transparent transparent;
+}
+
+.text-field {
+    -fx-background-color: background;
+    -fx-background-radius: 18px;
+    -fx-border-color: divider;
+    -fx-border-radius: 18px;
+    -fx-padding: 8px 14px 8px 14px;
+    -fx-font-size: 14px;
+    -fx-text-fill: ink;
+    -fx-prompt-text-fill: muted;
+}
+
+.text-field:focused {
+    -fx-border-color: accent;
+}
+
+.button {
+    -fx-background-color: accent;
+    -fx-background-radius: 18px;
+    -fx-padding: 8px 18px 8px 18px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: on-accent;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-opacity: 0.9;
+}
+
+.button:pressed {
+    -fx-opacity: 0.75;
 }

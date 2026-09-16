@@ -39,6 +39,9 @@ public class Sallman {
     /** Name of the command class that answered the last {@link #getResponse}. */
     private String lastCommandType = "";
 
+    /** Whether the last {@link #getResponse} reported a problem. */
+    private boolean isLastResponseError;
+
     /**
      * Creates a chatbot backed by the given data file, loading whatever is
      * already saved there.
@@ -128,6 +131,7 @@ public class Sallman {
         if (trimmed.isEmpty()) {
             return "";
         }
+        isLastResponseError = false;
         try {
             Command command = Parser.parse(trimmed);
             assert command != null : "parser returned no command for: " + trimmed;
@@ -137,9 +141,11 @@ public class Sallman {
         } catch (SallmanException e) {
             ui.showError(e);
             lastCommandType = "";
+            isLastResponseError = true;
         } catch (RuntimeException e) {
             ui.showError(unexpectedError(e));
             lastCommandType = "";
+            isLastResponseError = true;
         }
         return ui.drainText();
     }
@@ -169,6 +175,16 @@ public class Sallman {
      */
     public boolean isExitRequested() {
         return isExitRequested;
+    }
+
+    /**
+     * Returns whether the reply to the last input reported a problem, so a front
+     * end can make errors stand out from ordinary replies.
+     *
+     * @return true if the last command could not be carried out
+     */
+    public boolean isLastResponseError() {
+        return isLastResponseError;
     }
 
     /**
