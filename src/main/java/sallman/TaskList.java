@@ -172,8 +172,8 @@ public class TaskList {
      */
     public void undo() throws SallmanException {
         if (history.isEmpty()) {
-            throw new SallmanException("There is nothing to undo.",
-                    "I can only undo changes made since the chatbot started.");
+            throw new SallmanException("I apologise, but there is nothing to undo.",
+                    "As a large language model, I can only undo changes made since I started.");
         }
         List<Task> previous = history.pop();
         tasks.clear();

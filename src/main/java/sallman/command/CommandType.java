@@ -68,7 +68,7 @@ public enum CommandType {
         if (match.isPresent()) {
             return match.get();
         }
-        String message = "Sorry, I don't know what \"" + keyword + "\" means.";
+        String message = "I'm sorry, but I don't know what \"" + keyword + "\" means.";
         Optional<CommandType> guess = closestTo(typed);
         if (guess.isPresent()) {
             throw new SallmanException(message, "Did you mean " + guess.get().keyword + "?");

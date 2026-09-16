@@ -4,12 +4,14 @@
  * dialog boxes even though those load a stylesheet of their own.
  */
 .root {
-    background: #f4f5f7;
+    /* A soft violet theme, in the style of the AI assistants saLLMan imitates. */
+    background: #f7f6fc;
     surface: #ffffff;
-    divider: #dfe2e7;
-    ink: #1f2328;
-    muted: #6b7280;
-    accent: #3b5bdb;
+    divider: #e4e1f2;
+    ink: #1e1b2e;
+    muted: #6e6a86;
+    accent: #6d4aff;
+    accent-deep: #4f46e5;
     on-accent: #ffffff;
     error: #c92a2a;
     error-surface: #fff5f5;
@@ -45,6 +47,28 @@
     -fx-opacity: 0;
 }
 
+/* Names who the user is talking to, and keeps up the eager-assistant act. */
+.header {
+    -fx-background-color: surface;
+    -fx-border-color: transparent transparent divider transparent;
+}
+
+.brand {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: ink;
+}
+
+.status {
+    -fx-font-size: 11px;
+    -fx-text-fill: #2f9e44;
+}
+
+.disclaimer {
+    -fx-font-size: 10px;
+    -fx-text-fill: muted;
+}
+
 /* The input row is set apart from the conversation above it. */
 .input-bar {
     -fx-background-color: surface;
@@ -67,7 +91,7 @@
 }
 
 .button {
-    -fx-background-color: accent;
+    -fx-background-color: linear-gradient(to right, accent, accent-deep);
     -fx-background-radius: 18px;
     -fx-padding: 8px 18px 8px 18px;
     -fx-font-size: 14px;

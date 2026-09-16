@@ -137,15 +137,16 @@ public class Parser {
             if (arguments.contains(marker)) {
                 // Typed, but glued to a word, e.g. "book/by". Saying the marker
                 // is missing would contradict what the user can see they typed.
-                throw new SallmanException("Put a space before and after the " + marker
+                throw new SallmanException("I'm sorry, but I need a space before and after the " + marker
                         + " in that " + taskKind + ".", example);
             }
-            throw new SallmanException("I couldn't find a " + marker + " in that "
+            throw new SallmanException("I'm sorry, but I couldn't find a " + marker + " in that "
                     + taskKind + ".", example);
         }
         String after = arguments.substring(matcher.end());
         if (pattern.matcher(after).find()) {
-            throw new SallmanException("That " + taskKind + " has more than one " + marker + ".",
+            throw new SallmanException("I'm sorry, but that " + taskKind + " has more than one "
+                    + marker + ".",
                     example);
         }
         return new String[] {arguments.substring(0, matcher.start()), after};
@@ -201,7 +202,7 @@ public class Parser {
     public static String[] splitTaskNumberAndTags(String command, String arguments)
             throws SallmanException {
         if (arguments.isEmpty()) {
-            throw new SallmanException(command + " needs a task number and a tag.",
+            throw new SallmanException("I'd love to help, but " + command + " needs a task number and a tag.",
                     "Try: " + command + " 2 fun");
         }
         String[] words = arguments.split("\\s+", 2);
@@ -227,12 +228,12 @@ public class Parser {
                 .filter(tag -> !tag.isEmpty())
                 .toList();
         if (tags.isEmpty()) {
-            throw new SallmanException(command + " needs at least one tag.",
+            throw new SallmanException("I'd love to help, but " + command + " needs at least one tag.",
                     "Try: " + command + " 2 fun");
         }
         for (String tag : tags) {
             if (!TAG_PATTERN.matcher(tag).matches()) {
-                throw new SallmanException("I can't use \"" + tag + "\" as a tag.",
+                throw new SallmanException("I'm sorry, but I can't use \"" + tag + "\" as a tag.",
                         "A tag is made of letters, digits, hyphens or underscores.");
             }
         }
@@ -265,7 +266,7 @@ public class Parser {
      */
     public static String parseSearchKeyword(String arguments) throws SallmanException {
         if (arguments.isEmpty()) {
-            throw new SallmanException("find needs something to search for.",
+            throw new SallmanException("I'd love to help, but find needs something to search for.",
                     "Try: find book");
         }
         return collapseSpaces(arguments);
@@ -280,7 +281,8 @@ public class Parser {
      */
     public static LocalDate parseOnDate(String arguments) throws SallmanException {
         if (arguments.isEmpty()) {
-            throw new SallmanException("on needs a date.", "Try: on " + TaskDate.EXAMPLE);
+            throw new SallmanException("I'd love to help, but on needs a date.",
+                    "Try: on " + TaskDate.EXAMPLE);
         }
         return TaskDate.parse(arguments);
     }
@@ -298,11 +300,11 @@ public class Parser {
     public static int parseTaskNumber(String command, String arguments, int taskCount)
             throws SallmanException {
         if (arguments.isEmpty()) {
-            throw new SallmanException(command + " needs a task number.",
+            throw new SallmanException("I'd love to help, but " + command + " needs a task number.",
                     "Try: " + command + " 2");
         }
         if (arguments.split("\\s+").length > 1) {
-            throw new SallmanException(command + " takes one task number at a time.",
+            throw new SallmanException("I'm sorry, but " + command + " takes one task number at a time.",
                     "Try: " + command + " 2");
         }
         int index;
@@ -316,7 +318,7 @@ public class Parser {
                 throw noSuchTask(arguments, taskCount);
             }
             // Translate Java's exception into one phrased for the user.
-            throw new SallmanException("\"" + arguments + "\" is not a number.",
+            throw new SallmanException("I'm sorry, but \"" + arguments + "\" doesn't look like a task number.",
                     "Try: " + command + " 2");
         }
         if (taskCount == 0 || index < 0 || index >= taskCount) {
@@ -338,10 +340,11 @@ public class Parser {
      */
     private static SallmanException noSuchTask(String number, int taskCount) {
         if (taskCount == 0) {
-            return new SallmanException("There is no task " + number + ": your list is empty.",
-                    TODO_EXAMPLE);
+            return new SallmanException("As a large language model, I must point out that your list "
+                    + "is empty, so there is no task " + number + ".", TODO_EXAMPLE);
         }
-        return new SallmanException("There is no task " + number + " in your list.",
+        return new SallmanException("As a large language model, I must point out that there is no task "
+                + number + ".",
                 taskCount == 1
                         ? "You only have task 1."
                         : "Pick a number from 1 to " + taskCount + ".");
@@ -356,7 +359,7 @@ public class Parser {
      */
     public static Task parseTodo(String arguments) throws SallmanException {
         if (arguments.isEmpty()) {
-            throw new SallmanException("A todo needs a description.", TODO_EXAMPLE);
+            throw new SallmanException("I'd love to help, but a todo needs a description.", TODO_EXAMPLE);
         }
         return new Todo(collapseSpaces(arguments));
     }
@@ -374,9 +377,10 @@ public class Parser {
         String[] parts = splitAtMarker(arguments, "/by", "deadline", DEADLINE_EXAMPLE);
         String description = collapseSpaces(parts[0]);
         String by = parts[1].trim();
-        requirePresent(description, "That deadline has no description before the /by.",
+        requirePresent(description, "I'd love to help, but that deadline has no description before the /by.",
                 DEADLINE_EXAMPLE);
-        requirePresent(by, "That deadline has no due date after the /by.", DEADLINE_EXAMPLE);
+        requirePresent(by, "I'd love to help, but that deadline has no due date after the /by.",
+                DEADLINE_EXAMPLE);
         return new Deadline(description, TaskDate.parse(by));
     }
 
@@ -396,7 +400,7 @@ public class Parser {
         if (fromMarker.find() && toMarker.find() && toMarker.start() < fromMarker.start()) {
             // Otherwise the /to would be swallowed into the description, and the
             // user told there is no /to at all.
-            throw new SallmanException("The /from has to come before the /to in that event.",
+            throw new SallmanException("I'm sorry, but the /from has to come before the /to in that event.",
                     EVENT_EXAMPLE);
         }
         String[] fromParts = splitAtMarker(arguments, "/from", "event", EVENT_EXAMPLE);
@@ -404,16 +408,19 @@ public class Parser {
         String description = collapseSpaces(fromParts[0]);
         String from = toParts[0].trim();
         String to = toParts[1].trim();
-        requirePresent(description, "That event has no description before the /from.",
+        requirePresent(description, "I'd love to help, but that event has no description before the /from.",
                 EVENT_EXAMPLE);
-        requirePresent(from, "That event has no start time after the /from.", EVENT_EXAMPLE);
-        requirePresent(to, "That event has no end time after the /to.", EVENT_EXAMPLE);
+        requirePresent(from, "I'd love to help, but that event has no start time after the /from.",
+                EVENT_EXAMPLE);
+        requirePresent(to, "I'd love to help, but that event has no end time after the /to.",
+                EVENT_EXAMPLE);
         LocalDate start = TaskDate.parse(from);
         LocalDate end = TaskDate.parse(to);
         if (end.isBefore(start)) {
             // Such an event covers no days at all, so it could never be found
             // by the on command and is almost certainly a typo.
-            throw new SallmanException("That event ends before it starts.",
+            throw new SallmanException(
+                    "As a large language model, I can't schedule an event that ends before it starts.",
                     "Check the order of the /from and /to dates.");
         }
         return new Event(description, start, end);

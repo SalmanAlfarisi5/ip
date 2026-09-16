@@ -107,13 +107,13 @@ public class Ui {
         if (isPrintingToConsole) {
             System.out.println(BANNER);
         }
-        say("Hello! I'm " + name + ", freshly loaded and ready to assist.",
-                "What are we working on today?");
+        say("Hello! I'm " + name + ", your Large Language (task) Manager.",
+                "How can I assist you with your tasks today?");
     }
 
     /** Shows the parting message. */
     public void showGoodbye() {
-        say("Bye. Hope to see you again soon!");
+        say("Thank you for chatting with me! I hope this was helpful. Goodbye!");
     }
 
     /**
@@ -136,11 +136,11 @@ public class Ui {
             return;
         }
         List<String> reply = new ArrayList<>();
-        reply.add("I skipped " + skippedLines.size()
+        reply.add("I noticed " + skippedLines.size()
                 + (skippedLines.size() == 1 ? " unreadable line" : " unreadable lines")
-                + " in your saved data:");
+                + " in your saved data, so I skipped them:");
         reply.addAll(skippedLines);
-        reply.add("Everything else loaded fine. The bad lines will be dropped");
+        reply.add("Everything else loaded perfectly! I'll drop the unreadable lines");
         reply.add("the next time your list changes.");
         say(reply.toArray(new String[0]));
     }
@@ -152,7 +152,8 @@ public class Ui {
      * @param taskCount number of tasks now in the list
      */
     public void showAdded(Task task, int taskCount) {
-        say("Got it. I've added this task:", "  " + task, taskCountSummary(taskCount));
+        say("Certainly! What a wonderful task. I've added it:", "  " + task,
+                taskCountSummary(taskCount));
     }
 
     /**
@@ -162,7 +163,7 @@ public class Ui {
      * @param taskCount number of tasks left in the list
      */
     public void showRemoved(Task task, int taskCount) {
-        say("Noted. I've removed this task:", "  " + task, taskCountSummary(taskCount));
+        say("Of course! I've removed this task:", "  " + task, taskCountSummary(taskCount));
     }
 
     /**
@@ -171,7 +172,7 @@ public class Ui {
      * @param task the task, already updated
      */
     public void showMarked(Task task) {
-        say("Nice! I've marked this task as done:", "  " + task);
+        say("Great job! I've marked this task as done:", "  " + task);
     }
 
     /**
@@ -180,7 +181,7 @@ public class Ui {
      * @param task the task, already updated
      */
     public void showUnmarked(Task task) {
-        say("OK, I've marked this task as not done yet:", "  " + task);
+        say("No problem! I've marked this task as not done yet:", "  " + task);
     }
 
     /**
@@ -194,12 +195,13 @@ public class Ui {
     public void showTagged(Task task, boolean isAddingTags, boolean hasChanged) {
         if (!hasChanged) {
             say(isAddingTags
-                            ? "That task already has every tag you named:"
-                            : "That task has none of the tags you named:",
+                            ? "It looks like that task already has every tag you named:"
+                            : "It looks like that task has none of the tags you named:",
                     "  " + task);
             return;
         }
-        say(isAddingTags ? "Tagged this task:" : "Untagged this task:", "  " + task);
+        say(isAddingTags ? "Absolutely! I've tagged this task:" : "Sure thing! I've removed those tags:",
+                "  " + task);
     }
 
     /**
@@ -208,7 +210,8 @@ public class Ui {
      * @param taskCount number of tasks in the restored list
      */
     public void showUndone(int taskCount) {
-        say("OK, I've put your list back the way it was.", taskCountSummary(taskCount));
+        say("I apologise for any confusion! I've put your list back the way it was.",
+                taskCountSummary(taskCount));
     }
 
     /**
@@ -218,7 +221,8 @@ public class Ui {
      * @param orderName what they were sorted by, named as the user typed it
      */
     public void showSorted(TaskList tasks, String orderName) {
-        sayNumbered("Sorted your list by " + orderName + ":", tasks.asList());
+        sayNumbered("Here's a carefully sorted overview of your list, by " + orderName + ":",
+                tasks.asList());
     }
 
     /**
@@ -227,7 +231,13 @@ public class Ui {
      * @param tasks the tasks to show
      */
     public void showTaskList(TaskList tasks) {
-        sayNumbered("Here are the tasks in your list:", tasks.asList());
+        if (tasks.size() == 0) {
+            // A heading with nothing under it reads as if the command half-worked.
+            say("Great question! Your list is currently empty.",
+                    "Would you like me to help you add a task? Try: todo read book");
+            return;
+        }
+        sayNumbered("Great question! Here are the tasks in your list:", tasks.asList());
     }
 
     /**
@@ -257,10 +267,10 @@ public class Ui {
      */
     public void showMatchingTasks(List<Task> matches, String keyword) {
         if (matches.isEmpty()) {
-            say("No tasks match \"" + keyword + "\".");
+            say("I searched thoroughly, but no tasks match \"" + keyword + "\".");
             return;
         }
-        sayNumbered("Here are the matching tasks in your list:", matches);
+        sayNumbered("I found some tasks that match \"" + keyword + "\":", matches);
     }
 
     /**
@@ -271,10 +281,10 @@ public class Ui {
      */
     public void showTasksOn(List<Task> matches, LocalDate date) {
         if (matches.isEmpty()) {
-            say("Nothing on " + TaskDate.format(date) + ".");
+            say("Great news! You have nothing on " + TaskDate.format(date) + ".");
             return;
         }
-        sayNumbered("Here is what you have on " + TaskDate.format(date) + ":", matches);
+        sayNumbered("Here is everything you have on " + TaskDate.format(date) + ":", matches);
     }
 
     /**
@@ -284,8 +294,8 @@ public class Ui {
      * @return a sentence naming the total, with "task" pluralised to match
      */
     private static String taskCountSummary(int taskCount) {
-        return "Now you have " + taskCount + (taskCount == 1 ? " task" : " tasks")
-                + " in the list.";
+        return "You now have " + taskCount + (taskCount == 1 ? " task" : " tasks")
+                + " in your list.";
     }
 
     /**

@@ -53,7 +53,7 @@ public final class TaskDate {
                 throw noSuchDate(text);
             }
             // Translate Java's exception into one that names the format wanted.
-            throw new SallmanException("I couldn't read \"" + text + "\" as a date.",
+            throw new SallmanException("I'm sorry, but I couldn't read \"" + text + "\" as a date.",
                     "Use " + INPUT_FORMAT + ", e.g. " + EXAMPLE + ".");
         }
     }
@@ -69,12 +69,14 @@ public final class TaskDate {
         int year = Integer.parseInt(text.substring(0, 4));
         int month = Integer.parseInt(text.substring(5, 7));
         if (month < 1 || month > 12) {
-            return new SallmanException("There is no month " + month + " in \"" + text + "\".",
+            return new SallmanException("As a large language model, I must point out there is no month "
+                    + month + " in \"" + text + "\".",
                     "Months run from 01 to 12.");
         }
         int days = YearMonth.of(year, month).lengthOfMonth();
         String monthName = Month.of(month).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-        return new SallmanException("There is no such date as " + text + ".",
+        return new SallmanException("As a large language model, I must point out there is no such date as "
+                + text + ".",
                 monthName + " " + year + " has " + days + " days.");
     }
 

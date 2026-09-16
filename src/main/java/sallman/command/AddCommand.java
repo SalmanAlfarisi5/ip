@@ -43,7 +43,8 @@ public class AddCommand extends Command {
         if (existing.isPresent()) {
             // Checked before the snapshot, so a refused add leaves no undo step.
             int index = existing.getAsInt();
-            throw new SallmanException("You already have that task, so I didn't add it again:",
+            throw new SallmanException(
+                    "Great minds think alike! You already have that task, so I didn't add it again:",
                     "  " + (index + 1) + "." + tasks.get(index));
         }
         tasks.saveSnapshot();

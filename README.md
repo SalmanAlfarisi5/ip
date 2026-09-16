@@ -6,6 +6,11 @@ saLLMan is a chatbot that helps you keep track of your tasks:
 todos, deadlines and events. Your list is saved to disk automatically and
 loaded again the next time you start it.
 
+It has the personality of an over-eager AI assistant. Every task is a
+wonderful task, every `list` is a great question, and when you ask for task 99
+of 3 it will point out, as a large language model, that there is no task 99.
+The replies still say exactly what happened, so the act never gets in the way.
+
 ## Download and run
 
 Download `sallman.jar` from the [latest release][latest], put it in an empty
@@ -50,8 +55,8 @@ Prerequisites: JDK 25, and a recent version of IntelliJ.
    \__ \ | (_| || |___ | |___ | |  | || (_| || | | |
    |___/  \__,_||_____||_____||_|  |_| \__,_||_| |_|
        ____________________________________________________________
-        Hello! I'm saLLMan, freshly loaded and ready to assist.
-        What are we working on today?
+        Hello! I'm saLLMan, your Large Language (task) Manager.
+        How can I assist you with your tasks today?
        ____________________________________________________________
    ```
 
