@@ -3,6 +3,7 @@ package sallman.gui;
 import java.io.IOException;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -41,7 +42,10 @@ public class Main extends Application {
             fxmlLoader.<MainWindow>getController().setSallman(sallman);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            // Without its layout there is no window to show anything in, and
+            // JavaFX would otherwise keep running with nothing on screen.
+            System.err.println("saLLMan could not load its window: " + e.getMessage());
+            Platform.exit();
         }
     }
 }

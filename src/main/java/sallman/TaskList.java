@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 import sallman.task.Task;
 
@@ -91,6 +93,19 @@ public class TaskList {
      */
     public int size() {
         return tasks.size();
+    }
+
+    /**
+     * Returns the position of a task that duplicates the given one.
+     *
+     * @param task the task to look for
+     * @return the position of the first matching task, counting from 0, or
+     *         empty when the list holds nothing like it
+     */
+    public OptionalInt indexOfSameTask(Task task) {
+        return IntStream.range(0, tasks.size())
+                .filter(i -> tasks.get(i).isSameTask(task))
+                .findFirst();
     }
 
     /**

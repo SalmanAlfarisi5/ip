@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,6 +23,7 @@ import sallman.command.SortOrder;
 import sallman.command.TagCommand;
 import sallman.task.Deadline;
 import sallman.task.Event;
+import sallman.task.Task;
 import sallman.task.Todo;
 
 /**
@@ -258,5 +260,96 @@ public class ParserTest {
     public void parseOnDate_missingDate_exceptionThrown() {
         SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseOnDate(""));
         assertEquals("on needs a date.", e.getMessage());
+    }
+
+    @Test
+    public void parseDeadline_byGivenTwice_exceptionNamesTheRepeat() {
+        String arguments = "pay bill /by 2019-10-15 /by 2019-10-16";
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseDeadline(arguments));
+
+        assertEquals("That deadline has more than one /by.", e.getMessage());
+    }
+
+    @Test
+    public void parseDeadline_byJoinedToAWord_exceptionAsksForSpaces() {
+        // Reporting the /by as missing would contradict what the user typed.
+        String arguments = "return book/by 2019-10-15";
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseDeadline(arguments));
+
+        assertEquals("Put a space before and after the /by in that deadline.", e.getMessage());
+    }
+
+    @Test
+    public void parseEvent_toBeforeFrom_exceptionNamesTheOrder() {
+        // Without this check the /to disappears into the description and the
+        // user is told, wrongly, that there is no /to.
+        String arguments = "trip /to 2019-10-16 /from 2019-10-15";
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseEvent(arguments));
+
+        assertEquals("The /from has to come before the /to in that event.", e.getMessage());
+    }
+
+    @Test
+    public void parseEvent_fromGivenTwice_exceptionNamesTheRepeat() {
+        String arguments = "trip /from 2019-10-15 /from 2019-10-16 /to 2019-10-17";
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseEvent(arguments));
+
+        assertEquals("That event has more than one /from.", e.getMessage());
+    }
+
+    @Test
+    public void parseEvent_markerInsideAWord_notTreatedAsAMarker() throws Exception {
+        // "/tomorrow" starts with "/to" but is a word of its own, not the marker.
+        Task event = Parser.parseEvent("plan /tomorrow trip /from 2019-10-15 /to 2019-10-16");
+
+        assertEquals("[E][ ] plan /tomorrow trip (from: Oct 15 2019 to: Oct 16 2019)", event.toString());
+    }
+
+    @Test
+    public void parseTodo_repeatedSpaces_collapsedToOne() throws Exception {
+        assertEquals("[T][ ] read the book", Parser.parseTodo("read    the   book").toString());
+    }
+
+    @Test
+    public void parseSearchKeyword_repeatedSpaces_collapsedToOne() throws Exception {
+        assertEquals("read book", Parser.parseSearchKeyword("read     book"));
+    }
+
+    @Test
+    public void parseTaskNumber_tooManyDigitsForAnInt_reportedAsOutOfRange() {
+        // It is a number, just not one in the list, so "not a number" would be wrong.
+        String number = "99999999999";
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseTaskNumber("mark", number, 3));
+
+        assertEquals("There is no task 99999999999 in your list.", e.getMessage());
+    }
+
+    @Test
+    public void parseTaskNumber_severalNumbers_exceptionAsksForOne() {
+        String number = "1 2";
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parseTaskNumber("mark", number, 3));
+
+        assertEquals("mark takes one task number at a time.", e.getMessage());
+    }
+
+    @Test
+    public void parse_keywordInAnotherCase_recognised() throws Exception {
+        assertInstanceOf(ListCommand.class, Parser.parse("LIST"));
+        assertInstanceOf(AddCommand.class, Parser.parse("Todo read book"));
+    }
+
+    @Test
+    public void parse_keywordOneTypoAway_suggestsTheCommand() {
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parse("lst"));
+
+        assertEquals("Did you mean list?", e.toLines()[1]);
+    }
+
+    @Test
+    public void parse_keywordFarFromAnyCommand_listsEveryCommand() {
+        // Guessing from a word this far off would suggest something unrelated.
+        SallmanException e = assertThrows(SallmanException.class, () -> Parser.parse("blah"));
+
+        assertTrue(e.toLines()[1].startsWith("I understand: todo, deadline"));
     }
 }

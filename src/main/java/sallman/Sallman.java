@@ -95,6 +95,8 @@ public class Sallman {
                 isExit = command.isExit();
             } catch (SallmanException e) {
                 ui.showError(e);
+            } catch (RuntimeException e) {
+                ui.showError(unexpectedError(e));
             }
         }
         ui.close();
@@ -135,8 +137,28 @@ public class Sallman {
         } catch (SallmanException e) {
             ui.showError(e);
             lastCommandType = "";
+        } catch (RuntimeException e) {
+            ui.showError(unexpectedError(e));
+            lastCommandType = "";
         }
         return ui.drainText();
+    }
+
+    /**
+     * Turns a failure the chatbot did not anticipate into a reply.
+     * <p>
+     * This is the outermost point a command runs from. An exception escaping it
+     * would end the console session, or leave the GUI with a reply that never
+     * arrives, so a bug is reported as one failed command instead. The details
+     * still go to the error stream for whoever is debugging.
+     *
+     * @param e the unexpected failure
+     * @return an error phrased for the user
+     */
+    private static SallmanException unexpectedError(RuntimeException e) {
+        e.printStackTrace();
+        return new SallmanException("Something went wrong on my side while doing that.",
+                "Please check your list with: list");
     }
 
     /**

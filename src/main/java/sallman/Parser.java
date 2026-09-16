@@ -3,6 +3,7 @@ package sallman;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import sallman.command.AddCommand;
@@ -116,23 +117,62 @@ public class Parser {
      * Splits arguments at a marker such as {@code /by}.
      * <p>
      * The marker is named in the error, so a user who left it out or spelled
-     * it differently is told which one was expected.
+     * it differently is told which one was expected. A marker only counts when
+     * it stands as a word of its own, so a description such as
+     * {@code go /tomorrow} is not split at {@code /to}.
      *
      * @param arguments text the user typed after the command
      * @param marker    the marker to split at, e.g. {@code /by}
      * @param taskKind  the kind of task being built, for the error message
      * @param example   a worked example shown alongside the error
      * @return the text before the marker at index 0, and after it at index 1
-     * @throws SallmanException if the marker is not there
+     * @throws SallmanException if the marker is missing, is joined to the
+     *                          word beside it, or is given more than once
      */
     private static String[] splitAtMarker(String arguments, String marker, String taskKind,
             String example) throws SallmanException {
-        String[] parts = arguments.split(marker, 2);
-        if (parts.length < 2) {
+        Pattern pattern = markerPattern(marker);
+        Matcher matcher = pattern.matcher(arguments);
+        if (!matcher.find()) {
+            if (arguments.contains(marker)) {
+                // Typed, but glued to a word, e.g. "book/by". Saying the marker
+                // is missing would contradict what the user can see they typed.
+                throw new SallmanException("Put a space before and after the " + marker
+                        + " in that " + taskKind + ".", example);
+            }
             throw new SallmanException("I couldn't find a " + marker + " in that "
                     + taskKind + ".", example);
         }
-        return parts;
+        String after = arguments.substring(matcher.end());
+        if (pattern.matcher(after).find()) {
+            throw new SallmanException("That " + taskKind + " has more than one " + marker + ".",
+                    example);
+        }
+        return new String[] {arguments.substring(0, matcher.start()), after};
+    }
+
+    /**
+     * Returns a pattern matching a marker only where it stands as a word of
+     * its own, with whitespace or the end of the text on either side.
+     *
+     * @param marker the marker to look for, e.g. {@code /by}
+     * @return the pattern
+     */
+    private static Pattern markerPattern(String marker) {
+        return Pattern.compile("(?<!\\S)" + Pattern.quote(marker) + "(?!\\S)");
+    }
+
+    /**
+     * Collapses runs of whitespace inside user-typed text to single spaces.
+     * <p>
+     * Stray double spaces are almost always typos, and keeping them would let
+     * {@code read  book} and {@code read book} be stored as different tasks.
+     *
+     * @param text the text as typed
+     * @return the text trimmed, with each run of whitespace made one space
+     */
+    private static String collapseSpaces(String text) {
+        return text.trim().replaceAll("\\s+", " ");
     }
 
     /**
@@ -228,7 +268,7 @@ public class Parser {
             throw new SallmanException("find needs something to search for.",
                     "Try: find book");
         }
-        return arguments;
+        return collapseSpaces(arguments);
     }
 
     /**
@@ -261,30 +301,50 @@ public class Parser {
             throw new SallmanException(command + " needs a task number.",
                     "Try: " + command + " 2");
         }
+        if (arguments.split("\\s+").length > 1) {
+            throw new SallmanException(command + " takes one task number at a time.",
+                    "Try: " + command + " 2");
+        }
         int index;
         try {
             // Task numbers shown to the user start at 1, arrays start at 0.
             index = Integer.parseInt(arguments) - 1;
         } catch (NumberFormatException e) {
+            if (arguments.matches("-?\\d+")) {
+                // All digits, just too many for an int: it is a number, only not
+                // one in the list, so calling it "not a number" would be wrong.
+                throw noSuchTask(arguments, taskCount);
+            }
             // Translate Java's exception into one phrased for the user.
             throw new SallmanException("\"" + arguments + "\" is not a number.",
                     "Try: " + command + " 2");
         }
-        if (taskCount == 0) {
-            throw new SallmanException("There is no task " + arguments
-                    + ": your list is empty.", TODO_EXAMPLE);
-        }
-        if (index < 0 || index >= taskCount) {
-            throw new SallmanException("There is no task " + arguments + " in your list.",
-                    taskCount == 1
-                            ? "You only have task 1."
-                            : "Pick a number from 1 to " + taskCount + ".");
+        if (taskCount == 0 || index < 0 || index >= taskCount) {
+            throw noSuchTask(arguments, taskCount);
         }
         // Every out-of-range number has been rejected above, so whoever called
         // this can index the list straight away without checking again.
         assert index >= 0 && index < taskCount
                 : "returning out-of-range index " + index + " for " + taskCount + " tasks";
         return index;
+    }
+
+    /**
+     * Returns the error for a task number that is not in the list.
+     *
+     * @param number    the number as the user typed it
+     * @param taskCount number of tasks currently in the list
+     * @return the exception to throw, naming the numbers that are valid
+     */
+    private static SallmanException noSuchTask(String number, int taskCount) {
+        if (taskCount == 0) {
+            return new SallmanException("There is no task " + number + ": your list is empty.",
+                    TODO_EXAMPLE);
+        }
+        return new SallmanException("There is no task " + number + " in your list.",
+                taskCount == 1
+                        ? "You only have task 1."
+                        : "Pick a number from 1 to " + taskCount + ".");
     }
 
     /**
@@ -298,7 +358,7 @@ public class Parser {
         if (arguments.isEmpty()) {
             throw new SallmanException("A todo needs a description.", TODO_EXAMPLE);
         }
-        return new Todo(arguments);
+        return new Todo(collapseSpaces(arguments));
     }
 
     /**
@@ -312,7 +372,7 @@ public class Parser {
      */
     public static Task parseDeadline(String arguments) throws SallmanException {
         String[] parts = splitAtMarker(arguments, "/by", "deadline", DEADLINE_EXAMPLE);
-        String description = parts[0].trim();
+        String description = collapseSpaces(parts[0]);
         String by = parts[1].trim();
         requirePresent(description, "That deadline has no description before the /by.",
                 DEADLINE_EXAMPLE);
@@ -331,9 +391,17 @@ public class Parser {
      *                          read, or the end falls before the start
      */
     public static Task parseEvent(String arguments) throws SallmanException {
+        Matcher fromMarker = markerPattern("/from").matcher(arguments);
+        Matcher toMarker = markerPattern("/to").matcher(arguments);
+        if (fromMarker.find() && toMarker.find() && toMarker.start() < fromMarker.start()) {
+            // Otherwise the /to would be swallowed into the description, and the
+            // user told there is no /to at all.
+            throw new SallmanException("The /from has to come before the /to in that event.",
+                    EVENT_EXAMPLE);
+        }
         String[] fromParts = splitAtMarker(arguments, "/from", "event", EVENT_EXAMPLE);
         String[] toParts = splitAtMarker(fromParts[1], "/to", "event", EVENT_EXAMPLE);
-        String description = fromParts[0].trim();
+        String description = collapseSpaces(fromParts[0]);
         String from = toParts[0].trim();
         String to = toParts[1].trim();
         requirePresent(description, "That event has no description before the /from.",

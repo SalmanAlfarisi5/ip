@@ -161,6 +161,19 @@ public class StorageTest {
     }
 
     @Test
+    public void load_eventEndingBeforeItStarts_lineSkipped() throws Exception {
+        // The parser never creates one, so such a line was edited by hand, and
+        // loading it would put an event in the list that no date can find.
+        Storage storage = write("T | 0 | read book",
+                "E | 0 | trip | 2019-10-17 | 2019-10-15");
+
+        List<Task> loaded = storage.load();
+
+        assertEquals(1, loaded.size());
+        assertEquals(List.of("line 2: the event ends before it starts"), storage.getSkippedLines());
+    }
+
+    @Test
     public void load_blankLines_skippedSilently() throws Exception {
         // A trailing newline is normal, so blank lines must not be reported.
         Storage storage = write("T | 0 | read book", "", "   ");

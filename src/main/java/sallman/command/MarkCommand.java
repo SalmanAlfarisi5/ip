@@ -39,7 +39,8 @@ public class MarkCommand extends Command {
      * @param ui      used to confirm the change
      * @param storage used to save the changed list
      * @throws SallmanException if the number is missing, unreadable or outside
-     *                          the list, or if the list cannot be saved
+     *                          the list, the task is already in the state asked
+     *                          for, or the list cannot be saved
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SallmanException {
@@ -50,6 +51,14 @@ public class MarkCommand extends Command {
                 : CommandType.UNMARK.getKeyword();
         int index = Parser.parseTaskNumber(keyword, arguments, tasks.size());
         Task task = tasks.get(index);
+        if (task.isDone() == isMarkingDone) {
+            // Reporting success here would hide that the user may have meant a
+            // different task, and would leave an undo step that changes nothing.
+            throw new SallmanException(isMarkingDone
+                    ? "Task " + (index + 1) + " is already marked as done:"
+                    : "Task " + (index + 1) + " isn't marked as done, so there's nothing to unmark:",
+                    "  " + task);
+        }
         tasks.saveSnapshot();
         if (isMarkingDone) {
             task.markAsDone();
