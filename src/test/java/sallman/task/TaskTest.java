@@ -198,6 +198,35 @@ public class TaskTest {
     }
 
     @Test
+    public void isSameTask_sameDescriptionInAnotherCase_same() {
+        assertTrue(new Todo("read book").isSameTask(new Todo("Read Book")));
+    }
+
+    @Test
+    public void isSameTask_doneStatusAndTagsDiffer_stillSame() {
+        // Marking or tagging a task changes what has happened to it, not what it is.
+        Todo tagged = new Todo("read book");
+        tagged.markAsDone();
+        tagged.addTag("fun");
+
+        assertTrue(tagged.isSameTask(new Todo("read book")));
+    }
+
+    @Test
+    public void isSameTask_differentDates_notSame() {
+        Deadline first = new Deadline("return book", LocalDate.of(2019, 10, 15));
+
+        assertFalse(first.isSameTask(new Deadline("return book", LocalDate.of(2019, 10, 16))));
+    }
+
+    @Test
+    public void isSameTask_differentKindsOfTask_notSame() {
+        // A todo and a deadline can share a description without duplicating each other.
+        assertFalse(new Todo("return book")
+                .isSameTask(new Deadline("return book", LocalDate.of(2019, 10, 15))));
+    }
+
+    @Test
     public void isOn_todo_neverOnAnyDate() {
         // A todo carries no date, so it must not appear under any day.
         assertFalse(new Todo("read book").isOn(LocalDate.of(2019, 10, 15)));

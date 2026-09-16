@@ -262,10 +262,15 @@ public class Storage {
         if (startCut < 0) {
             throw new SallmanException("an event needs both a start and an end");
         }
-        return new Event(requireDescription(rest.substring(0, startCut)),
-                parseStoredDate(rest.substring(startCut + SEPARATOR.length(), endCut).trim(),
-                        "start date"),
-                parseStoredDate(after(rest, endCut), "end date"));
+        LocalDate start = parseStoredDate(rest.substring(startCut + SEPARATOR.length(), endCut)
+                .trim(), "start date");
+        LocalDate end = parseStoredDate(after(rest, endCut), "end date");
+        if (end.isBefore(start)) {
+            // The parser never creates such an event, so this line was edited by
+            // hand; loading it would put an event in the list no date can find.
+            throw new SallmanException("the event ends before it starts");
+        }
+        return new Event(requireDescription(rest.substring(0, startCut)), start, end);
     }
 
     /**

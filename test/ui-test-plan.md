@@ -173,7 +173,8 @@ anything that is not a real date is rejected with the expected format quoted
 back. Previously this case asserted the opposite: free text was accepted
 verbatim. A day name is included because it reads like a date to a human but
 is not one, and an impossible calendar date is included because it has the
-right shape yet cannot exist.
+right shape yet cannot exist. That last one names what is wrong with the date,
+since repeating the format back would not help someone who already used it.
 
 **Input:**
 
@@ -200,8 +201,8 @@ bye
     ____________________________________________________________
 
     ____________________________________________________________
-     I couldn't read "2019-02-30" as a date.
-     Use yyyy-mm-dd, e.g. 2019-10-15.
+     There is no such date as 2019-02-30.
+     February 2019 has 28 days.
     ____________________________________________________________
 
     ____________________________________________________________
@@ -1612,6 +1613,179 @@ bye
      Here are the tasks in your list:
      1.[T][ ] zebra
      2.[T][ ] apple
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC32: Dates and markers that are wrong in a specific way are explained
+
+**Aim:** Verify each mistake is named for what it is rather than reported as an
+unreadable date or a missing marker: a day past the end of the month, a
+month that does not exist, a marker given twice, a marker joined to a word,
+and an event whose /to comes before its /from.
+
+**Input:**
+
+```text
+deadline pay bill /by 2019-02-30
+deadline pay bill /by 2019-13-01
+deadline pay bill /by 2019-10-15 /by 2019-10-16
+deadline return book/by 2019-10-15
+event trip /to 2019-10-16 /from 2019-10-15
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     There is no such date as 2019-02-30.
+     February 2019 has 28 days.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There is no month 13 in "2019-13-01".
+     Months run from 01 to 12.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     That deadline has more than one /by.
+     Try: deadline return book /by 2019-10-15
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Put a space before and after the /by in that deadline.
+     Try: deadline return book /by 2019-10-15
+    ____________________________________________________________
+
+    ____________________________________________________________
+     The /from has to come before the /to in that event.
+     Try: event project meeting /from 2019-10-15 /to 2019-10-16
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC33: Duplicate tasks and marks that change nothing are refused
+
+**Aim:** Verify a task matching an existing one (ignoring case and extra spaces) is
+not added again, that marking a done task or unmarking an undone one is
+refused, and that none of these refusals leaves an undo step: the `undo` at
+the end reverses the last change that really happened, the `unmark`, rather
+than landing on one of the refused commands.
+
+**Input:**
+
+```text
+todo read book
+todo READ    book
+mark 1
+mark 1
+unmark 1
+unmark 1
+undo
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     You already have that task, so I didn't add it again:
+       1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Nice! I've marked this task as done:
+       [T][X] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Task 1 is already marked as done:
+       [T][X] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OK, I've marked this task as not done yet:
+       [T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Task 1 isn't marked as done, so there's nothing to unmark:
+       [T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     OK, I've put your list back the way it was.
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Here are the tasks in your list:
+     1.[T][X] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Bye. Hope to see you again soon!
+    ____________________________________________________________
+```
+
+### TC34: Command keywords and task numbers are read forgivingly
+
+**Aim:** Verify a keyword in the wrong case still works, a keyword one typo away is
+suggested, a far-off word still lists every command, and task numbers that
+are too large or given two at a time get messages that say so.
+
+**Input:**
+
+```text
+TODO read book
+lst
+blah
+mark 99999999999
+mark 1 2
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Got it. I've added this task:
+       [T][ ] read book
+     Now you have 1 task in the list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Sorry, I don't know what "lst" means.
+     Did you mean list?
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Sorry, I don't know what "blah" means.
+     I understand: todo, deadline, event, list, find, mark, unmark, delete, tag, untag, undo, sort, on, bye.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     There is no task 99999999999 in your list.
+     You only have task 1.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     mark takes one task number at a time.
+     Try: mark 2
     ____________________________________________________________
 
     ____________________________________________________________

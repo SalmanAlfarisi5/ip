@@ -1,8 +1,12 @@
 package sallman.task;
 
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 import sallman.SallmanException;
 
@@ -43,10 +47,35 @@ public final class TaskDate {
         try {
             return LocalDate.parse(text);
         } catch (DateTimeParseException e) {
+            if (text.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                // Right shape, so the problem is the calendar, not the format:
+                // telling the user to "use yyyy-mm-dd" would not help them.
+                throw noSuchDate(text);
+            }
             // Translate Java's exception into one that names the format wanted.
             throw new SallmanException("I couldn't read \"" + text + "\" as a date.",
                     "Use " + INPUT_FORMAT + ", e.g. " + EXAMPLE + ".");
         }
+    }
+
+    /**
+     * Returns the error for text in the input format that names no real date,
+     * such as {@code 2019-02-30} or {@code 2019-13-01}.
+     *
+     * @param text a date in the input format that failed to parse
+     * @return the exception to throw, saying what is wrong with the date
+     */
+    private static SallmanException noSuchDate(String text) {
+        int year = Integer.parseInt(text.substring(0, 4));
+        int month = Integer.parseInt(text.substring(5, 7));
+        if (month < 1 || month > 12) {
+            return new SallmanException("There is no month " + month + " in \"" + text + "\".",
+                    "Months run from 01 to 12.");
+        }
+        int days = YearMonth.of(year, month).lengthOfMonth();
+        String monthName = Month.of(month).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+        return new SallmanException("There is no such date as " + text + ".",
+                monthName + " " + year + " has " + days + " days.");
     }
 
     /**

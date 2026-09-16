@@ -145,6 +145,24 @@ public class Task {
     }
 
     /**
+     * Returns whether another task describes the same piece of work as this one.
+     * <p>
+     * The kind of task, the description (ignoring case) and any dates must all
+     * match. Whether it is done and how it is tagged are left out: those are
+     * things that happen to a task, not what the task is. Dates are compared in
+     * their saved form, which every kind of task already produces, so no
+     * subclass needs its own comparison.
+     *
+     * @param other the task to compare with
+     * @return true if the two would be duplicates in one list
+     */
+    public boolean isSameTask(Task other) {
+        return getClass() == other.getClass()
+                && description.equalsIgnoreCase(other.description)
+                && dateFields().equals(other.dateFields());
+    }
+
+    /**
      * Attaches a tag to this task, ignoring case and doing nothing if it is
      * already there.
      *

@@ -1,5 +1,7 @@
 package sallman.command;
 
+import java.util.OptionalInt;
+
 import sallman.SallmanException;
 import sallman.Storage;
 import sallman.TaskList;
@@ -32,10 +34,18 @@ public class AddCommand extends Command {
      * @param tasks   the list to add to
      * @param ui      used to confirm the addition
      * @param storage used to save the enlarged list
-     * @throws SallmanException if the list cannot be saved
+     * @throws SallmanException if the list already holds the same task, or the
+     *                          list cannot be saved
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SallmanException {
+        OptionalInt existing = tasks.indexOfSameTask(task);
+        if (existing.isPresent()) {
+            // Checked before the snapshot, so a refused add leaves no undo step.
+            int index = existing.getAsInt();
+            throw new SallmanException("You already have that task, so I didn't add it again:",
+                    "  " + (index + 1) + "." + tasks.get(index));
+        }
         tasks.saveSnapshot();
         tasks.add(task);
         ui.showAdded(task, tasks.size());

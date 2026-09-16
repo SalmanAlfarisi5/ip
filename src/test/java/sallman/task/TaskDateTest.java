@@ -47,6 +47,28 @@ public class TaskDateTest {
     }
 
     @Test
+    public void parse_dayPastTheEndOfTheMonth_exceptionNamesTheMonthLength() {
+        SallmanException e = assertThrows(SallmanException.class, () -> TaskDate.parse("2019-02-30"));
+
+        assertEquals("There is no such date as 2019-02-30.", e.getMessage());
+        assertEquals("February 2019 has 28 days.", e.toLines()[1]);
+    }
+
+    @Test
+    public void parse_leapDayInACommonYear_exceptionNamesTheMonthLength() {
+        SallmanException e = assertThrows(SallmanException.class, () -> TaskDate.parse("2019-02-29"));
+
+        assertEquals("February 2019 has 28 days.", e.toLines()[1]);
+    }
+
+    @Test
+    public void parse_monthOutOfRange_exceptionNamesTheMonth() {
+        SallmanException e = assertThrows(SallmanException.class, () -> TaskDate.parse("2019-13-01"));
+
+        assertEquals("There is no month 13 in \"2019-13-01\".", e.getMessage());
+    }
+
+    @Test
     public void parse_emptyText_exceptionThrown() {
         assertThrows(SallmanException.class, () -> TaskDate.parse(""));
     }
