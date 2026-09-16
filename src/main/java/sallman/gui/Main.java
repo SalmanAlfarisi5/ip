@@ -13,6 +13,10 @@ import sallman.Sallman;
 
 /**
  * The JavaFX application that puts a window around the chatbot.
+ * <p>
+ * Based on the SE-EDU JavaFX tutorial (https://se-education.org/guides/tutorials/javaFx.html),
+ * extended here with the window's minimum size, icon and a clean exit when its
+ * layout cannot be loaded.
  */
 public class Main extends Application {
 

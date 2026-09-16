@@ -152,3 +152,47 @@ report as a `coverage-report` artifact on every push.
 There is also a text-UI test plan in [`test/ui-test-plan.md`](test/ui-test-plan.md),
 which feeds commands to the chatbot and checks the console output against the
 expected transcript.
+
+## Acknowledgements
+
+### Starting point
+
+The project began as the [se-edu Duke template](https://github.com/se-edu/duke)
+by Jeffry Lum and Damith C. Rajapakse (see [`CONTRIBUTORS.md`](CONTRIBUTORS.md)).
+
+### Reused code and configuration
+
+- The GUI classes (`Launcher`, `Main`, `MainWindow`, `DialogBox`), their FXML
+  layouts, and the JavaFX dependencies in `build.gradle` were first written by
+  following the [SE-EDU JavaFX tutorial](https://se-education.org/guides/tutorials/javaFx.html),
+  then reworked for this project. Each class notes this in its header comment.
+- `config/checkstyle/` is adapted from
+  [AddressBook-Level3](https://github.com/se-edu/addressbook-level3).
+- `.github/workflows/gradle.yml` started from the
+  [se-edu Duke template's workflow](https://github.com/se-edu/duke/blob/full-template/.github/workflows/gradle.yml).
+
+### Third-party libraries and tools
+
+| Library or tool | Used for |
+|---|---|
+| [JavaFX](https://openjfx.io/) 17.0.7 | the GUI |
+| [JUnit](https://junit.org/) 5.14.4 | unit tests |
+| [Shadow](https://gradleup.com/shadow/) Gradle plugin 9.5.1 | building the runnable JAR |
+| [Checkstyle](https://checkstyle.org/) 11.0.0 | enforcing the coding standard |
+| [JaCoCo](https://www.jacoco.org/) 0.8.15 | measuring test coverage |
+| [Gradle](https://gradle.org/) 9.6.1 | building the project |
+
+### Use of AI tools
+
+AI tools were used widely in this project by Muhammad Salman Al Farisi.
+
+- **Claude Code** (Anthropic, Claude Opus 5) was used throughout: implementing
+  and refactoring increments, including A-MoreErrorHandling, A-BetterGui,
+  A-Personality and A-MoreTesting; writing JUnit tests and the text-UI test
+  plan; drafting documentation and commit messages; and reviewing code. Recent
+  commits made with its help carry a `Co-Authored-By: Claude` line.
+- The saLLMan avatar and window icon were drawn by a short program written with
+  Claude Code for this project; no existing image was used.
+
+Code produced with AI was checked with the project's automated tests, the
+text-UI test plan, Checkstyle and CI before it was committed.
