@@ -28,9 +28,14 @@ public final class TaskDate {
     /** An example date in the input format, for use in error hints. */
     public static final String EXAMPLE = "2019-10-15";
 
-    /** How a date is shown to the user. */
+    /**
+     * How a date is shown to the user. The locale is fixed rather than taken
+     * from the computer, since the month is otherwise spelled however the
+     * computer's language setting spells it: "Sept" on a British or Singapore
+     * English machine, "Sept." in German, and in Chinese characters in Chinese.
+     */
     private static final DateTimeFormatter DISPLAY_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy");
+            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
 
     /** Not meant to be instantiated: this class only holds static helpers. */
     private TaskDate() {

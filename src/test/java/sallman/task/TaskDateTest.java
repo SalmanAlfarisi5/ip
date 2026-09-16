@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
+import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
@@ -75,6 +76,21 @@ public class TaskDateTest {
         SallmanException e = assertThrows(SallmanException.class, () -> TaskDate.parse("2019-00-15"));
 
         assertEquals("Months run from 01 to 12.", e.toLines()[1]);
+    }
+
+    @Test
+    public void format_computerSetToAnotherLanguage_monthStillInEnglish() {
+        // British and Singapore English write "Sept", German "Sept.", and Chinese
+        // uses its own characters, so the display must not follow the computer.
+        Locale original = Locale.getDefault();
+        try {
+            for (String language : new String[] {"en-SG", "en-GB", "de-DE", "zh-CN"}) {
+                Locale.setDefault(Locale.forLanguageTag(language));
+                assertEquals("Sep 25 2026", TaskDate.format(LocalDate.of(2026, 9, 25)), language);
+            }
+        } finally {
+            Locale.setDefault(original);
+        }
     }
 
     @Test
