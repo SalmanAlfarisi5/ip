@@ -137,6 +137,19 @@ public class TaskTest {
     }
 
     @Test
+    public void toFileFormat_untaggedDescriptionEndingLikeTags_emptyTagFieldAdded() {
+        // An empty tag field makes the real description's last part unambiguous.
+        assertEquals("T | 0 | buy milk | #urgent | #", new Todo("buy milk | #urgent").toFileFormat());
+    }
+
+    @Test
+    public void toFileFormat_deadlineDescriptionLikeTags_noExtraFieldNeeded() {
+        // The due date follows the description, so it can never be the last field.
+        assertEquals("D | 0 | pay | #rent | 2026-09-30",
+                new Deadline("pay | #rent", LocalDate.of(2026, 9, 30)).toFileFormat());
+    }
+
+    @Test
     public void toFileFormat_untaggedTask_noTagField() {
         // An untagged task must not gain an empty field, so that a file stays
         // readable by a version of the app that knows nothing about tags.

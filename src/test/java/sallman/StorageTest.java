@@ -94,6 +94,31 @@ public class StorageTest {
     }
 
     @Test
+    public void loadThenSave_descriptionEndingInWhatLooksLikeTags_keptAsDescription() throws Exception {
+        // With no tags of its own, a todo's description is the last field on its
+        // line, so a description ending in " | #..." must not be read back as tags.
+        Storage storage = new Storage(folder.resolve("tasks.txt").toString());
+        storage.save(List.of(new Todo("buy milk | #urgent"), new Todo("pack bag | #")));
+
+        List<Task> loaded = storage.load();
+
+        assertEquals("[T][ ] buy milk | #urgent", loaded.get(0).toString());
+        assertTrue(loaded.get(0).getTags().isEmpty());
+        assertEquals("[T][ ] pack bag | #", loaded.get(1).toString());
+    }
+
+    @Test
+    public void loadThenSave_taggedTaskWhoseDescriptionLooksLikeTags_bothKept() throws Exception {
+        Storage storage = new Storage(folder.resolve("tasks.txt").toString());
+        Todo todo = new Todo("buy milk | #urgent");
+        todo.addTag("errand");
+
+        storage.save(List.of(todo));
+
+        assertEquals("[T][ ] buy milk | #urgent #errand", storage.load().get(0).toString());
+    }
+
+    @Test
     public void load_fileDoesNotExist_emptyListAndNoError() throws Exception {
         // The first run on a new computer has no data file, which is not a fault.
         Storage storage = new Storage(folder.resolve("never-written.txt").toString());
