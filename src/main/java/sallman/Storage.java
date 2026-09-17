@@ -1,6 +1,9 @@
 package sallman;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -59,6 +62,13 @@ public class Storage {
     private final List<String> skippedLines = new ArrayList<>();
 
     /**
+     * Whether the last {@link #load()} found the data file but could not read
+     * it. Saving would then replace every task in that file with this session's
+     * list, which starts empty, so saving is refused until a load succeeds.
+     */
+    private boolean isSavingBlocked;
+
+    /**
      * Creates storage backed by the given file.
      *
      * @param filePath path to the data file, written with {@code /} separators;
@@ -78,19 +88,31 @@ public class Storage {
     public List<Task> load() throws SallmanException {
         List<Task> tasks = new ArrayList<>();
         skippedLines.clear();
+        isSavingBlocked = false;
         if (!Files.exists(file)) {
             // First run on this computer: no data file is not an error.
             return tasks;
         }
-        List<String> lines;
+        byte[] contents;
         try {
-            lines = Files.readAllLines(file);
+            contents = Files.readAllBytes(file);
         } catch (IOException e) {
+            isSavingBlocked = true;
             throw new SallmanException("I couldn't read your saved tasks from " + file + ".",
-                    "Starting with an empty list this time.");
+                    "To keep them safe, I won't save any changes over that file this time.");
         }
+        List<byte[]> lines = splitLines(contents);
         for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
+            String line;
+            try {
+                line = decodeLine(lines.get(i), i == 0);
+            } catch (CharacterCodingException e) {
+                // Decoded line by line, so text that is not UTF-8, such as an
+                // accented letter saved by an editor using a Windows code page,
+                // costs only its own line rather than making the whole file unreadable.
+                skippedLines.add("line " + (i + 1) + ": the line is not valid UTF-8 text");
+                continue;
+            }
             if (line.isBlank()) {
                 continue;
             }
@@ -103,6 +125,44 @@ public class Storage {
             }
         }
         return tasks;
+    }
+
+    /**
+     * Splits a file's bytes into lines, dropping the carriage return that ends
+     * each line in a file saved on Windows.
+     * <p>
+     * Splitting happens before decoding, which is safe because the newline byte
+     * never occurs inside a multi-byte UTF-8 character.
+     *
+     * @param contents the whole file
+     * @return the bytes of each line, in order, without line endings
+     */
+    private static List<byte[]> splitLines(byte[] contents) {
+        List<byte[]> lines = new ArrayList<>();
+        int start = 0;
+        for (int i = 0; i <= contents.length; i++) {
+            if (i == contents.length || contents[i] == '\n') {
+                int end = (i > start && contents[i - 1] == '\r') ? i - 1 : i;
+                lines.add(Arrays.copyOfRange(contents, start, end));
+                start = i + 1;
+            }
+        }
+        return lines;
+    }
+
+    /**
+     * Decodes one line as UTF-8, refusing bytes that are not valid UTF-8 text
+     * rather than quietly replacing them.
+     *
+     * @param line        the bytes of the line
+     * @param isFirstLine whether a byte order mark may begin it
+     * @return the line's text
+     * @throws CharacterCodingException if the bytes are not valid UTF-8
+     */
+    private static String decodeLine(byte[] line, boolean isFirstLine) throws CharacterCodingException {
+        String text = StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(line)).toString();
+        // Some Windows editors begin a UTF-8 file with a byte order mark, which is not part of the text.
+        return isFirstLine && text.startsWith("﻿") ? text.substring(1) : text;
     }
 
     /**
@@ -121,6 +181,10 @@ public class Storage {
      * @throws SallmanException if the file cannot be written
      */
     public void save(List<Task> tasks) throws SallmanException {
+        if (isSavingBlocked) {
+            throw new SallmanException("I'm sorry, but I won't save over " + file + ", since I couldn't read it.",
+                    "Your change still applies until you exit. Fix or move that file, then restart me.");
+        }
         try {
             Path folder = file.getParent();
             if (folder != null) {

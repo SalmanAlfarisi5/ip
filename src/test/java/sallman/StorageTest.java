@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -262,6 +264,45 @@ public class StorageTest {
     }
 
     @Test
+    public void load_lineThatIsNotValidText_onlyThatLineSkipped() throws Exception {
+        // An accented letter saved by an editor using a Windows code page rather
+        // than UTF-8 must cost only its own line, not the whole list.
+        Storage storage = writeBytes(bytesWithLatin1Line());
+
+        List<Task> loaded = storage.load();
+
+        assertEquals("[T][ ] read book", loaded.get(0).toString());
+        assertEquals("[T][ ] buy milk", loaded.get(1).toString());
+        assertEquals(List.of("line 2: the line is not valid UTF-8 text"), storage.getSkippedLines());
+    }
+
+    @Test
+    public void load_windowsLineEndingsAndByteOrderMark_readAsPlainLines() throws Exception {
+        // Windows editors may end lines with CR LF and start the file with a
+        // byte order mark; neither is part of the text.
+        String text = "﻿T | 0 | read book\r\nT | 0 | buy milk\r\n";
+        Storage storage = writeBytes(text.getBytes(StandardCharsets.UTF_8));
+
+        List<Task> loaded = storage.load();
+
+        assertTrue(storage.getSkippedLines().isEmpty());
+        assertEquals("[T][ ] read book", loaded.get(0).toString());
+        assertEquals("[T][ ] buy milk", loaded.get(1).toString());
+    }
+
+    @Test
+    public void save_afterTheFileCouldNotBeRead_refusesToOverwriteIt() throws Exception {
+        // Saving then would replace every task in the file with this session's
+        // list, which starts empty because nothing could be read.
+        Storage storage = new Storage(Files.createDirectory(folder.resolve("tasks.txt")).toString());
+        assertThrows(SallmanException.class, storage::load);
+
+        SallmanException e = assertThrows(SallmanException.class, () -> storage.save(List.of(new Todo("x"))));
+
+        assertTrue(e.getMessage().startsWith("I'm sorry, but I won't save over"));
+    }
+
+    @Test
     public void load_blankLines_skippedSilently() throws Exception {
         // A trailing newline is normal, so blank lines must not be reported.
         Storage storage = write("T | 0 | read book", "", "   ");
@@ -280,6 +321,32 @@ public class StorageTest {
         storage.load();
 
         assertEquals(1, storage.getSkippedLines().size());
+    }
+
+    /**
+     * Writes raw bytes to a fresh data file inside the temporary folder.
+     *
+     * @param bytes the exact contents of the file
+     * @return storage backed by that file
+     */
+    private Storage writeBytes(byte[] bytes) throws IOException {
+        Path file = folder.resolve("tasks.txt");
+        Files.write(file, bytes);
+        return new Storage(file.toString());
+    }
+
+    /**
+     * Returns a three-line data file whose second line spells "cafe" with an
+     * accented e in Latin-1, which is not valid UTF-8.
+     *
+     * @return the file's bytes
+     */
+    static byte[] bytesWithLatin1Line() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        out.write("T | 0 | read book\nT | 0 | caf".getBytes(StandardCharsets.UTF_8));
+        out.write(0xE9);
+        out.write(" visit\nT | 0 | buy milk\n".getBytes(StandardCharsets.UTF_8));
+        return out.toByteArray();
     }
 
     /**

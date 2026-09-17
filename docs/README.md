@@ -186,6 +186,10 @@ Format: `bye`
   to another computer.
 - If you edit the file by hand and a line cannot be read, saLLMan skips that
   line, tells you which one it was when it starts, and loads everything else.
+  Save the file as UTF-8 if you add accented letters or other non-English text.
+- If the file cannot be read at all, saLLMan says so, starts with an empty
+  list, and does not save over the file, so nothing in it is lost. Fix or move
+  the file, then start saLLMan again.
 
 ## Command summary
 
