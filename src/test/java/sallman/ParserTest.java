@@ -372,6 +372,15 @@ public class ParserTest {
     }
 
     @Test
+    public void parse_extraWordsAfterACommandThatTakesNone_refused() {
+        // Ignoring them would mislead: "undo twice" would undo only once.
+        for (String input : new String[] {"list nonsense", "undo twice", "bye later"}) {
+            SallmanException e = assertThrows(SallmanException.class, () -> Parser.parse(input));
+            assertTrue(e.getMessage().endsWith("doesn't take anything after it."), input);
+        }
+    }
+
+    @Test
     public void parse_keywordInAnotherCase_recognised() throws Exception {
         assertInstanceOf(ListCommand.class, Parser.parse("LIST"));
         assertInstanceOf(AddCommand.class, Parser.parse("Todo read book"));
