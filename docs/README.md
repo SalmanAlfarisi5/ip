@@ -46,7 +46,8 @@ always say exactly what happened, so the act never gets in your way.
 - Command words ignore case, so `LIST` and `list` both work.
 - Dates are typed as `yyyy-mm-dd`, e.g. `2026-09-25`, and shown back as
   `Sep 25 2026`.
-- A task's number is its position in the list shown by `list`.
+- A task's number is its position in the list shown by `list`. `find` and `on`
+  show each task with that same number, so you can use it straight away.
 - Markers such as `/by`, `/from` and `/to` need a space on each side, and each
   may be given only once.
 - Extra spaces between words are ignored.

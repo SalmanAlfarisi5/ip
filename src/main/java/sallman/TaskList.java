@@ -96,6 +96,22 @@ public class TaskList {
     }
 
     /**
+     * Returns where a task sits in the list.
+     * <p>
+     * The task is found by identity, not by equal contents, so that of two
+     * identical tasks the right one is found.
+     *
+     * @param task a task in this list
+     * @return its position, counting from 0, or -1 if it is not in the list
+     */
+    public int indexOf(Task task) {
+        return IntStream.range(0, tasks.size())
+                .filter(i -> tasks.get(i) == task)
+                .findFirst()
+                .orElse(-1);
+    }
+
+    /**
      * Returns the position of a task that duplicates the given one.
      *
      * @param task the task to look for

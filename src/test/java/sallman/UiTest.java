@@ -192,33 +192,43 @@ public class UiTest {
 
     @Test
     public void showMatchingTasks_noMatches_quotesTheKeyword() {
-        ui.showMatchingTasks(List.of(), "book");
+        ui.showMatchingTasks(new TaskList(), List.of(), "book");
 
         assertEquals(List.of("I searched thoroughly, but no tasks match \"book\"."), reply());
     }
 
     @Test
-    public void showMatchingTasks_someMatches_numberedFromOneNotByListPosition() {
-        ui.showMatchingTasks(List.of(new Todo("read book")), "book");
+    public void showMatchingTasks_someMatches_numberedByTheirPlaceInTheWholeList() {
+        // The number shown must be the one mark, delete and tag act on, or
+        // "delete 1" after a search could remove a different task.
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("buy milk"));
+        Task match = new Todo("read book");
+        tasks.add(match);
 
-        assertEquals(List.of("I found some tasks that match \"book\":", "1.[T][ ] read book"), reply());
+        ui.showMatchingTasks(tasks, List.of(match), "book");
+
+        assertEquals(List.of("I found some tasks that match \"book\":", "2.[T][ ] read book"), reply());
     }
 
     @Test
     public void showTasksOn_nothingThatDay_namesTheDate() {
-        ui.showTasksOn(List.of(), LocalDate.of(2019, 10, 15));
+        ui.showTasksOn(new TaskList(), List.of(), LocalDate.of(2019, 10, 15));
 
         assertEquals(List.of("Great news! You have nothing on Oct 15 2019."), reply());
     }
 
     @Test
     public void showTasksOn_somethingThatDay_listsIt() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
         Task deadline = new Deadline("return book", LocalDate.of(2019, 10, 15));
+        tasks.add(deadline);
 
-        ui.showTasksOn(List.of(deadline), LocalDate.of(2019, 10, 15));
+        ui.showTasksOn(tasks, List.of(deadline), LocalDate.of(2019, 10, 15));
 
         assertEquals(List.of("Here is everything you have on Oct 15 2019:",
-                "1.[D][ ] return book (by: Oct 15 2019)"), reply());
+                "2.[D][ ] return book (by: Oct 15 2019)"), reply());
     }
 
     @Test

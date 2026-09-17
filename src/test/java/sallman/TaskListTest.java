@@ -81,6 +81,20 @@ public class TaskListTest {
     }
 
     @Test
+    public void indexOf_taskInTheList_itsPositionEvenBesideAnIdenticalTask() {
+        // Duplicates can still come from older data files, so the position is
+        // found by identity rather than by equal contents.
+        TaskList tasks = new TaskList();
+        Task first = new Todo("read book");
+        Task second = new Todo("read book");
+        tasks.add(first);
+        tasks.add(second);
+
+        assertEquals(1, tasks.indexOf(second));
+        assertEquals(-1, tasks.indexOf(new Todo("read book")));
+    }
+
+    @Test
     public void isSortedBy_orderAlreadyHolds_trueUntilATaskBreaksIt() {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("apple"));

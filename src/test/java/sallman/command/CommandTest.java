@@ -256,6 +256,17 @@ public class CommandTest {
     }
 
     @Test
+    public void find_thenDeleteTheNumberShown_removesTheTaskThatWasFound() throws Exception {
+        addTodos("read book", "buy bread");
+        new FindCommand("bread").execute(tasks, ui, storage);
+        String shownNumber = ui.drainText().lines().toList().get(1).split("\\.")[0];
+
+        new DeleteCommand(shownNumber).execute(tasks, ui, storage);
+
+        assertEquals(List.of("[T][ ] read book"), saved());
+    }
+
+    @Test
     public void on_dateWithADeadline_showsIt() throws Exception {
         new AddCommand(new Deadline("return book", LocalDate.of(2019, 10, 15))).execute(tasks, ui, storage);
         ui.drainText();

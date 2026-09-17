@@ -262,31 +262,52 @@ public class Ui {
     }
 
     /**
+     * Shows a heading followed by some of the tasks, each numbered by its place
+     * in the whole list.
+     * <p>
+     * Those are the numbers mark, delete and tag act on, so a task found by a
+     * search can be changed using the number it is shown with.
+     *
+     * @param heading the line introducing the tasks
+     * @param tasks   the whole list
+     * @param matches the tasks to show, all of them in that list
+     */
+    private void sayWithListNumbers(String heading, TaskList tasks, List<Task> matches) {
+        String[] lines = Stream.concat(
+                        Stream.of(heading),
+                        matches.stream().map(task -> (tasks.indexOf(task) + 1) + "." + task))
+                .toArray(String[]::new);
+        say(lines);
+    }
+
+    /**
      * Shows the tasks matching a search, or says there were none.
      *
+     * @param tasks   the whole list, whose positions number the matches
      * @param matches the matching tasks, possibly empty
      * @param keyword the text that was searched for
      */
-    public void showMatchingTasks(List<Task> matches, String keyword) {
+    public void showMatchingTasks(TaskList tasks, List<Task> matches, String keyword) {
         if (matches.isEmpty()) {
             say("I searched thoroughly, but no tasks match \"" + keyword + "\".");
             return;
         }
-        sayNumbered("I found some tasks that match \"" + keyword + "\":", matches);
+        sayWithListNumbers("I found some tasks that match \"" + keyword + "\":", tasks, matches);
     }
 
     /**
      * Shows the tasks falling on one date, or says there are none.
      *
+     * @param tasks   the whole list, whose positions number the matches
      * @param matches the tasks on that date, possibly empty
      * @param date    the date being asked about
      */
-    public void showTasksOn(List<Task> matches, LocalDate date) {
+    public void showTasksOn(TaskList tasks, List<Task> matches, LocalDate date) {
         if (matches.isEmpty()) {
             say("Great news! You have nothing on " + TaskDate.format(date) + ".");
             return;
         }
-        sayNumbered("Here is everything you have on " + TaskDate.format(date) + ":", matches);
+        sayWithListNumbers("Here is everything you have on " + TaskDate.format(date) + ":", tasks, matches);
     }
 
     /**
