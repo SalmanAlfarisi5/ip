@@ -381,7 +381,7 @@ public class ParserTest {
     }
 
     @Test
-    public void parse_keywordInAnotherCase_recognised() throws Exception {
+    public void parse_keywordInAnotherCase_recognized() throws Exception {
         assertInstanceOf(ListCommand.class, Parser.parse("LIST"));
         assertInstanceOf(AddCommand.class, Parser.parse("Todo read book"));
     }

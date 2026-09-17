@@ -47,18 +47,11 @@ Prerequisites: JDK 25, and a recent version of IntelliJ.
    If the Gradle toolbar does not appear, close the project, delete the
    `.idea` folder, and open it again so IntelliJ re-imports it.
 1. Run the `run` task from the Gradle toolbar, or `./gradlew run` in a
-   terminal. If the setup is correct, you should see something like this:
-   ```
-                 _      _      __  __
-    ___    __ _ | |    | |    |  \/  |  __ _  _ __
-   / __|  / _` || |    | |    | |\/| | / _` || '_ \
-   \__ \ | (_| || |___ | |___ | |  | || (_| || | | |
-   |___/  \__,_||_____||_____||_|  |_| \__,_||_| |_|
-       ____________________________________________________________
-        Hello! I'm saLLMan, your Large Language (task) Manager.
-        How can I assist you with your tasks today?
-       ____________________________________________________________
-   ```
+   terminal. If the setup is correct, a saLLMan window opens and greets you:
+   "Hello! I'm saLLMan, your Large Language (task) Manager." It looks like
+   the screenshot in [`docs/Ui.png`](docs/Ui.png). To see the console version
+   instead, see [the text-based interface](#building-and-running-with-gradle)
+   below.
 
 **Warning:** Keep the `src/main/java` folder as the root folder for Java files
 (i.e., don't rename those folders or move Java files outside that path), as
@@ -197,9 +190,10 @@ AI tools were used widely in this project by Muhammad Salman Al Farisi.
   commits made with its help carry a `Co-Authored-By: Claude` line.
 - The saLLMan avatar and window icon were drawn by a short program written with
   Claude Code for this project; no existing image was used.
-- **OpenAI Codex** (model `gpt-5.6-sol`) reviewed the finished codebase twice,
-  read-only, against the course's requirements, the second time as a final
-  check before submission. Each finding was checked
+- **OpenAI Codex** reviewed the finished codebase three times, read-only,
+  against the course's requirements: twice with model `gpt-5.6-sol`, then once
+  more with model `gpt-6-astra` as a final check before submission. Each
+  finding was checked
   against the code and the course policies before anything was changed. Those
   that held up were fixed, in commits that say they were found by the review;
   those that did not, such as a claim that credit tags were needed for reusing

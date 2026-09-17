@@ -27,7 +27,7 @@ def sections(text, level):
     return result
 
 
-def labelled_block(body, label):
+def labeled_block(body, label):
     """Returns the first fenced code block appearing after `label` in `body`."""
     start = body.find(label)
     if start == -1:
@@ -36,7 +36,7 @@ def labelled_block(body, label):
     return match.group(1) if match else None
 
 
-def normalise(text):
+def normalize(text):
     """Splits into lines, dropping trailing whitespace and trailing blank lines.
 
     Trailing spaces are invisible in a terminal, so treating them as
@@ -60,8 +60,8 @@ def parse_plan(path):
 
     cases = []
     for heading, body in sections(text, 3):
-        commands = labelled_block(body, "**Input:**")
-        expected = labelled_block(body, "**Expected output:**")
+        commands = labeled_block(body, "**Input:**")
+        expected = labeled_block(body, "**Expected output:**")
         if commands is None or expected is None:
             continue
         aim = ""
@@ -71,8 +71,8 @@ def parse_plan(path):
         cases.append({
             "name": heading,
             "aim": aim,
-            "setup": labelled_block(body, "**Setup input:**"),
-            "setup_data": labelled_block(body, "**Setup data file:**"),
+            "setup": labeled_block(body, "**Setup input:**"),
+            "setup_data": labeled_block(body, "**Setup data file:**"),
             "input": commands,
             "expected": preamble + expected,
         })
@@ -156,8 +156,8 @@ def main():
         if process.returncode != 0:
             actual_text += process.stderr
 
-        expected = normalise(case["expected"])
-        actual = normalise(actual_text)
+        expected = normalize(case["expected"])
+        actual = normalize(actual_text)
 
         print(f"=== {case['name']} ===")
         if case["aim"]:

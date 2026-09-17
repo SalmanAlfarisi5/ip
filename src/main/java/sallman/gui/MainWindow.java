@@ -36,7 +36,7 @@ public class MainWindow {
 
     private final Image sallmanImage = new Image(this.getClass().getResourceAsStream("/images/sallman.png"));
 
-    /** Makes the dialogue scroll to the newest message as it grows. */
+    /** Makes the conversation scroll to the newest message as it grows. */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());

@@ -223,6 +223,19 @@ public class CommandTest {
     }
 
     @Test
+    public void sort_listAlreadyInThatOrder_showsItButLeavesNoUndoStep() throws Exception {
+        // Otherwise undo after it would appear to do nothing, and repeated sorts
+        // would push real changes out of the undo history.
+        addTodos("apple", "zebra");
+        int undoStepsBefore = tasks.getUndoCount();
+
+        new SortCommand("name").execute(tasks, ui, storage);
+
+        assertEquals(undoStepsBefore, tasks.getUndoCount());
+        assertTrue(ui.drainText().startsWith("Here's a carefully sorted overview of your list, by name:"));
+    }
+
+    @Test
     public void sort_unknownOrder_refusedAndListUnchanged() throws Exception {
         addTodos("zebra", "apple");
 
@@ -240,6 +253,17 @@ public class CommandTest {
 
         assertEquals(List.of("I found some tasks that match \"book\":", "1.[T][ ] read book"),
                 ui.drainText().lines().toList());
+    }
+
+    @Test
+    public void find_thenDeleteTheNumberShown_removesTheTaskThatWasFound() throws Exception {
+        addTodos("read book", "buy bread");
+        new FindCommand("bread").execute(tasks, ui, storage);
+        String shownNumber = ui.drainText().lines().toList().get(1).split("\\.")[0];
+
+        new DeleteCommand(shownNumber).execute(tasks, ui, storage);
+
+        assertEquals(List.of("[T][ ] read book"), saved());
     }
 
     @Test

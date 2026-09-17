@@ -46,7 +46,8 @@ always say exactly what happened, so the act never gets in your way.
 - Command words ignore case, so `LIST` and `list` both work.
 - Dates are typed as `yyyy-mm-dd`, e.g. `2026-09-25`, and shown back as
   `Sep 25 2026`.
-- A task's number is its position in the list shown by `list`.
+- A task's number is its position in the list shown by `list`. `find` and `on`
+  show each task with that same number, so you can use it straight away.
 - Markers such as `/by`, `/from` and `/to` need a space on each side, and each
   may be given only once.
 - Extra spaces between words are ignored.
@@ -186,6 +187,10 @@ Format: `bye`
   to another computer.
 - If you edit the file by hand and a line cannot be read, saLLMan skips that
   line, tells you which one it was when it starts, and loads everything else.
+  Save the file as UTF-8 if you add accented letters or other non-English text.
+- If the file cannot be read at all, saLLMan says so, starts with an empty
+  list, and does not save over the file, so nothing in it is lost. Fix or move
+  the file, then start saLLMan again.
 
 ## Command summary
 

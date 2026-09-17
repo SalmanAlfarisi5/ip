@@ -133,6 +133,19 @@ public class SallmanTest {
     }
 
     @Test
+    public void getResponse_afterALineCouldNotBeDecoded_otherTasksSurviveTheNextSave() throws Exception {
+        // One undecodable byte used to make the whole file unreadable, and the
+        // next change then overwrote every task in it.
+        Path file = folder.resolve("latin1.txt");
+        Files.write(file, StorageTest.bytesWithLatin1Line());
+
+        new Sallman(file.toString(), false).getResponse("todo replacement");
+
+        List<String> saved = new Storage(file.toString()).load().stream().map(Object::toString).toList();
+        assertEquals(List.of("[T][ ] read book", "[T][ ] buy milk", "[T][ ] replacement"), saved);
+    }
+
+    @Test
     public void run_mixedCommands_carriesOnPastBlankLinesAndErrorsUntilBye() throws Exception {
         String printed = runOnConsole(() -> new Sallman(dataPath).run(),
                 "todo read book", "", "blah", "list", "bye", "todo never reached");

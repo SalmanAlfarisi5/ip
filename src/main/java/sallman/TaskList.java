@@ -96,6 +96,22 @@ public class TaskList {
     }
 
     /**
+     * Returns where a task sits in the list.
+     * <p>
+     * The task is found by identity, not by equal contents, so that of two
+     * identical tasks the right one is found.
+     *
+     * @param task a task in this list
+     * @return its position, counting from 0, or -1 if it is not in the list
+     */
+    public int indexOf(Task task) {
+        return IntStream.range(0, tasks.size())
+                .filter(i -> tasks.get(i) == task)
+                .findFirst()
+                .orElse(-1);
+    }
+
+    /**
      * Returns the position of a task that duplicates the given one.
      *
      * @param task the task to look for
@@ -136,6 +152,20 @@ public class TaskList {
         return tasks.stream()
                 .filter(task -> task.hasKeyword(keyword))
                 .toList();
+    }
+
+    /**
+     * Returns whether the tasks are already in the given order.
+     * <p>
+     * The sort is stable, so when this holds, sorting would leave every task
+     * where it is.
+     *
+     * @param order how to compare one task with another
+     * @return true if no task comes before one the order puts ahead of it
+     */
+    public boolean isSortedBy(Comparator<Task> order) {
+        return IntStream.range(1, tasks.size())
+                .allMatch(i -> order.compare(tasks.get(i - 1), tasks.get(i)) <= 0);
     }
 
     /**

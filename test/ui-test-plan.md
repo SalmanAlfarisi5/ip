@@ -993,14 +993,14 @@ bye
 
     ____________________________________________________________
      Here is everything you have on Oct 15 2019:
-     1.[D][ ] return book (by: Oct 15 2019)
-     2.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+     2.[D][ ] return book (by: Oct 15 2019)
+     4.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
     ____________________________________________________________
 
     ____________________________________________________________
      Here is everything you have on Oct 16 2019:
-     1.[D][ ] pay bill (by: Oct 16 2019)
-     2.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
+     3.[D][ ] pay bill (by: Oct 16 2019)
+     4.[E][ ] conference (from: Oct 14 2019 to: Oct 17 2019)
     ____________________________________________________________
 
     ____________________________________________________________
@@ -1130,8 +1130,8 @@ bye
 ### TC25: Finding tasks by keyword
 
 **Aim:** Verify `find` shows only the tasks whose description contains the
-keyword, numbering them from 1 in their own right rather than by their position
-in the full list. The search is case-insensitive, and `bread` must not match
+keyword, each numbered by its position in the full list, since that is the
+number `mark`, `delete` and `tag` act on. The search is case-insensitive, and `bread` must not match
 `read` even though one contains the other in the opposite direction.
 
 **Input:**
@@ -1182,7 +1182,7 @@ bye
 
     ____________________________________________________________
      I found some tasks that match "bread":
-     1.[T][ ] buy bread
+     3.[T][ ] buy bread
     ____________________________________________________________
 
     ____________________________________________________________
