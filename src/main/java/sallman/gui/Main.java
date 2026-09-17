@@ -42,7 +42,7 @@ public class Main extends Application {
             stage.setScene(scene);
             stage.setTitle("saLLMan");
             // The sparkle is the same icon the chatbot's replies carry, so the
-            // taskbar entry is recognisably the same assistant.
+            // taskbar entry is recognizably the same assistant.
             stage.getIcons().add(new Image(Main.class.getResourceAsStream("/images/sallman.png")));
 
             // Below roughly this size the layout stops making sense: the input

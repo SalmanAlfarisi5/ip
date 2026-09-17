@@ -71,12 +71,12 @@ public class DialogBox extends HBox {
     }
 
     /**
-     * Gives the bubble an edge coloured by the kind of command being answered,
+     * Gives the bubble an edge colored by the kind of command being answered,
      * so the effect of a command can be seen before the reply is read.
      *
      * @param commandType simple class name of the command, or an empty string
      */
-    private void colourByCommand(String commandType) {
+    private void colorByCommand(String commandType) {
         switch (commandType) {
             case "AddCommand":
                 dialog.getStyleClass().add("add-label");
@@ -115,13 +115,13 @@ public class DialogBox extends HBox {
      * @param text        what the chatbot said
      * @param img         the chatbot's avatar
      * @param commandType simple class name of the command that produced the
-     *                    reply, used to colour the bubble
+     *                    reply, used to color the bubble
      * @return the dialog box to add to the conversation
      */
     public static DialogBox getSallmanDialog(String text, Image img, String commandType) {
         DialogBox box = new DialogBox(text, img);
         box.flip();
-        box.colourByCommand(commandType);
+        box.colorByCommand(commandType);
         return box;
     }
 

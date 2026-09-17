@@ -28,7 +28,7 @@ import sallman.task.Todo;
  * T | 0 | read book | #fun,books
  * </pre>
  * The first field is the task type, the second is 1 when the task is done.
- * A line may end with a tag field, recognised by its {@code #} prefix; a task
+ * A line may end with a tag field, recognized by its {@code #} prefix; a task
  * with no tags simply leaves it out, so files written before tags existed are
  * still read correctly.
  */
@@ -150,16 +150,16 @@ public class Storage {
      *                          for the caller to report against a line number
      */
     private static Task parseLine(String line) throws SallmanException {
-        String[] head = line.split(SEPARATOR_PATTERN, 3);
-        if (head.length < 3) {
-            throw new SallmanException("expected at least 3 fields, found " + head.length);
+        String[] fields = line.split(SEPARATOR_PATTERN, 3);
+        if (fields.length < 3) {
+            throw new SallmanException("expected at least 3 fields, found " + fields.length);
         }
         // The check above rules out fewer than three fields, and the split was
         // capped at three, so exactly three is all that is left.
-        assert head.length == 3 : "expected 3 fields, found " + head.length;
-        String type = head[0];
-        String doneFlag = head[1];
-        String rest = head[2];
+        assert fields.length == 3 : "expected 3 fields, found " + fields.length;
+        String type = fields[0];
+        String doneFlag = fields[1];
+        String rest = fields[2];
         if (!doneFlag.equals("0") && !doneFlag.equals("1")) {
             throw new SallmanException("the done flag should be 0 or 1, found \""
                     + doneFlag + "\"");
@@ -177,7 +177,7 @@ public class Storage {
     /**
      * Splits the optional tag field off the end of a line's remaining fields.
      * <p>
-     * The field is recognised by its {@code #} prefix rather than by its
+     * The field is recognized by its {@code #} prefix rather than by its
      * position, because a task may carry dates, tags, both or neither, and
      * because a file saved before tags existed has no such field at all.
      *

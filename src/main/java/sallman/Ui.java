@@ -136,15 +136,15 @@ public class Ui {
             return;
         }
         boolean isOneLine = skippedLines.size() == 1;
-        List<String> reply = new ArrayList<>();
-        reply.add("I noticed " + skippedLines.size()
+        List<String> replyLines = new ArrayList<>();
+        replyLines.add("I noticed " + skippedLines.size()
                 + (isOneLine ? " unreadable line" : " unreadable lines")
                 + " in your saved data, so I skipped " + (isOneLine ? "it:" : "them:"));
-        reply.addAll(skippedLines);
-        reply.add("Everything else loaded perfectly! I'll drop the unreadable "
+        replyLines.addAll(skippedLines);
+        replyLines.add("Everything else loaded perfectly! I'll drop the unreadable "
                 + (isOneLine ? "line" : "lines"));
-        reply.add("the next time your list changes.");
-        say(reply.toArray(new String[0]));
+        replyLines.add("the next time your list changes.");
+        say(replyLines.toArray(new String[0]));
     }
 
     /**
@@ -293,7 +293,7 @@ public class Ui {
      * Reports how many tasks are in the list, shown after adding or removing one.
      *
      * @param taskCount number of tasks now in the list
-     * @return a sentence naming the total, with "task" pluralised to match
+     * @return a sentence naming the total, with "task" pluralized to match
      */
     private static String taskCountSummary(int taskCount) {
         return "You now have " + taskCount + (taskCount == 1 ? " task" : " tasks")

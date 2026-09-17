@@ -175,9 +175,9 @@ public class TaskList {
             throw new SallmanException("I apologise, but there is nothing to undo.",
                     "As a large language model, I can only undo changes made since I started.");
         }
-        List<Task> previous = history.pop();
+        List<Task> previousTasks = history.pop();
         tasks.clear();
-        tasks.addAll(previous);
+        tasks.addAll(previousTasks);
     }
 
     /**
