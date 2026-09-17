@@ -139,6 +139,20 @@ public class TaskList {
     }
 
     /**
+     * Returns whether the tasks are already in the given order.
+     * <p>
+     * The sort is stable, so when this holds, sorting would leave every task
+     * where it is.
+     *
+     * @param order how to compare one task with another
+     * @return true if no task comes before one the order puts ahead of it
+     */
+    public boolean isSortedBy(Comparator<Task> order) {
+        return IntStream.range(1, tasks.size())
+                .allMatch(i -> order.compare(tasks.get(i - 1), tasks.get(i)) <= 0);
+    }
+
+    /**
      * Puts the tasks in the given order.
      * <p>
      * The sort is stable, so tasks the order cannot tell apart keep the order

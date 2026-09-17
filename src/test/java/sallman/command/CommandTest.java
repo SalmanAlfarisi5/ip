@@ -223,6 +223,19 @@ public class CommandTest {
     }
 
     @Test
+    public void sort_listAlreadyInThatOrder_showsItButLeavesNoUndoStep() throws Exception {
+        // Otherwise undo after it would appear to do nothing, and repeated sorts
+        // would push real changes out of the undo history.
+        addTodos("apple", "zebra");
+        int undoStepsBefore = tasks.getUndoCount();
+
+        new SortCommand("name").execute(tasks, ui, storage);
+
+        assertEquals(undoStepsBefore, tasks.getUndoCount());
+        assertTrue(ui.drainText().startsWith("Here's a carefully sorted overview of your list, by name:"));
+    }
+
+    @Test
     public void sort_unknownOrder_refusedAndListUnchanged() throws Exception {
         addTodos("zebra", "apple");
 

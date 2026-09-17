@@ -28,6 +28,9 @@ public class SortCommand extends Command {
 
     /**
      * Sorts the list, shows it in its new order, and saves it.
+     * <p>
+     * A list already in the order asked for is shown as it is, without saving it
+     * or leaving an undo step, as marking and tagging do when nothing would change.
      *
      * @param tasks   the list to sort
      * @param ui      used to show the sorted list
@@ -38,9 +41,14 @@ public class SortCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws SallmanException {
         SortOrder order = Parser.parseSortOrder(arguments);
-        tasks.saveSnapshot();
-        tasks.sort(order.getComparator());
+        boolean isChanging = !tasks.isSortedBy(order.getComparator());
+        if (isChanging) {
+            tasks.saveSnapshot();
+            tasks.sort(order.getComparator());
+        }
         ui.showSorted(tasks, order.getKeyword());
-        storage.save(tasks.asList());
+        if (isChanging) {
+            storage.save(tasks.asList());
+        }
     }
 }

@@ -1,6 +1,7 @@
 package sallman;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -77,6 +78,27 @@ public class TaskListTest {
 
         assertEquals("[T][ ] buy milk", tasks.get(0).toString());
         assertEquals("[T][X] read book", tasks.get(1).toString());
+    }
+
+    @Test
+    public void isSortedBy_orderAlreadyHolds_trueUntilATaskBreaksIt() {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("apple"));
+        tasks.add(new Todo("zebra"));
+        assertTrue(tasks.isSortedBy(SortOrder.NAME.getComparator()));
+
+        tasks.add(new Todo("mango"));
+        assertFalse(tasks.isSortedBy(SortOrder.NAME.getComparator()));
+    }
+
+    @Test
+    public void isSortedBy_tasksTheOrderCannotSeparate_countAsSorted() {
+        // A stable sort leaves such tasks where they are, so sorting would change nothing.
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("zebra"));
+        tasks.add(new Todo("apple"));
+
+        assertTrue(tasks.isSortedBy(SortOrder.DATE.getComparator()));
     }
 
     @Test
