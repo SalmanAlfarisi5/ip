@@ -48,13 +48,6 @@ public class Parser {
             "Try: event project meeting /from " + TaskDate.EXAMPLE + " /to 2019-10-16";
 
     /**
-     * What a tag may be made of. Whitespace is excluded because tags are
-     * separated by it, and the field separator because a tag is saved on the
-     * same line as one.
-     */
-    private static final Pattern TAG_PATTERN = Pattern.compile("[A-Za-z0-9_\\-]+");
-
-    /**
      * Commands that take nothing after their keyword. Anything typed after one
      * is refused rather than ignored, since ignoring it can mislead: "undo twice"
      * would undo only once, and "bye later" would exit straight away.
@@ -246,7 +239,7 @@ public class Parser {
                     "Try: " + command + " 2 fun");
         }
         for (String tag : tags) {
-            if (!TAG_PATTERN.matcher(tag).matches()) {
+            if (!Task.isValidTag(tag)) {
                 throw new SallmanException("I'm sorry, but I can't use \"" + tag + "\" as a tag.",
                         "A tag is made of letters, digits, hyphens or underscores.");
             }

@@ -203,15 +203,23 @@ public class Storage {
      *
      * @param task     the task that line describes
      * @param tagField the tag field without its prefix, possibly empty
+     * @throws SallmanException if a tag is not one that could have been typed
      */
-    private static void applyTags(Task task, String tagField) {
+    private static void applyTags(Task task, String tagField) throws SallmanException {
         if (tagField.isEmpty()) {
             return;
         }
-        Arrays.stream(tagField.split(","))
+        List<String> tags = Arrays.stream(tagField.split(","))
                 .map(String::trim)
                 .filter(tag -> !tag.isEmpty())
-                .forEach(task::addTag);
+                .toList();
+        for (String tag : tags) {
+            if (!Task.isValidTag(tag)) {
+                // Loading it would leave a tag that untag refuses to remove.
+                throw new SallmanException("the tag \"" + tag + "\" is not a valid tag");
+            }
+            task.addTag(tag);
+        }
     }
 
     /**

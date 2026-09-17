@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +30,13 @@ public class Task {
 
     /** What separates one tag from the next inside the saved tag field. */
     private static final String TAG_SEPARATOR = ",";
+
+    /**
+     * What a tag may be made of. Whitespace is excluded because typed tags are
+     * separated by it, and punctuation because saved tags share a line with the
+     * field separator and are separated from each other by commas.
+     */
+    private static final Pattern TAG_PATTERN = Pattern.compile("[A-Za-z0-9_\\-]+");
 
     /** Description of what the task involves, as typed by the user. */
     protected String description;
@@ -161,6 +169,20 @@ public class Task {
         return getClass() == other.getClass()
                 && description.equalsIgnoreCase(other.description)
                 && dateFields().equals(other.dateFields());
+    }
+
+    /**
+     * Returns whether text can be used as a tag.
+     * <p>
+     * Both typed tags and tags read back from the data file are checked here,
+     * so a hand-edited file cannot give a task a tag that {@code untag} would
+     * then refuse to remove.
+     *
+     * @param tag the text to check, without a leading {@code #}
+     * @return true if it is made only of letters, digits, hyphens and underscores
+     */
+    public static boolean isValidTag(String tag) {
+        return TAG_PATTERN.matcher(tag).matches();
     }
 
     /**
