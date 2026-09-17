@@ -190,9 +190,10 @@ AI tools were used widely in this project by Muhammad Salman Al Farisi.
   commits made with its help carry a `Co-Authored-By: Claude` line.
 - The saLLMan avatar and window icon were drawn by a short program written with
   Claude Code for this project; no existing image was used.
-- **OpenAI Codex** (model `gpt-5.6-sol`) reviewed the finished codebase twice,
-  read-only, against the course's requirements, the second time as a final
-  check before submission. Each finding was checked
+- **OpenAI Codex** reviewed the finished codebase three times, read-only,
+  against the course's requirements: twice with model `gpt-5.6-sol`, then once
+  more with model `gpt-6-astra` as a final check before submission. Each
+  finding was checked
   against the code and the course policies before anything was changed. Those
   that held up were fixed, in commits that say they were found by the review;
   those that did not, such as a claim that credit tags were needed for reusing
