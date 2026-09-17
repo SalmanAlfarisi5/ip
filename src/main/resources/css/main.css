@@ -1,5 +1,5 @@
 /*
- * The colours every stylesheet refers to by name. Defining them once on the
+ * The colors every stylesheet refers to by name. Defining them once on the
  * root lets the whole look be retuned here, and they are inherited by the
  * dialog boxes even though those load a stylesheet of their own.
  */

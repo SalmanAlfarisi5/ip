@@ -153,6 +153,18 @@ public class SallmanTest {
     }
 
     @Test
+    public void dataPathFrom_noArguments_defaultFile() {
+        assertEquals("data/sallman.txt", Sallman.dataPathFrom(List.of()));
+    }
+
+    @Test
+    public void dataPathFrom_fileNamed_thatFileWhicheverWindowStartsIt() {
+        // The console and the GUI both read the data file from here, so a file
+        // named when starting either one is the file actually used.
+        assertEquals("elsewhere/tasks.txt", Sallman.dataPathFrom(List.of("elsewhere/tasks.txt", "ignored")));
+    }
+
+    @Test
     public void main_dataPathGiven_usesThatFile() throws Exception {
         runOnConsole(() -> Sallman.main(new String[] {dataPath}), "todo read book", "bye");
 

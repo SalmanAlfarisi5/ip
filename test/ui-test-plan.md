@@ -1797,3 +1797,55 @@ bye
      Thank you for chatting with me! I hope this was helpful. Goodbye!
     ____________________________________________________________
 ```
+
+### TC37: Commands that take nothing refuse extra words
+
+**Aim:** Verify `undo`, `list` and `bye` refuse anything typed after them instead
+of ignoring it, since ignoring it would mislead: `undo twice` would undo only
+once, and `bye later` would exit at once. None of the refusals changes the list,
+so the task added first is still there at the end.
+
+**Input:**
+
+```text
+todo read book
+undo twice
+list nonsense
+bye later
+list
+bye
+```
+
+**Expected output:**
+
+```text
+    ____________________________________________________________
+     Certainly! What a wonderful task. I've added it:
+       [T][ ] read book
+     You now have 1 task in your list.
+    ____________________________________________________________
+
+    ____________________________________________________________
+     I'm sorry, but undo doesn't take anything after it.
+     Try: undo
+    ____________________________________________________________
+
+    ____________________________________________________________
+     I'm sorry, but list doesn't take anything after it.
+     Try: list
+    ____________________________________________________________
+
+    ____________________________________________________________
+     I'm sorry, but bye doesn't take anything after it.
+     Try: bye
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Great question! Here are the tasks in your list:
+     1.[T][ ] read book
+    ____________________________________________________________
+
+    ____________________________________________________________
+     Thank you for chatting with me! I hope this was helpful. Goodbye!
+    ____________________________________________________________
+```

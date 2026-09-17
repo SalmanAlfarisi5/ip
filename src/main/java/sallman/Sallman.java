@@ -1,5 +1,8 @@
 package sallman;
 
+import java.util.Arrays;
+import java.util.List;
+
 import sallman.command.Command;
 
 /**
@@ -204,6 +207,20 @@ public class Sallman {
      *             the real task list
      */
     public static void main(String[] args) {
-        new Sallman(args.length > 0 ? args[0] : DEFAULT_DATA_PATH).run();
+        new Sallman(dataPathFrom(Arrays.asList(args))).run();
+    }
+
+    /**
+     * Returns the file to keep the task list in: the first command-line argument
+     * if one was given, otherwise the default.
+     * <p>
+     * Both the console and the GUI decide the file here, so naming a file works
+     * the same whichever one is started.
+     *
+     * @param args the command-line arguments the app was started with
+     * @return the path of the data file to use
+     */
+    public static String dataPathFrom(List<String> args) {
+        return args.isEmpty() ? DEFAULT_DATA_PATH : args.get(0);
     }
 }

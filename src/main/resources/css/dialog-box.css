@@ -8,7 +8,7 @@
 }
 
 /*
- * What the user typed: compact and filled with the accent colour. The corner
+ * What the user typed: compact and filled with the accent color. The corner
  * nearest the right edge is squared off to show which side it came from.
  */
 .user-label {
@@ -27,7 +27,7 @@
 }
 
 /*
- * A reply that reports a problem. A thick coloured edge and tinted card make it
+ * A reply that reports a problem. A thick colored edge and tinted card make it
  * stand out from ordinary replies at a glance, before any of it is read.
  */
 .error-label {
@@ -37,7 +37,7 @@
     -fx-text-fill: error;
 }
 
-/* A quieter coloured edge that tells apart what kind of change a reply confirms. */
+/* A quieter colored edge that tells apart what kind of change a reply confirms. */
 .add-label {
     -fx-border-color: #2f9e44;
     -fx-border-width: 1px 1px 1px 4px;

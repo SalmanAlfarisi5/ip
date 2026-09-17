@@ -274,6 +274,15 @@ public class TaskTest {
     }
 
     @Test
+    public void isValidTag_lettersDigitsHyphensAndUnderscoresOnly() {
+        assertTrue(Task.isValidTag("read_later-2"));
+        assertFalse(Task.isValidTag("bad!tag"));
+        assertFalse(Task.isValidTag("two words"));
+        assertFalse(Task.isValidTag("a,b"));
+        assertFalse(Task.isValidTag(""));
+    }
+
+    @Test
     public void isOn_todo_neverOnAnyDate() {
         // A todo carries no date, so it must not appear under any day.
         assertFalse(new Todo("read book").isOn(LocalDate.of(2019, 10, 15)));

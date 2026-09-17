@@ -250,6 +250,18 @@ public class StorageTest {
     }
 
     @Test
+    public void load_tagThatCouldNotHaveBeenTyped_lineSkipped() throws Exception {
+        // Loading it would leave a tag that untag refuses, so it could never be removed.
+        Storage storage = write("T | 0 | read book",
+                "T | 0 | buy milk | #fun,bad!tag");
+
+        List<Task> loaded = storage.load();
+
+        assertEquals(1, loaded.size());
+        assertEquals(List.of("line 2: the tag \"bad!tag\" is not a valid tag"), storage.getSkippedLines());
+    }
+
+    @Test
     public void load_blankLines_skippedSilently() throws Exception {
         // A trailing newline is normal, so blank lines must not be reported.
         Storage storage = write("T | 0 | read book", "", "   ");

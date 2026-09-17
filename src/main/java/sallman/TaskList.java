@@ -29,7 +29,7 @@ public class TaskList {
      */
     private static final int HISTORY_LIMIT = 20;
 
-    /** The tasks, in the order the user added them. */
+    /** The tasks, in the order they were added unless the list has since been sorted. */
     private final List<Task> tasks;
 
     /** Past states of the list, most recent first. */
@@ -141,8 +141,8 @@ public class TaskList {
     /**
      * Puts the tasks in the given order.
      * <p>
-     * The sort is stable, so tasks the order cannot tell apart stay in the
-     * order the user added them.
+     * The sort is stable, so tasks the order cannot tell apart keep the order
+     * they were already in, which after an earlier sort is that sort's order.
      *
      * @param order how to compare one task with another
      */
@@ -175,9 +175,9 @@ public class TaskList {
             throw new SallmanException("I apologise, but there is nothing to undo.",
                     "As a large language model, I can only undo changes made since I started.");
         }
-        List<Task> previous = history.pop();
+        List<Task> previousTasks = history.pop();
         tasks.clear();
-        tasks.addAll(previous);
+        tasks.addAll(previousTasks);
     }
 
     /**

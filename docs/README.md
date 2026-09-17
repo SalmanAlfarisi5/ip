@@ -158,8 +158,9 @@ Formats: `sort`, `sort ORDER`
 | `sort name` | alphabetical by description |
 | `sort status` | unfinished tasks first |
 
-An event is placed by the day it starts. Tasks the order cannot separate stay
-in the order you added them.
+An event is placed by the day it starts. Tasks the order cannot separate keep
+the order they were already in, so sorting by status after sorting by name
+leaves each group in name order.
 
 ### Undoing a change: `undo`
 

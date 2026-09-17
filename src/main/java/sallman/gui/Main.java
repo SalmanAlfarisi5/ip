@@ -20,18 +20,13 @@ import sallman.Sallman;
  */
 public class Main extends Application {
 
-    /** Where the task list is saved, relative to the folder the app runs in. */
-    private static final String DATA_PATH = "data/sallman.txt";
-
-    /**
-     * The chatbot itself, told not to print to the console because the window
-     * displays its replies instead.
-     */
-    private final Sallman sallman = new Sallman(DATA_PATH, false);
-
     /**
      * Builds the saLLMan window from its layout, gives it its title, icon and
      * minimum size, connects it to the chatbot, and shows it.
+     * <p>
+     * The chatbot keeps its tasks in the file named on the command line, if
+     * any, just as the console version does; it is told not to print to the
+     * console, since the window shows its replies instead.
      * <p>
      * If the layout cannot be loaded there is nothing to show, so the reason is
      * printed and JavaFX is shut down rather than left running without a window.
@@ -47,7 +42,7 @@ public class Main extends Application {
             stage.setScene(scene);
             stage.setTitle("saLLMan");
             // The sparkle is the same icon the chatbot's replies carry, so the
-            // taskbar entry is recognisably the same assistant.
+            // taskbar entry is recognizably the same assistant.
             stage.getIcons().add(new Image(Main.class.getResourceAsStream("/images/sallman.png")));
 
             // Below roughly this size the layout stops making sense: the input
@@ -56,6 +51,7 @@ public class Main extends Application {
             stage.setMinHeight(240);
             stage.setMinWidth(320);
 
+            Sallman sallman = new Sallman(Sallman.dataPathFrom(getParameters().getRaw()), false);
             fxmlLoader.<MainWindow>getController().setSallman(sallman);
             stage.show();
         } catch (IOException e) {

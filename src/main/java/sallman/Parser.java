@@ -2,7 +2,9 @@ package sallman;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,11 +48,12 @@ public class Parser {
             "Try: event project meeting /from " + TaskDate.EXAMPLE + " /to 2019-10-16";
 
     /**
-     * What a tag may be made of. Whitespace is excluded because tags are
-     * separated by it, and the field separator because a tag is saved on the
-     * same line as one.
+     * Commands that take nothing after their keyword. Anything typed after one
+     * is refused rather than ignored, since ignoring it can mislead: "undo twice"
+     * would undo only once, and "bye later" would exit straight away.
      */
-    private static final Pattern TAG_PATTERN = Pattern.compile("[A-Za-z0-9_\\-]+");
+    private static final Set<CommandType> TAKES_NO_ARGUMENTS =
+            EnumSet.of(CommandType.LIST, CommandType.UNDO, CommandType.BYE);
 
     /** Not meant to be instantiated: this class only holds static helpers. */
     private Parser() {
@@ -75,6 +78,10 @@ public class Parser {
 
         // Rejects an unknown keyword first, so every case below is a known one.
         CommandType type = CommandType.fromKeyword(keyword);
+        if (TAKES_NO_ARGUMENTS.contains(type) && !arguments.isEmpty()) {
+            throw new SallmanException("I'm sorry, but " + type.getKeyword() + " doesn't take anything after it.",
+                    "Try: " + type.getKeyword());
+        }
         return switch (type) {
             case BYE -> new ExitCommand();
             case LIST -> new ListCommand();
@@ -232,7 +239,7 @@ public class Parser {
                     "Try: " + command + " 2 fun");
         }
         for (String tag : tags) {
-            if (!TAG_PATTERN.matcher(tag).matches()) {
+            if (!Task.isValidTag(tag)) {
                 throw new SallmanException("I'm sorry, but I can't use \"" + tag + "\" as a tag.",
                         "A tag is made of letters, digits, hyphens or underscores.");
             }
