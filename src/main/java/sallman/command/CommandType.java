@@ -83,7 +83,7 @@ public enum CommandType {
      * Short keywords allow only one slip, since at two slips almost any short
      * word would look like {@code on} or {@code bye}.
      *
-     * @param typed the unrecognised keyword, in lower case
+     * @param typed the unrecognized keyword, in lower case
      * @return the closest command, or empty when none is close enough
      */
     private static Optional<CommandType> closestTo(String typed) {

@@ -46,7 +46,7 @@ public class Main extends Application {
             stage.getIcons().add(new Image(Main.class.getResourceAsStream("/images/sallman.png")));
 
             // Below roughly this size the layout stops making sense: the input
-            // row and a line or two of dialogue need the height, and the input
+            // row and a line or two of conversation need the height, and the input
             // box needs room beside the Send button to show what is typed.
             stage.setMinHeight(240);
             stage.setMinWidth(320);
