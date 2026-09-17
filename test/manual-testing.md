@@ -8,7 +8,7 @@ Only checks that were actually carried out are listed.
 
 ## What automated tests do not reach
 
-JUnit covers 98.8% of the lines and 95.5% of the branches outside the GUI.
+JUnit covers 98.8% of the lines and 96.1% of the branches outside the GUI.
 The rest cannot be reached from a test without a reason not to:
 
 | Not covered | Why |
@@ -16,7 +16,7 @@ The rest cannot be reached from a test without a reason not to:
 | The GUI (`sallman.gui`) | Tested by hand, as below. |
 | The failure branches of `assert` statements | They only run if the code has a bug. |
 | The `catch (RuntimeException e)` handlers in `Sallman` | A last resort for bugs; no valid or invalid input reaches them. |
-| `Sallman.main` with no arguments, and `Storage` given a bare file name | Both write to the real task list in the working directory. |
+| `Storage` given a bare file name, with no folder | Saving would write a file into the working directory. |
 
 ## The JAR on each operating system
 
@@ -27,8 +27,8 @@ when it is bundled inside a JAR on Java 25.
 
 | Build | Operating system | Java |
 |---|---|---|
-| `7dedb91` | Windows 11 Home | Oracle JDK 25.0.4 |
-| `7dedb91` | Ubuntu 24.04.3 LTS (WSL2, displayed through WSLg) | Temurin 25.0.4.1 |
+| `2b912fc` | Windows 11 Home | Oracle JDK 25.0.4 |
+| `2b912fc` | Ubuntu 24.04.3 LTS (WSL2, displayed through WSLg) | Temurin 25.0.4.1 |
 
 The bundled JavaFX native libraries were also counted in the JAR: 54 `.dll`
 files for Windows, 11 `.so` files for Linux, and 7 `.dylib` files for macOS.
