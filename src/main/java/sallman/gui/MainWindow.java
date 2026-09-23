@@ -2,6 +2,7 @@ package sallman.gui;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -36,10 +37,17 @@ public class MainWindow {
 
     private final Image sallmanImage = new Image(this.getClass().getResourceAsStream("/images/sallman.png"));
 
-    /** Makes the conversation scroll to the newest message as it grows. */
+    /**
+     * Makes the conversation scroll to the newest message as it grows, keeps
+     * Send switched off until there is something to send, and puts the cursor
+     * in the input box so the user can type straight away.
+     */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        sendButton.disableProperty().bind(
+                Bindings.createBooleanBinding(() -> userInput.getText().isBlank(), userInput.textProperty()));
+        Platform.runLater(userInput::requestFocus);
     }
 
     /**

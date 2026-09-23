@@ -107,3 +107,9 @@
 .button:pressed {
     -fx-opacity: 0.75;
 }
+
+/* Send is switched off until something is typed, so it is dimmed to say so. */
+.button:disabled {
+    -fx-opacity: 0.45;
+    -fx-cursor: default;
+}

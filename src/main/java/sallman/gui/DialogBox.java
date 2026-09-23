@@ -3,6 +3,9 @@ package sallman.gui;
 import java.io.IOException;
 import java.util.Collections;
 
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 /**
  * One message in the conversation.
@@ -34,6 +38,15 @@ public class DialogBox extends HBox {
      * waste most of a narrow one.
      */
     private static final double MAX_BUBBLE_SHARE = 0.8;
+
+    /**
+     * How long a new message takes to fade and slide into place. Long enough to
+     * follow the eye to the newest message, short enough not to delay reading it.
+     */
+    private static final Duration ENTRANCE = Duration.millis(180);
+
+    /** How far below its place a new message starts, in pixels. */
+    private static final double ENTRANCE_OFFSET = 12;
 
     @FXML
     private Label dialog;
@@ -59,6 +72,20 @@ public class DialogBox extends HBox {
         // room or draw the eye away from the text beside it.
         double radius = displayPicture.getFitWidth() / 2;
         displayPicture.setClip(new Circle(radius, radius, radius));
+    }
+
+    /**
+     * Fades and slides this message into place, so a new one is easy to follow
+     * in a conversation that is already several messages long.
+     */
+    private void playEntrance() {
+        FadeTransition fade = new FadeTransition(ENTRANCE, this);
+        fade.setFromValue(0);
+        fade.setToValue(1);
+        TranslateTransition slide = new TranslateTransition(ENTRANCE, this);
+        slide.setFromY(ENTRANCE_OFFSET);
+        slide.setToY(0);
+        new ParallelTransition(fade, slide).play();
     }
 
     /** Puts the avatar on the left and the text on the right. */
@@ -105,6 +132,7 @@ public class DialogBox extends HBox {
         DialogBox box = new DialogBox(text, null);
         box.getChildren().remove(box.displayPicture);
         box.dialog.getStyleClass().add("user-label");
+        box.playEntrance();
         return box;
     }
 
@@ -122,6 +150,7 @@ public class DialogBox extends HBox {
         DialogBox box = new DialogBox(text, img);
         box.flip();
         box.colorByCommand(commandType);
+        box.playEntrance();
         return box;
     }
 
@@ -137,6 +166,7 @@ public class DialogBox extends HBox {
         DialogBox box = new DialogBox(text, img);
         box.flip();
         box.dialog.getStyleClass().add("error-label");
+        box.playEntrance();
         return box;
     }
 }

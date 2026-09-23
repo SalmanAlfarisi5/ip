@@ -5,6 +5,8 @@
     -fx-border-radius: 14px;
     -fx-font-size: 13px;
     -fx-line-spacing: 2px;
+    /* A shadow soft enough to lift the bubble off the background without being seen as one. */
+    -fx-effect: dropshadow(gaussian, rgba(30, 27, 46, 0.10), 6, 0, 0, 2);
 }
 
 /*
