@@ -11,6 +11,8 @@ wonderful task, every `list` is a great question, and when you ask for task 99
 of 3 it will point out, as a large language model, that there is no task 99.
 The replies still say exactly what happened, so the act never gets in the way.
 
+<img src="docs/sallman-demo.gif" alt="A recording of saLLMan in use" width="420">
+
 ## Download and run
 
 Download `sallman.jar` from the [latest release][latest], put it in an empty
