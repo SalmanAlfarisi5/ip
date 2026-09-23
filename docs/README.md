@@ -1,6 +1,8 @@
 # saLLMan User Guide
 
-<img src="Ui.png" alt="saLLMan's window, showing a task list and a highlighted error" width="400">
+<img src="sallman-demo.gif" alt="A recording of saLLMan in use" width="420">
+
+*Nine commands in saLLMan, recorded from the app itself.*
 
 **saLLMan** is a desktop chatbot that keeps track of your todos, deadlines and
 events. You tell it what to do by typing short commands, and it saves your list
